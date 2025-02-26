@@ -40,7 +40,7 @@ function App() {
                   <h1>Prova 2</h1>
                 </div>
                 <div className="carousel-item">
-                  <h1>Prova 3</h1>
+                  <h1>Prova 6</h1>
                 </div>
               </div>
             </div>
