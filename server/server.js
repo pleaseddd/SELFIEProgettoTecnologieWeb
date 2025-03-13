@@ -23,7 +23,7 @@ app.get("/api", (req, res) => {
 });
 
 
-// users - CRUD
+// users - richieste
 app.get('/users', users.userGET);
 app.post('/newuser', users.userPOST_new);
 app.post('/userlogin', users.userPOST_login);

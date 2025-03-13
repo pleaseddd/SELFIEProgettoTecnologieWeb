@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', UserSchema);
 
-// CRUD
+// Richieste
 module.exports = {
     userGET: async function(req, res) {
 	    try {
@@ -37,21 +37,18 @@ module.exports = {
 	},
 
 	userPOST_login: async function(req, res) {
-		console.log("qui");
 		try {
-			console.log(JSON.stringify(req.body));
 			const { email, password } = req.body;
 			const user = await User.findOne({ email });
 
-			if(user == null) {
+			if(user == null)
 				res.status(401).json({message: "Utente non trovato"});
-			}
-			else if(password != user.password) {
+
+			else if(password != user.password)
 				res.status(401).json({message: "Password errata"});
-			}
-			else {
+
+			else
 				res.status(200).json({message: "Successo!"});
-			}
 		}
 		catch(err) {
 			res.status(500).json({message: err.message});
