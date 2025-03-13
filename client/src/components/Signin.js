@@ -1,0 +1,83 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
+function Signin({ change }) {
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    console.log(email
+    );
+    console.log(password);
+    try {
+      const response = await fetch("/userlogin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess("Login effettuato con successo!");
+        navigate("/home");
+      } else {
+        setError("Email o password errati!");
+        alert("Email o password errati!");
+      }
+    } catch (error) {
+      console.error("Errore di rete:", error);
+      alert("Errore di connessione al server.");
+    }
+    console.log(error);
+    console.log(success);
+  };
+  return (
+    <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
+      <div className="card p-4 shadow-lg">
+        <h2 className="text-center mb-4">Login</h2>
+        <form onSubmit={handleLogin}>
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label">
+              Email
+            </label>
+            <input
+              type="email"
+              className="form-control"
+              id="email"
+              name="email"
+              placeholder="Email"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
+            <input
+              type="password"
+              className="form-control"
+              id="password"
+              name="password"
+              placeholder="Password"
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100">
+            Accedi
+          </button>
+        </form>
+        <button className="btn btn-primary w-100 mt-2" onClick={change}>
+          Registrati
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default Signin;
