@@ -39,7 +39,10 @@ module.exports = {
 	userPOST_login: async function(req, res) {
 		try {
 			const { email, password } = req.body;
+
 			const user = await User.findOne({ email });
+
+			console.log(JSON.stringify(user));
 
 			if(user == null)
 				res.status(401).json({message: "Utente non trovato"});
@@ -48,7 +51,10 @@ module.exports = {
 				res.status(401).json({message: "Password errata"});
 
 			else
-				res.status(200).json({message: "Successo!"});
+				res.status(200).json({
+					message: "Successo!",
+					user: user
+				});
 		}
 		catch(err) {
 			res.status(500).json({message: err.message});

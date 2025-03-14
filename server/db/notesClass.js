@@ -12,4 +12,4 @@ const NotesSchema = new mongoose.Schema({
 const Note = mongoose.model('Note', NotesSchema);
 
 // crud
-module.exports = {
+module.exports = {};
