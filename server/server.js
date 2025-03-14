@@ -1,19 +1,37 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 const path = require("path");
 
+const mongoose = require("mongoose");
 
-app.get('/api', (req, res) => {
-    res.json({"utente":["utente1","utente2","utente3"]});
-})
+const { userGET, userPOST_new, userPOST_login } = require('./db/usersClass.js');
+
+
+const MONGO_URL = "mongodb://site232479:ahlaYae8@mongo_site232479?writeConcern=majority";
+main().catch(err => console.log(err));
+
+async function main() {
+	await mongoose.connect(MONGO_URL);
+	console.log("database connesso");
+}
+
+app.get("/api", (req, res) => {
+  res.json({ utente: ["utente1", "utente2", "utente3"] });
+});
+
+app.use(express.json());
+// users - CRUD
+app.get('/users', userGET);
+app.post('/newuser', userPOST_new);
+app.post('/userlogin', userPOST_login);
+
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+	res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
-
 app.listen(8000, () => {
-    console.log('Server started on http://localhost:8000');
+	console.log("Server started on http://localhost:8000");
 });
