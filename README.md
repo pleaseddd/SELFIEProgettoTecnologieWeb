@@ -6,4 +6,4 @@
 ## per il database
 - non si può accedere al db del progetto da fuori, quindi ho creato un cluster su atlas per i test
 - in server.js, usare TEST_MONGO_URL al posto di MONGO_URL in mongoose.connect()
-
+- non so perchè ma se si usa ALMA_WIFI non riesce a connettersi al cluster, bisogna usare un altro wifi
