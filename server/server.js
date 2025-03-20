@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const users = require('./db/usersClass.js');
-
+const notes = require('./db/notesClass.js');
 
 const MONGO_URL = "mongodb://site232479:ahlaYae8@mongo_site232479?writeConcern=majority";
 const TEST_MONGO_URL = "mongodb+srv://twuser:twpassword@twtestdb.6nobk.mongodb.net/";
@@ -28,6 +28,10 @@ app.get('/users', users.userGET);
 app.post('/newuser', users.userPOST_new);
 app.post('/userlogin', users.userPOST_login);
 
+// notes - richieste
+app.post('/notes', notes.notePOST_list);
+app.post('/newnote', notes.notePOST_new);
+app.delete('/deletenote', notes.noteDELETE);
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 

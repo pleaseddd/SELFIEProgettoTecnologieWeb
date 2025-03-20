@@ -6,19 +6,12 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 
 function Register({change}) {
-    const [newUser, setNewUser] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-    });
-
+    const navigate = useNavigate();
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
     const handleregister = async (e) => {
         e.preventDefault();
-
         const name = e.target.name.value;
         const email = e.target.email.value;
         const password = e.target.password.value;
@@ -51,10 +44,11 @@ function Register({change}) {
         }
         console.log(error);
         console.log(success);
+        navigate('/login');
     };
 
-  return (  
-    
+  return (
+
             <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
             <div className="card p-4 shadow-lg">
                 <h2 className="text-center mb-4">Registrazione</h2>
@@ -89,7 +83,7 @@ function Register({change}) {
                 <button onClick={change} className="btn btn-primary w-100 mt-2">Indietro</button>
             </div>
             </div>
-      
+
   );
 }
 

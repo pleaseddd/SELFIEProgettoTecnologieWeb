@@ -9,7 +9,7 @@ function Login({ setUser }) {
   useEffect(() => {
     const bootstrap = require('bootstrap');
     new bootstrap.Carousel(document.getElementById('carouselExampleSlidesOnly'), {
-      interval: 5000, 
+      interval: 5000,
       ride: 'carousel'
     });
   }, []);
@@ -18,7 +18,7 @@ function Login({ setUser }) {
     <div className="container d-flex justify-content-center align-items-center vh-100">
       <div className="row w-100">
 
-       {login ? <Signin change={()=>setLogin(false)} setUser={setUser}/> : <Register change={()=>setLogin(true)} />}
+       {login ? <Signin setUser={setUser} change={()=>setLogin(false)} /> : <Register change={()=>setLogin(true)} />}
         <div className="col-md-6 d-flex justify-content-center align-items-center">
           <div className="container">
             <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">

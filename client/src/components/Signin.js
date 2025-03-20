@@ -6,23 +6,17 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 function Signin({ change, setUser }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
   const navigate = useNavigate();
-
   const handleLogin = async (event) => {
     event.preventDefault();
-
     const email = event.target.email.value;
     const password = event.target.password.value;
-
-    console.log(email);
-    console.log(password);
-
     try {
-
       const response = await fetch("/userlogin", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
 
@@ -30,7 +24,8 @@ function Signin({ change, setUser }) {
 
       if (response.ok) {
         setSuccess("Login effettuato con successo!");
-		setUser(data.user);
+        console.log(data);
+        setUser(data.user);
         navigate("/home");
       } else {
         setError("Email o password errati!");
@@ -41,10 +36,7 @@ function Signin({ change, setUser }) {
       alert("Errore di connessione al server.");
     }
 
-    console.log(error);
-    console.log(success);
   };
-
   return (
     <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
       <div className="card p-4 shadow-lg">
