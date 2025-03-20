@@ -4,7 +4,7 @@ import Signin from './components/Signin';
 import Register from './components/Signup';
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-function Login() {
+function Login({ setUser }) {
   const [login, setLogin] = useState([true]);
   useEffect(() => {
     const bootstrap = require('bootstrap');
@@ -18,7 +18,7 @@ function Login() {
     <div className="container d-flex justify-content-center align-items-center vh-100">
       <div className="row w-100">
 
-       {login ? <Signin change={()=>setLogin(false)} /> : <Register change={()=>setLogin(true)} />}
+       {login ? <Signin setUser={setUser} change={()=>setLogin(false)} /> : <Register change={()=>setLogin(true)} />}
         <div className="col-md-6 d-flex justify-content-center align-items-center">
           <div className="container">
             <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">

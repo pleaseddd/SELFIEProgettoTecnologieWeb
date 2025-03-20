@@ -5,7 +5,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 
 const { userGET, userPOST_new, userPOST_login } = require('./db/usersClass.js');
-
+const { notePOST_list, notePOST_new, noteDELETE } = require('./db/notesClass.js');
 
 const MONGO_URL = "mongodb://site232479:ahlaYae8@mongo_site232479?writeConcern=majority";
 main().catch(err => console.log(err));
@@ -20,11 +20,16 @@ app.get("/api", (req, res) => {
 });
 
 app.use(express.json());
+
 // users - CRUD
 app.get('/users', userGET);
 app.post('/newuser', userPOST_new);
 app.post('/userlogin', userPOST_login);
 
+// note - CRUD
+app.post('/notes', notePOST_list);
+app.post('/newnote', notePOST_new);
+app.post('/deletenote', noteDELETE);
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
@@ -33,5 +38,5 @@ app.get("*", (req, res) => {
 });
 
 app.listen(8000, () => {
-	console.log("Server started on http://localhost:8000");
+	console.log("Server started on http://site23279.tw.cs.unibo.it");
 });
