@@ -24,7 +24,6 @@ function Signin({ change, setUser }) {
 
       if (response.ok) {
         setSuccess("Login effettuato con successo!");
-        console.log(data);
         setUser(data.user);
         navigate("/home");
       } else {

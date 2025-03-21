@@ -16,7 +16,7 @@ function NotesPages({ user }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ userid: user.id }),
+          body: JSON.stringify({ userid: user._id }),
         });
         const data = await response.json();
         if (response.ok) {

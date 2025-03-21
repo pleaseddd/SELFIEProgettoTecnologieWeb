@@ -37,9 +37,7 @@ module.exports = {
 	},
 
 	userPOST_login: async function(req, res) {
-		console.log("qui");
 		try {
-			console.log(JSON.stringify(req.body));
 			const { email, password } = req.body;
 			const user = await User.findOne({ email });
 
@@ -50,7 +48,7 @@ module.exports = {
 				res.status(401).json({message: "Password errata"});
 			}
 			else {
-				res.status(200).json({message: "Successo!"});
+				res.status(200).json({message: "Successo!", user:user});
 			}
 		}
 		catch(err) {

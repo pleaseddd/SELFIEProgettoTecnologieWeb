@@ -5,12 +5,14 @@ import Home from "./Home";
 import NotesPage from "./NotesPage";
 
 const App = () => {
-    // Carica l'utente dal localStorage all'avvio
     const [user, setUser] = useState(() => {
-        const savedUser = localStorage.getItem("user");
-        return savedUser ? JSON.parse(savedUser) : null;
+        try {
+            const savedUser = localStorage.getItem("user");
+            return savedUser ? JSON.parse(savedUser) : null;
+        } catch (error) {
+            return null;
+        }
     });
-
     // Funzione per aggiornare lo stato e salvare nel localStorage
     const handleSetUser = (userData) => {
         setUser(userData);

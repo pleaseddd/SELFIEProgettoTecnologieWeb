@@ -11,7 +11,7 @@ function AddNote({ user }) {
     const title = event.target.title.value;
     const category = event.target.category.value;
     const text = event.target.text.value;
-    const userid = user.id;
+    const userid = user._id;
     try {
       const response = await fetch("/newnote", {
         method: "POST",
@@ -28,7 +28,7 @@ function AddNote({ user }) {
         event.target.reset();
         setTimeout(() => {
           window.location.reload();
-        }, 1000);
+        }, 200);
       } else {
         setMessage("Errore durante la creazione della nota" + data.message);
       }
