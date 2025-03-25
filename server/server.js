@@ -5,7 +5,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 
 const { userGET, userPOST_new, userPOST_login } = require('./db/usersClass.js');
-const { notePOST_list, notePOST_new, noteDELETE } = require('./db/notesClass.js');
+const { notePOST_list, notePOST_new, notePOST_delete, notePUT_update } = require('./db/notesClass.js');
 
 const MONGO_URL = "mongodb://site232479:ahlaYae8@mongo_site232479?writeConcern=majority";
 main().catch(err => console.log(err));
@@ -29,7 +29,8 @@ app.post('/userlogin', userPOST_login);
 // note - CRUD
 app.post('/notes', notePOST_list);
 app.post('/newnote', notePOST_new);
-app.post('/deletenote', noteDELETE);
+app.post('/deletenote', notePOST_delete);
+app.post('/updatenote', notePUT_update);
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 

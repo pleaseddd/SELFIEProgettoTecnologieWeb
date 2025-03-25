@@ -1,38 +1,35 @@
-import { useState } from "react";
+import React from "react";
 
-function RemoveNote({ noteId, onNoteRemoved }) {
-  const [message, setMessage] = useState("");
+function RemoveNote({ noteId, userId, onSuccess }) {
+  const handleDelete = async () => {
+    const conferma = window.confirm("Sei sicuro di voler eliminare questa nota?");
+    if (!conferma) return;
 
-  const handleRemove = async () => {
-    if (!noteId) {
-      setMessage("ID nota non valido.");
-      return;
-    }
-    
     try {
-      const response = await fetch(`/notes/${noteId}`, {
-        method: "DELETE",
+      const response = await fetch("/deletenote", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ noteid: noteId, userid: userId }),
       });
-      const data = await response.json();
-      
+
       if (response.ok) {
-        setMessage("Nota eliminata con successo!");
-        if (onNoteRemoved) onNoteRemoved(noteId);
+        onSuccess(noteId); 
       } else {
-        setMessage("Errore: " + data.message);
+        const data = await response.json();
+        alert("Errore durante l'eliminazione: " + data.message);
       }
-    } catch (error) {
-      setMessage("Errore di connessione al server.");
+    } catch (err) {
+      console.error("Errore:", err);
+      alert("Errore di rete durante l'eliminazione");
     }
   };
 
   return (
-    <div className="d-flex align-items-center gap-2">
-      <button onClick={handleRemove} className="btn btn-danger">
-        Elimina Nota
-      </button>
-      {message && <p className="text-danger m-0">{message}</p>}
-    </div>
+    <button className="btn btn-sm btn-outline-danger" onClick={handleDelete}>
+      Elimina
+    </button>
   );
 }
 
