@@ -1,0 +1,42 @@
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    height: 100%;
+    width: 220px;
+    background-color: #f8f9fa;
+    transition: left 0.3s ease;
+    padding: 1rem;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar .close-btn {
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    float: right;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    padding: 10px 0;
+    cursor: pointer;
+  }
+  
+  .sidebar li.logout {
+    position: absolute;
+    bottom: 1rem;
+    width: 100%;
+    color: red;
+  }
+  

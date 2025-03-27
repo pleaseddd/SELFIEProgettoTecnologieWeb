@@ -6,6 +6,7 @@ function Home({ user, logout }) {
         <div>
             <h1>Ciao, {user.name}!</h1>
             <button className="btn btn-primary" onClick={()=>navigate("/Note")}>Note</button>
+            <button className="btn btn-primary" onClick={()=>navigate("/Calendario")}>Calendario</button>
             <button onClick={logout} className="btn btn-danger">Logout</button>
         </div>
     );

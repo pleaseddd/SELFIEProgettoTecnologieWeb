@@ -15,10 +15,6 @@ async function main() {
 	console.log("database connesso");
 }
 
-app.get("/api", (req, res) => {
-  res.json({ utente: ["utente1", "utente2", "utente3"] });
-});
-
 app.use(express.json());
 
 // users - CRUD

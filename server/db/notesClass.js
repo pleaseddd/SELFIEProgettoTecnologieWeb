@@ -72,8 +72,6 @@ module.exports = {
     }
   },
 
-
-  //aggiorna nota
   notePUT_update: async function (req, res) {
     try {
       const { noteid, title, category, body, userid } = req.body;

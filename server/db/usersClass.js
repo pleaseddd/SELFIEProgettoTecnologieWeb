@@ -1,10 +1,35 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true }
 });
+
+UserSchema.pre('save', async function(next) {
+	try {
+		if(!this.isModified('password'))
+			return next;
+
+		const salt = await bcrypt.genSalt(10);
+		this.password = await bcrypt.hash(this.password, salt);
+
+		next();
+	}
+	catch(error) {
+		next(error);
+	}
+});
+
+UserSchema.methods.checkpw = async function(password) {
+	try {
+		return await bcrypt.compare(password, this.password);
+	}
+	catch(error) {
+		throw new Error("La password non matcha :')");
+	}
+};
 
 const User = mongoose.model('User', UserSchema);
 
@@ -23,13 +48,21 @@ module.exports = {
 	userPOST_new: async function(req, res) {
 		try {
 	        const { name, email, password } = req.body;
-	        const newUser = new User({
-                name,
-                email,
-                password
-	        });
-	        await newUser.save();
-	        res.status(201).json(newUser);
+			const user = await User.findOne({ email });
+
+			if(user) {
+				res.status(401).json({message: "Usa un'altra email!"});
+			}
+			else {
+		        const newUser = new User({
+	                name,
+	                email,
+	                password
+		        });
+
+		        await newUser.save();
+		        res.status(201).json(newUser);
+			}
 	    }
 		catch (err) {
 	        res.status(400).json({ message: err.message });
@@ -44,7 +77,7 @@ module.exports = {
 			if(user == null) {
 				res.status(401).json({message: "Utente non trovato"});
 			}
-			else if(password != user.password) {
+			else if(!(await user.checkpw(password))) {
 				res.status(401).json({message: "Password errata"});
 			}
 			else {
