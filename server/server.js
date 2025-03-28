@@ -8,8 +8,8 @@ const MONGO_URL = "mongodb://site232479:ahlaYae8@mongo_site232479?writeConcern=m
 const TEST_MONGO_URL = "mongodb+srv://twuser:twpassword@twtestdb.6nobk.mongodb.net/";
 
 async function connectDatabase() {
-	// await mongoose.connect(MONGO_URL);
-	await mongoose.connect(TEST_MONGO_URL);
+	await mongoose.connect(MONGO_URL);
+	// await mongoose.connect(TEST_MONGO_URL);
 	console.log("database connesso");
 }
 connectDatabase().catch(err => console.log(err));

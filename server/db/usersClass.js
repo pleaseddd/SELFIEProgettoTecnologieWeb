@@ -4,7 +4,8 @@ const bcrypt = require('bcrypt');
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+	propic: { type: String }
 });
 
 UserSchema.pre('save', async function(next) {
@@ -33,12 +34,12 @@ UserSchema.methods.checkpw = async function(password) {
 
 const User = mongoose.model('User', UserSchema);
 
-// CRUD
+// requests
 module.exports = {
     userGET: async function(req, res) {
 	    try {
 			const users = await User.find();
-	        	res.json(users);
+			res.json(users);
 		}
 		catch (err) {
 	    	res.status(500).json({ message: err.message });
@@ -50,14 +51,14 @@ module.exports = {
 	        const { name, email, password } = req.body;
 			const user = await User.findOne({ email });
 
-			if(user) {
+			if(user)
 				res.status(401).json({message: "Usa un'altra email!"});
-			}
 			else {
 		        const newUser = new User({
 	                name,
 	                email,
-	                password
+	                password,
+	                propic: "https://dummyimage.com/80x80/023430/fff.jpg&text=prova"
 		        });
 
 		        await newUser.save();
@@ -74,15 +75,12 @@ module.exports = {
 			const { email, password } = req.body;
 			const user = await User.findOne({ email });
 
-			if(user == null) {
+			if(user == null)
 				res.status(401).json({message: "Utente non trovato"});
-			}
-			else if(!(await user.checkpw(password))) {
+			else if(!(await user.checkpw(password)))
 				res.status(401).json({message: "Password errata"});
-			}
-			else {
+			else
 				res.status(200).json({message: "Successo!", user:user});
-			}
 		}
 		catch(err) {
 			res.status(500).json({message: err.message});
