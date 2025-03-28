@@ -14,13 +14,8 @@ async function connectDatabase() {
 }
 connectDatabase().catch(err => console.log(err));
 
-
 const app = express();
 app.use(express.json());
-
-app.get("/api", (req, res) => {
-  res.json({ utente: ["utente1", "utente2", "utente3"] });
-});
 
 
 // users - richieste
@@ -31,7 +26,9 @@ app.post('/userlogin', users.userPOST_login);
 // notes - richieste
 app.post('/notes', notes.notePOST_list);
 app.post('/newnote', notes.notePOST_new);
-app.delete('/deletenote', notes.noteDELETE);
+app.delete('/deletenote', notes.notePOST_delete,);
+app.post('/updatenote', notes.notePUT_update);
+
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
@@ -39,6 +36,6 @@ app.get("*", (req, res) => {
 	res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
-app.listen(8000, () => {
-	console.log("Server started on http://localhost:8000");
+app.listen(8000, '0.0.0.0', () => {
+	console.log("Server started on http://site23279.tw.cs.unibo.it");
 });

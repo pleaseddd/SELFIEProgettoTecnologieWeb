@@ -1,50 +1,76 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-function AddNote({ user }) {
+function AddNote({ user, selectedNote, clearSelectedNote }) {
+  const [form, setForm] = useState({ title: "", category: "", text: "" });
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (selectedNote) {
+      setForm({
+        title: selectedNote.title,
+        category: selectedNote.category,
+        text: selectedNote.body,
+      });
+    } else {
+      setForm({ title: "", category: "", text: "" });
+    }
+  }, [selectedNote]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const title = event.target.title.value;
-    const category = event.target.category.value;
-    const text = event.target.text.value;
-    const userid = user.id;
+    const { title, category, text } = form;
+    const userid = user._id;
+
+    const nota = {
+      title,
+      category,
+      body: text,
+      userid,
+      ...(selectedNote && { noteid: selectedNote._id }),
+    };
+
+    const endpoint = selectedNote ? "/updatenote" : "/newnote";
+
     try {
-      const response = await fetch("/newnote", {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, category, text, userid }),
+        body: JSON.stringify(nota),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMessage("Nota creata con successo!");
-        event.target.reset();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        setMessage(selectedNote ? "Nota aggiornata!" : "Nota creata con successo!");
+        clearSelectedNote();
+        setTimeout(() => window.location.reload(), 500);
       } else {
-        setMessage("Errore durante la creazione della nota" + data.message);
+        setMessage("Errore: " + data.message);
       }
     } catch (err) {
-      setMessage("Errore di connessione al server");
+      setMessage("Errore di connessione");
     }
   };
 
   return (
     <div className="card p-4 shadow-lg">
-      <h2 className="text-center mb-4">Aggiungi nota</h2>
+      <h2 className="text-center mb-4">{selectedNote ? "Modifica nota" : "Aggiungi nota"}</h2>
       {message && <p className="text-center text-success">{message}</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Titolo</label>
-          <input type="text" className="form-control" name="title" required />
+          <input
+            type="text"
+            className="form-control"
+            name="title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            required
+          />
         </div>
         <div className="mb-3">
           <label className="form-label">Categoria</label>
@@ -52,16 +78,34 @@ function AddNote({ user }) {
             type="text"
             className="form-control"
             name="category"
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
             required
           />
         </div>
         <div className="mb-3">
           <label className="form-label">Corpo</label>
-          <textarea id="text" className="form-control" name="text"></textarea>
+          <textarea
+            id="text"
+            className="form-control"
+            name="text"
+            rows="4"
+            value={form.text}
+            onChange={(e) => setForm({ ...form, text: e.target.value })}
+          />
         </div>
         <button type="submit" className="btn btn-primary w-100">
-          Aggiungi
+          {selectedNote ? "Modifica" : "Aggiungi"}
         </button>
+        {selectedNote && (
+          <button
+            type="button"
+            className="btn btn-secondary w-100 mt-2"
+            onClick={clearSelectedNote}
+          >
+            Annulla modifica
+          </button>
+        )}
       </form>
     </div>
   );

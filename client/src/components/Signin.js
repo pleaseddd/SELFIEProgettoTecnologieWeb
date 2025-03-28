@@ -24,7 +24,6 @@ function Signin({ change, setUser }) {
 
       if (response.ok) {
         setSuccess("Login effettuato con successo!");
-        console.log(data);
         setUser(data.user);
         navigate("/home");
       } else {
@@ -35,7 +34,7 @@ function Signin({ change, setUser }) {
       console.error("Errore di rete:", error);
       alert("Errore di connessione al server.");
     }
-
+    
   };
   return (
     <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">

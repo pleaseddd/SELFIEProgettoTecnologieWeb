@@ -3,14 +3,18 @@ import { useState, useEffect } from "react";
 import Login from "./Login";
 import Home from "./Home";
 import NotesPage from "./NotesPage";
+import CalendarPage from "./CalendarPage";
+import MainLayout from "./components/Layout";
 
 const App = () => {
-    // Carica l'utente dal localStorage all'avvio
     const [user, setUser] = useState(() => {
-        const savedUser = localStorage.getItem("user");
-        return savedUser ? JSON.parse(savedUser) : null;
+        try {
+            const savedUser = localStorage.getItem("user");
+            return savedUser ? JSON.parse(savedUser) : null;
+        } catch (error) {
+            return null;
+        }
     });
-
     // Funzione per aggiornare lo stato e salvare nel localStorage
     const handleSetUser = (userData) => {
         setUser(userData);
@@ -28,8 +32,9 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Navigate to={user ? "/home" : "/login"} replace />} />
                 <Route path="/login" element={<Login setUser={handleSetUser} />} />
-                <Route path="/home" element={user ? <Home user={user} logout={handleLogout} /> : <Navigate to="/login" />} />
-                <Route path='/Note' element={user ? <NotesPage user={user}/> : <Navigate to="/login" />} />
+                <Route path="/home" element={user ? <MainLayout logout={handleLogout}><Home user={user} logout={handleLogout} /></MainLayout> : <Navigate to="/login" />} />
+                <Route path="/Note" element={user ? <MainLayout logout={handleLogout}><NotesPage user={user} /></MainLayout> : <Navigate to="/login" />} />
+                <Route path="/Calendario" element={user ? <MainLayout logout={handleLogout}><CalendarPage user={user} /></MainLayout> : <Navigate to="/login" />} />
             </Routes>
         </Router>
     );

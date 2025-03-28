@@ -19,6 +19,7 @@ function Register({change}) {
 
         if (password !== confirmPassword) {
             setError("Le password non corrispondono!");
+            alert("Le password non corrispondono!");
             return;
         }
 
@@ -32,23 +33,25 @@ function Register({change}) {
             });
 
             const data = await response.json();
-
             if (response.ok) {
                 setSuccess("Registrazione completata con successo!");
                 setError("");
+                console.log(success);
+				change();
             } else {
+                alert(data.message || " Errore durante la registrazione");
                 setError(data.message || "Errore durante la registrazione");
+                console.log(error);
             }
         } catch (err) {
             setError("Errore di connessione al server");
         }
-        console.log(error);
-        console.log(success);
-        navigate('/login');
+        
+        
     };
 
-  return (
-
+  return (  
+    
             <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
             <div className="card p-4 shadow-lg">
                 <h2 className="text-center mb-4">Registrazione</h2>
@@ -83,7 +86,7 @@ function Register({change}) {
                 <button onClick={change} className="btn btn-primary w-100 mt-2">Indietro</button>
             </div>
             </div>
-
+      
   );
 }
 

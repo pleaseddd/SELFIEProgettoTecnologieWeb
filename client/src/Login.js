@@ -9,7 +9,7 @@ function Login({ setUser }) {
   useEffect(() => {
     const bootstrap = require('bootstrap');
     new bootstrap.Carousel(document.getElementById('carouselExampleSlidesOnly'), {
-      interval: 5000,
+      interval: 5000, 
       ride: 'carousel'
     });
   }, []);
