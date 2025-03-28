@@ -30,11 +30,50 @@ const App = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Navigate to={user ? "/home" : "/login"} replace />} />
-                <Route path="/login" element={<Login setUser={handleSetUser} />} />
-                <Route path="/home" element={user ? <MainLayout logout={handleLogout}><Home user={user} logout={handleLogout} /></MainLayout> : <Navigate to="/login" />} />
-                <Route path="/Note" element={user ? <MainLayout logout={handleLogout}><NotesPage user={user} /></MainLayout> : <Navigate to="/login" />} />
-                <Route path="/Calendario" element={user ? <MainLayout logout={handleLogout}><CalendarPage user={user} /></MainLayout> : <Navigate to="/login" />} />
+                <Route
+	                path="/"
+					element={
+						<Navigate to={user ? "/home" : "/login"} replace />
+					}
+				/>
+
+                <Route
+	                path="/login"
+					element={<Login setUser={handleSetUser}/>}
+				/>
+
+                <Route
+	                path="/home"
+					element={
+						user ?
+							<MainLayout user={user} logout={handleLogout}>
+								<Home user={user} logout={handleLogout}/>
+							</MainLayout>
+							: <Navigate to="/login" />
+					}
+				/>
+
+                <Route
+	                path="/Note"
+					element={
+						user ?
+							<MainLayout user={user} logout={handleLogout}>
+								<NotesPage user={user}/>
+							</MainLayout>
+							: <Navigate to="/login"/>
+					}
+				/>
+
+                <Route
+	                path="/Calendario"
+					element={
+						user ?
+							<MainLayout user={user} logout={handleLogout}>
+								<CalendarPage user={user} />
+							</MainLayout>
+							: <Navigate to="/login" />
+					}
+				/>
             </Routes>
         </Router>
     );
