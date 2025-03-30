@@ -1,10 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+
+import MainLayout from "./components/Layout";
+
 import Login from "./Login";
+
 import Home from "./Home";
 import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
-import MainLayout from "./components/Layout";
+import Settings from "./Settings.js";
 
 const App = () => {
     const [user, setUser] = useState(() => {
@@ -71,7 +75,18 @@ const App = () => {
 							<MainLayout user={user} logout={handleLogout}>
 								<CalendarPage user={user} />
 							</MainLayout>
-							: <Navigate to="/login" />
+							: <Navigate to="/login"/>
+					}
+				/>
+
+				<Route
+					path="/settings"
+					element={
+						user ?
+							<MainLayout user={user} logout={handleLogout}>
+								<Settings user={user} />
+							</MainLayout>
+							: <Navigate to="/login"/>
 					}
 				/>
             </Routes>

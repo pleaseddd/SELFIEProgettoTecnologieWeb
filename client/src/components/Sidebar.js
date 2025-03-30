@@ -11,6 +11,7 @@ function Sidebar({ toggleSidebar, logout }) {
           <li className="nav-item"><a href="/home" className="nav-link">Home</a></li>
           <li><a href="/Note" className="nav-link">Note</a></li>
           <li><a href="/Calendario" className="nav-link">Calendario</a></li>
+          <li><a href="/settings" className="nav-link">Impostazioni</a></li>
         </ul>
         <hr />
         <button className="btn btn-danger mt-auto" onClick={logout}>Logout</button>
