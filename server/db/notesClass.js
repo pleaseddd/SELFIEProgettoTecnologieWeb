@@ -1,46 +1,52 @@
 const mongoose = require("mongoose");
 
 const NoteSchema = new mongoose.Schema(
-  {
-    title: { type: String, required: true, trim: true },
-    category: { type: String, required: true },
-    body: { type: String },
-    author: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-  },
-  {
-    timestamps: true, // Aggiunge automaticamente "createdAt" e "updatedAt"
-  }
+	{
+    	title: {
+			type: String,
+			required: true,
+			trim: true
+		},
+
+    	category: {
+			type: String,
+			required: true
+		},
+
+    	body: { type: String },
+
+	    author: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+			required: true
+    	},
+	},
+
+	// Aggiunge automaticamente "createdAt" e "updatedAt"
+	{ timestamps: true }
 );
 
 const Note = mongoose.model("Note", NoteSchema);
 
-// crud
+// richieste
 module.exports = {
   // recupera note
-  notePOST_list: async function (req, res) {
+  POST_list: async function (req, res) {
     try {
       // filtra per id utente
-
       const userId = req.body.userid;
       const notes = await Note.find({ author: userId });
 
-      // non filtra
-      // const notes = await Note.find();
-      res.json(notes);
+      res.status(201).json(notes);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   },
 
   // crea nuova nota
-  notePOST_new: async function (req, res) {
+  POST_new: async function (req, res) {
     try {
       const { title, category, body, userid } = req.body;
-
       const newNote = new Note({
         title,
         category,
@@ -54,8 +60,24 @@ module.exports = {
     }
   },
 
-  //elimina nota
-  notePOST_delete: async function (req, res) {
+  // restituisce le note in ordine di modifica
+  POST_last: async function (req, res) {
+	try {
+	  const userId = req.body.userid;
+	  const numNotes = req.body.limit;
+	  const lastNotes = await Note.find({ author: userId })
+	  	.sort({ updateAt: 1 })
+		.limit(numNotes);
+
+	  res.status(201).json(lastNotes);
+	}
+	catch(err) {
+		res.status(400).json({ message: err.message });
+	}
+  },
+
+  // elimina nota
+  POST_delete: async function (req, res) {
     try {
       const { noteid, userid } = req.body;
       const note = await Note.findById(noteid);
@@ -72,7 +94,8 @@ module.exports = {
     }
   },
 
-  notePUT_update: async function (req, res) {
+  // modifica una nota pre-esistente
+  PUT_update: async function (req, res) {
     try {
       const { noteid, title, category, body, userid } = req.body;
       const note = await Note.findById(noteid);

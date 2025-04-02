@@ -1,36 +1,46 @@
+
 import { useEffect,useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Signin from './components/Signin';
 import Register from './components/Signup';
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import './style/login.css';
+
 function Login({ setUser }) {
   const [login, setLogin] = useState([true]);
   useEffect(() => {
     const bootstrap = require('bootstrap');
     new bootstrap.Carousel(document.getElementById('carouselExampleSlidesOnly'), {
-      interval: 5000, 
+      interval: 4069, 
       ride: 'carousel'
     });
   }, []);
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div className="row w-100">
-
-       {login ? <Signin setUser={setUser} change={()=>setLogin(false)} /> : <Register change={()=>setLogin(true)} />}
-        <div className="col-md-6 d-flex justify-content-center align-items-center">
-          <div className="container">
-            <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
-              <div className="carousel-inner">
-                <div className="carousel-item active">
-                  <h1>Prova 1</h1>
-                </div>
-                <div className="carousel-item">
-                  <h1>Prova 2</h1>
-                </div>
-                <div className="carousel-item">
-                  <h1>Prova 3</h1>
+ <div className="background-container">
+      <div className="container vh-100">
+        <div className="row h-100">
+          <div className="col-md-4 d-flex justify-content-center align-items-center">
+            {login ? (
+              <Signin setUser={setUser} change={() => setLogin(false)} />
+            ) : (
+              <Register change={() => setLogin(true)} />
+            )}
+          </div>
+          <div className="col-md-8 d-flex justify-content-center align-items-center">
+            <div className="container">
+              <div id="carouselExampleSlidesOnly" className="carousel slide w-100" data-bs-ride="carousel">
+                <div className="carousel-inner">
+                  <div className="carousel-item active">
+                    <img src="https://i.imgur.com/xbTjYJ8.jpeg" className="d-block w-100" alt="Immagine 1" />
+                  </div>
+                  <div className="carousel-item">
+                    <img src="https://i.imgur.com/cbei4dg.jpeg" className="d-block w-100" alt="Immagine 2" />
+                  </div>
+                  <div className="carousel-item">
+                    <img src="https://i.imgur.com/OmtG7wu.jpeg" className="d-block w-100" alt="Immagine 3" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -40,5 +50,4 @@ function Login({ setUser }) {
     </div>
   );
 }
-
 export default Login;

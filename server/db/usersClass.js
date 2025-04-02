@@ -34,19 +34,10 @@ UserSchema.methods.checkpw = async function(password) {
 
 const User = mongoose.model('User', UserSchema);
 
-// requests
+// richieste
 module.exports = {
-    userGET: async function(req, res) {
-	    try {
-			const users = await User.find();
-			res.json(users);
-		}
-		catch (err) {
-	    	res.status(500).json({ message: err.message });
-		}
-	},
-
-	userPOST_new: async function(req, res) {
+	// crea un nuovo utente
+	POST_new: async function(req, res) {
 		try {
 	        const { name, email, password } = req.body;
 			const user = await User.findOne({ email });
@@ -69,8 +60,9 @@ module.exports = {
 	        res.status(400).json({ message: err.message });
 	    }
 	},
-
-	userPOST_login: async function(req, res) {
+	
+	// cerca l'utente con certe credenziali
+	POST_login: async function(req, res) {
 		try {
 			const { email, password } = req.body;
 			const user = await User.findOne({ email });

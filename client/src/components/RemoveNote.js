@@ -15,7 +15,7 @@ function RemoveNote({ noteId, userId, onSuccess }) {
       });
 
       if (response.ok) {
-        onSuccess(noteId); 
+        onSuccess(noteId); // Rimuove la nota dalla lista
       } else {
         const data = await response.json();
         alert("Errore durante l'eliminazione: " + data.message);
