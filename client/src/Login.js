@@ -17,8 +17,9 @@ function Login({ setUser }) {
     });
   }, []);
 
-  return (
- <div className="background-container">
+return (
+    <>
+      <div className="background-container"></div>
       <div className="container vh-100">
         <div className="row h-100">
           <div className="col-md-4 d-flex justify-content-center align-items-center">
@@ -47,7 +48,7 @@ function Login({ setUser }) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 export default Login;
