@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { RRule } = require("rrule");
 
 const EventSchema = new mongoose.Schema(
   {
@@ -28,12 +29,20 @@ const EventSchema = new mongoose.Schema(
       trim: true,
     },
 
-    repetition: {
-      frequency: {
-        type: String,
-        enum: ["daily", "weekly", "monthly", "yearly"],
-      },
-      until: Date,
+    isRecurring: {
+      type: Boolean,
+    },
+
+    rruleStr: {
+      type: String,
+    },
+
+    notifications: {
+      type: String,
+    },
+    color: {
+      type: String,
+      default: "#3788d8", 
     },
   },
   { timestamps: true }
@@ -56,17 +65,18 @@ module.exports = {
   // Nuovo evento
   POST_new: async (req, res) => {
     try {
-      const { title, category, location, begin, end, repetition, userid } =
+      const { title, category, location, begin, end, isRecurring, rruleStr, userid,color } =
         req.body;
-
       const newEvent = new Event({
         title,
         category,
         location,
         begin,
         end,
-        repetition,
+        isRecurring,
+        rruleStr,
         author: userid, // ⬅️ Mappa correttamente il campo
+        color,
       });
 
       await newEvent.save();

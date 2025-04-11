@@ -32,7 +32,6 @@ function MainLayout({ children, user, logout }) {
 
 			<div
 				style={{
-					marginLeft: showSidebar ? "220px" : "60px",
 					transition: "margin 0.3s ease"
 				}}
 			>

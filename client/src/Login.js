@@ -1,6 +1,4 @@
-
 import { useEffect,useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Signin from './components/Signin';
 import Register from './components/Signup';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -9,6 +7,7 @@ import './style/login.css';
 
 function Login({ setUser }) {
   const [login, setLogin] = useState([true]);
+/*
   useEffect(() => {
     const bootstrap = require('bootstrap');
     new bootstrap.Carousel(document.getElementById('carouselExampleSlidesOnly'), {
@@ -16,6 +15,7 @@ function Login({ setUser }) {
       ride: 'carousel'
     });
   }, []);
+*/
 
 return (
     <>
@@ -34,13 +34,13 @@ return (
               <div id="carouselExampleSlidesOnly" className="carousel slide w-100" data-bs-ride="carousel">
                 <div className="carousel-inner">
                   <div className="carousel-item active">
-                    <img src="https://i.imgur.com/xbTjYJ8.jpeg" className="d-block w-100" alt="Immagine 1" />
+                    <img src="https://i.imgur.com/xbTjYJ8.jpeg" className="d-block w-100 carousel-img" alt="Immagine 1" />
                   </div>
                   <div className="carousel-item">
-                    <img src="https://i.imgur.com/cbei4dg.jpeg" className="d-block w-100" alt="Immagine 2" />
+                    <img src="https://i.imgur.com/cbei4dg.jpeg" className="d-block w-100 carousel-img" alt="Immagine 2" />
                   </div>
                   <div className="carousel-item">
-                    <img src="https://i.imgur.com/OmtG7wu.jpeg" className="d-block w-100" alt="Immagine 3" />
+                    <img src="https://i.imgur.com/OmtG7wu.jpeg" className="d-block w-100 carousel-img" alt="Immagine 3" />
                   </div>
                 </div>
               </div>
@@ -51,4 +51,5 @@ return (
     </>
   );
 }
+
 export default Login;

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Weather from "./components/home/Weather.js";
+import SystemNotification from "./components/SystemNotification.js";
 import "./style/home.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -105,6 +106,7 @@ function Home({ user, logout }) {
       )}
 
       <Weather />
+      <SystemNotification />
     </div>
   );
 }

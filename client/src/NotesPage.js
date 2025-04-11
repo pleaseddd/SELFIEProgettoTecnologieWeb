@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import AddNote from "./components/AddNote";
 import RemoveNote from "./components/RemoveNote";
+import "./style/note.css";
 
 function NotesPages({ user }) {
   const [notes, setNotes] = useState([]);
@@ -40,16 +41,6 @@ function NotesPages({ user }) {
 
   return (
     <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="text-md-start text-center m-0">Le tue Note</h2>
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => navigate("/")}
-        >
-          Torna alla Home
-        </button>
-      </div>
-  
       <div className="row d-flex flex-column flex-md-row">
         <div className="col-md-4 mb-3">
           <div className="p-3 bg-light rounded shadow-sm">
@@ -60,7 +51,7 @@ function NotesPages({ user }) {
             />
           </div>
         </div>
-  
+
         <div className="col-md-8">
           <div className="row">
             {notes.length > 0 ? (
@@ -69,7 +60,9 @@ function NotesPages({ user }) {
                   <div className="card shadow-sm h-100 d-flex flex-column">
                     <div className="card-body flex-grow-1">
                       <h5 className="card-title">{note.title}</h5>
-                      <h6 className="card-subtitle mb-2 text-muted">{note.category}</h6>
+                      <h6 className="card-subtitle mb-2 text-muted">
+                        {note.category}
+                      </h6>
                       <p className="card-text">{note.body}</p>
                     </div>
                     <div className="card-footer bg-transparent border-top-0 d-flex justify-content-between px-3 pb-3">

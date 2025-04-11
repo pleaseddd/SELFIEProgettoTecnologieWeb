@@ -1,305 +1,238 @@
-import React, { useState, useEffect, use } from "react";
-import { Temporal } from "@js-temporal/polyfill";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { RRule } from "rrule";
+import { Temporal } from "@js-temporal/polyfill";
 import EventModal from "./components/EventModal";
-import EventView from "./components/EventView";
 
-function Calendar({ user }) {
-  const [today, setToday] = useState(null);
-  const [currentMonth, setCurrentMonth] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+import { format, parse, startOfWeek, getDay } from "date-fns";
+import it from "date-fns/locale/it";
+
+const locales = {
+  "it-IT": it,
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
+
+function toLocalInput(date) {
+  const local = new Date(date);
+  local.setMinutes(local.getMinutes() - local.getTimezoneOffset());
+  return local.toISOString().slice(0, 16);
+}
+
+
+
+
+function CalendarPage({ user }) {
   const [events, setEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
-
-  const userId = user._id;
+  const [serverTime, setServerTime] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalData, setModalData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const fetchServerTime = async () => {
-      const res = await fetch("/api/server-time");
-      const data = await res.json();
-      const serverNow = Temporal.Instant.from(data.now);
-      const serverDate = serverNow.toZonedDateTimeISO("UTC").toPlainDate();
-
-      setToday(serverDate);
-      setCurrentMonth(serverDate.with({ day: 1 }));
-    };
-
-    fetchServerTime();
+    fetch("/api/server-time")
+      .then((res) => res.json())
+      .then((data) => {
+        const serverNow = Temporal.Instant.from(data.now);
+        setServerTime(serverNow);
+      })
+      .catch((err) => {
+        console.error("Errore nel recupero orario dal server:", err);
+      });
   }, []);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const res = await fetch("/events", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userid: userId }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setEvents(data);
-        } else {
-          console.error("Errore nel caricamento eventi");
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    if (userId) fetchEvents();
-  }, [userId]);
-
-  const openModal = (date) => {
-    setSelectedDate(date);
-    setShowModal(true);
-  };
-
-  // Crea evento
-  const handleSave = async (formData) => {
-    const payload = {
-      ...formData,
-      repetition: {
-        frequency: formData.repetition?.frequency || undefined,
-        until: formData.repetition?.until || undefined,
-      },
-      userid: userId,
-    };
-
-    const endpoint = formData._id ? "/updateevent" : "/newevent";
-
+  const loadEvents = async () => {
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch("/events", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ userid: user._id }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
-        alert(
-          formData._id ? "Evento aggiornato!" : "Evento creato con successo!"
-        );
-        setShowModal(false);
+        const allEvents = [];
+        if (!serverTime) return; 
+        const now = serverTime.toZonedDateTimeISO("UTC");
+        const oneYearLater = now.add({ years: 1 });
 
-        if (formData._id) {
-          // aggiorna evento modificato
-          setEvents((prev) =>
-            prev.map((e) => (e._id === formData._id ? data : e))
-          );
-        } else {
-          // aggiungi nuovo evento
-          setEvents((prev) => [...prev, data]);
-        }
+        data.forEach((event) => {
+          if (!event.begin || !event.end) return;
+
+          if (event.rruleStr) {
+            const rule = RRule.fromString(event.rruleStr);
+            const dates = rule.between(
+              new Date(now.toInstant().epochMilliseconds),
+              new Date(oneYearLater.toInstant().epochMilliseconds),
+              true
+            );
+            dates.forEach((date) => {
+              const begin = Temporal.Instant.from(date.toISOString());
+              const originalBegin = Temporal.Instant.from(event.begin);
+              const originalEnd = Temporal.Instant.from(event.end);
+              const duration = originalEnd.since(originalBegin);
+              const end = begin.add(duration);
+              allEvents.push({
+                ...event,
+                start: new Date(begin.epochMilliseconds),
+                end: new Date(end.epochMilliseconds),
+              });
+            });
+          } else {
+            allEvents.push({
+              ...event,
+              start: new Date(
+                Temporal.Instant.from(event.begin).epochMilliseconds
+              ),
+              end: new Date(Temporal.Instant.from(event.end).epochMilliseconds),
+            });
+          }
+        });
+        setEvents(allEvents);
       } else {
-        alert("Errore: " + data.message);
+        alert("Errore durante il recupero degli eventi");
       }
-    } catch (err) {
-      alert("Errore di connessione");
+    } catch (error) {
+      console.error("Errore durante il recupero degli eventi:", error);
     }
   };
 
-  //Elimina evento
-  const handleDelete = async (event) => {
+  
+  useEffect(() => {
+    if (serverTime) {
+      loadEvents();
+    }
+  }, [serverTime]);
+  
+  const handleSelectSlot = useCallback((slotInfo) => {
+    const start = new Date(slotInfo.start);
+    const end = new Date(slotInfo.end - 1);
+
+    if (start.toDateString() === end.toDateString() && (end.getTime()-start.getTime()) > 23 * 60 * 60 * 1000) {
+      start.setHours(9, 0, 0, 0);
+      end.setHours(10, 0, 0, 0);
+    }else if (start.toDateString() === end.toDateString()) {
+      end.setTime(end.getTime() +1);
+    }
+
+    setModalData({
+      begin: toLocalInput(start),
+      end: toLocalInput(end),
+    });
+    setIsEditing(false);
+    setModalOpen(true);
+  }, []);
+
+  const handleSelectEvent = useCallback((event) => {
+    const beginDate = new Date(event.start);
+    const endDate = new Date(event.end);
+
+    setModalData({
+      ...event,
+      begin: toLocalInput(beginDate),
+      end: toLocalInput(endDate),
+    });
+    setIsEditing(true);
+    setModalOpen(true);
+  }, []);
+
+  const handleModalSave = async (eventData) => {
+    const localBegin = new Date(eventData.begin);
+    const localEnd = new Date(eventData.end);
+    try {
+      const payload = {
+        ...eventData,
+        begin: localBegin.toISOString(),
+        end: localEnd.toISOString(),
+        _id: modalData?._id,
+        userid: user._id,
+      };
+
+      const url = isEditing ? "/updateevent" : "/newevent";
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        setModalOpen(false);
+        loadEvents();
+      } else {
+        alert("Errore durante il salvataggio dell'evento");
+        console.error(data);
+      }
+    } catch (error) {
+      console.error("Errore nella richiesta di salvataggio:", error);
+    }
+  };
+
+  const handleModalDelete = async () => {
     try {
       const response = await fetch("/deleteevent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ _id: event._id, author: userId }),
+        body: JSON.stringify({ _id: modalData._id, author: user._id }),
       });
-
       const data = await response.json();
 
       if (response.ok) {
-        alert("Evento eliminato");
-        setEvents((prev) => prev.filter((e) => e._id !== event._id));
-        setShowViewModal(false);
+        setModalOpen(false);
+        loadEvents();
       } else {
-        alert("Errore: " + data.message);
+        alert("Errore durante l'eliminazione dell'evento");
+        console.error(data);
       }
-    } catch (err) {
-      alert("Errore di connessione");
+    } catch (error) {
+      console.error("Errore durante l'eliminazione:", error);
     }
   };
-
-  // Modifica evento
-  const handleEdit = (event) => {
-    const dateBegin = Temporal.Instant.from(event.begin).toZonedDateTimeISO(
-      "UTC"
-    );
-    const dateEnd = Temporal.Instant.from(event.end).toZonedDateTimeISO("UTC");
-
-    const initialData = {
-      ...event,
-      begin: dateBegin.toPlainDateTime().toString().slice(0, 16),
-      end: dateEnd.toPlainDateTime().toString().slice(0, 16),
-      repetition: {
-        frequency: event.repetition?.frequency || "",
-        until: event.repetition?.until
-          ? event.repetition.until.slice(0, 10)
-          : "",
-      },
-    };
-
-    setShowViewModal(false);
-    setTimeout(() => {
-      setSelectedDate(dateBegin.toPlainDate().toString());
-      setShowModal(true);
-      setEditingEvent(initialData);
-    }, 200);
-  };
-
-  const getCalendarDays = () => {
-    const startDay = currentMonth;
-    const endDay = currentMonth
-      .add({ months: 1 })
-      .with({ day: 1 })
-      .subtract({ days: 1 });
-    const startWeekDay = startDay.dayOfWeek % 7;
-    const days = [];
-
-    for (let i = 0; i < startWeekDay; i++) {
-      days.push(null);
-    }
-
-    for (let d = 1; d <= endDay.day; d++) {
-      days.push(currentMonth.with({ day: d }));
-    }
-
-    return days;
-  };
-
-  const prevMonth = () => setCurrentMonth(currentMonth.subtract({ months: 1 }));
-  const nextMonth = () => setCurrentMonth(currentMonth.add({ months: 1 }));
-
-  if (!currentMonth || !today)
-    return <div className="text-center mt-5">Caricamento calendario...</div>;
-
-  const days = getCalendarDays();
-  const weeks = [];
-  const filteredEvents = events.filter((e) => {
-    const eventDate = Temporal.Instant.from(e.begin)
-      .toZonedDateTimeISO("UTC")
-      .toPlainDate();
-    return (
-      eventDate.month === currentMonth.month &&
-      eventDate.year === currentMonth.year
-    );
-  });
-
-  for (let i = 0; i < days.length; i += 7) {
-    weeks.push(days.slice(i, i + 7));
-  }
 
   return (
-    <div className="container mt-5">
-      <h3 className="text-center mb-3">
-        {currentMonth.toLocaleString("it-IT", { month: "long" })}{" "}
-        {currentMonth.year}
-      </h3>
-
-      <div className="d-flex justify-content-between mb-2">
-        <button className="btn btn-outline-primary" onClick={prevMonth}>
-          ← Mese Precedente
-        </button>
-        <button className="btn btn-outline-primary" onClick={nextMonth}>
-          Mese Successivo →
-        </button>
-      </div>
-
-      <table className="table table-bordered text-center">
-        <thead>
-          <tr>
-            {["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"].map((d) => (
-              <th key={d}>{d}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {weeks.map((week, idx) => (
-            <tr key={idx}>
-              {week.map((day, i) => (
-                <td
-                  key={i}
-                  className={
-                    day && day.equals(today)
-                      ? "bg-info text-white fw-bold align-top"
-                      : "align-top"
-                  }
-                  style={{
-                    height: "100px",
-                    verticalAlign: "top",
-                    overflow: "hidden",
-                    fontSize: "0.8rem",
-                    padding: "4px",
-                    cursor: day ? "pointer" : "default",
-                  }}
-                  onClick={() => day && openModal(day.toString())}
-                >
-                  <div className="fw-bold">{day ? day.day : ""}</div>
-                  {day &&
-                    filteredEvents
-                      .filter((ev) =>
-                        Temporal.Instant.from(ev.begin)
-                          .toZonedDateTimeISO("UTC")
-                          .toPlainDate()
-                          .equals(day)
-                      )
-                      .map((ev, idx) => (
-                        <div
-                          key={idx}
-                          className="badge bg-primary text-truncate d-block w-100 mt-1"
-                          title={ev.title}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedEvent(ev);
-                            setShowViewModal(true);
-                          }}
-                        >
-                          {ev.title.length > 20 ? ev.title.slice(0, 17) + "..." : ev.title}
-                        </div>
-                      ))}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <EventModal
-        show={showModal}
-        handleClose={() => {
-          setShowModal(false);
-          setEditingEvent(null);
-        }}
-        onSave={handleSave}
-        initialData={
-          editingEvent || {
-            title: "",
-            category: "",
-            location: "",
-            begin: selectedDate ? `${selectedDate}T09:00` : "",
-            end: selectedDate ? `${selectedDate}T10:00` : "",
-            repetition: { frequency: "", until: "" },
-          }
-        }
+    <div className="container mt-3">
+      <h2 className="text-center">Calendario</h2>
+      <Calendar
+        localizer={localizer}
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        selectable
+        style={{ height: "80vh" }}
+        onSelectSlot={handleSelectSlot}
+        onSelectEvent={handleSelectEvent}
+        views={["month", "week", "day"]}
+        popup
+        timeslots={2}
+        step={30}
+        culture="it-IT"
+        formats={{ timeGutterFormat: "HH:mm" }}
+        eventPropGetter={(event) => ({
+          style: {
+            backgroundColor: event.color || "#3788d8",
+            color: "white",
+            borderRadius: "5px",
+          },
+        })}
       />
-
-      <EventView
-        show={showViewModal}
-        event={selectedEvent}
-        onClose={() => setShowViewModal(false)}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
+      <EventModal
+        show={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleModalSave}
+        onDelete={handleModalDelete}
+        initialData={modalData}
       />
     </div>
   );
 }
 
-export default Calendar;
+export default CalendarPage;
