@@ -1,6 +1,6 @@
 import React from "react";
 
-export function RemoveNote({ noteId, userId, onSuccess }) {
+function RemoveNote({ noteId, userId, onSuccess }) {
   const handleDelete = async () => {
     const conferma = window.confirm("Sei sicuro di voler eliminare questa nota?");
     if (!conferma) return;
@@ -32,3 +32,5 @@ export function RemoveNote({ noteId, userId, onSuccess }) {
     </button>
   );
 }
+
+export default RemoveNote;

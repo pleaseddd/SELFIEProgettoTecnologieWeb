@@ -1,5 +1,13 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import React, { useState} from 'react';
+import{ 
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Image,
+} from "react-bootstrap";
 
 function Settings({ user ,updateUser}) {
   const [form, setForm] = useState({
