@@ -34,11 +34,14 @@ function Login({ setUser }) {
                 <div className="carousel-inner">
                   <div className="carousel-item active">
                     <img src="https://i.imgur.com/xbTjYJ8.jpeg" className="d-block w-100 carousel-img" alt="Immagine 1" />
+                    <img src="https://i.imgur.com/xbTjYJ8.jpeg" className="d-block w-100 carousel-img" alt="Immagine 1" />
                   </div>
                   <div className="carousel-item">
                     <img src="https://i.imgur.com/cbei4dg.jpeg" className="d-block w-100 carousel-img" alt="Immagine 2" />
+                    <img src="https://i.imgur.com/cbei4dg.jpeg" className="d-block w-100 carousel-img" alt="Immagine 2" />
                   </div>
                   <div className="carousel-item">
+                    <img src="https://i.imgur.com/OmtG7wu.jpeg" className="d-block w-100 carousel-img" alt="Immagine 3" />
                     <img src="https://i.imgur.com/OmtG7wu.jpeg" className="d-block w-100 carousel-img" alt="Immagine 3" />
                   </div>
                 </div>
@@ -50,5 +53,6 @@ function Login({ setUser }) {
     </>
   );
 }
+
 
 export default Login;

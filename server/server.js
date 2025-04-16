@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const users = require('./db/usersClass.js');
 const notes = require('./db/notesClass.js');
+const calendar = require('./db/calendarClass.js');
 
 const MONGO_URL = "mongodb://site232479:ahlaYae8@mongo_site232479?writeConcern=majority";
 main().catch(err => console.log(err));
@@ -33,6 +34,15 @@ app.post('/newnote', notes.POST_new);
 app.post('/lastnotes', notes.POST_last);
 app.post('/deletenote', notes.POST_delete);
 app.post('/updatenote', notes.PUT_update);
+
+
+//calendar - CRUD
+app.post('/events', calendar.POST_list);
+app.post('/newevent', calendar.POST_new);
+app.post('/updateevent', calendar.POST_update);
+app.post('/deleteevent', calendar.POST_delete);
+
+
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
