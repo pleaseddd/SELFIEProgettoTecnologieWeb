@@ -5,7 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 function AddNote({ user, selectedNote, clearSelectedNote }) {
   const [form, setForm] = useState({ title: "", category: "", text: "" });
   const [message, setMessage] = useState("");
-
+  const categories=user.settings.categoryNotes.split("/");
   useEffect(() => {
     if (selectedNote) {
       setForm({
@@ -45,7 +45,9 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(selectedNote ? "Nota aggiornata!" : "Nota creata con successo!");
+        setMessage(
+          selectedNote ? "Nota aggiornata!" : "Nota creata con successo!"
+        );
         clearSelectedNote();
         setTimeout(() => window.location.reload(), 500);
       } else {
@@ -58,7 +60,9 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
 
   return (
     <div className="card p-4 shadow-lg">
-      <h2 className="text-center mb-4">{selectedNote ? "Modifica nota" : "Aggiungi nota"}</h2>
+      <h2 className="text-center mb-4">
+        {selectedNote ? "Modifica nota" : "Aggiungi nota"}
+      </h2>
       {message && <p className="text-center text-success">{message}</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -74,14 +78,22 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
         </div>
         <div className="mb-3">
           <label className="form-label">Categoria</label>
-          <input
-            type="text"
+          <select
+            type="select"
             className="form-control"
             name="category"
             value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value })}
             required
-          />
+          >
+            {
+              categories.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
+                </option>
+              ))
+            }
+          </select>
         </div>
         <div className="mb-3">
           <label className="form-label">Corpo</label>

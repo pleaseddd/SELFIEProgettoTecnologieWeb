@@ -5,11 +5,15 @@ const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-	propic: { type: String },
+	propic: { type: String,  default: "https://dummyimage.com/80x80/023430/fff.jpg&text=not a propic"},
 	settings: {
-		language: { type: String },
-		categoryNotes: String,
-		categoryEvents: String
+		language: { type: String, default: "italian" },
+		categoryNotes: { type: String, default: "appunti/todo" },
+		categoryEvents: { type: String, default: "studio/lavoro/sport" },
+		theme: { type: Boolean, default: false}, // false chiario, true scuro
+		startDay: { type: Boolean, default: false }, // false lunedi, true domenica
+		position: { type: String, default: "world" },
+		homeNotes: { type: Number, default: 3 }
 	}
 });
 
@@ -54,7 +58,7 @@ module.exports = {
 	                name,
 	                email,
 	                password,
-	                propic: "https://dummyimage.com/80x80/023430/fff.jpg&text=prova"
+	                propic: "https://dummyimage.com/80x80/023430/fff.jpg&text=propic"
 		        });
 
 		        await newUser.save();
@@ -65,7 +69,7 @@ module.exports = {
 	        res.status(400).json({ message: err.message });
 	    }
 	},
-	
+
 	// cerca l'utente con certe credenziali
 	POST_login: async function(req, res) {
 		try {
@@ -82,6 +86,28 @@ module.exports = {
 		catch(err) {
 			res.status(500).json({message: err.message});
 		}
+	},
+
+	// per modificare le impostazioni
+	POST_settings: async function(req, res) {
+		try {
+			const filter = { _id: req.body.user.id };
+			const update = {
+				$set: {
+					name: req.body.user.name,
+					email: req.body.user.email,
+					settings: req.body.user.settings
+				}
+			};
+			const user = await User.findOneAndupdate(filter, update);
+
+			user.save();
+			res.status(201).json({ message: "Impostazioni cambiate con successo" });
+		}
+		catch(error) {
+			res.status(500).json({ error: "errore nel cambiaere le impostazioni" });
+		}
 	}
 };
+
 

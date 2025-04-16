@@ -226,6 +226,7 @@ function CalendarPage({ user }) {
       />
       <EventModal
         show={modalOpen}
+        user={user}
         onClose={() => setModalOpen(false)}
         onSave={handleModalSave}
         onDelete={handleModalDelete}
