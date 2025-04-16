@@ -38,9 +38,9 @@ function Signin({ change, setUser }) {
   };
   return (
     <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
-      <div className="card p-4 shadow-lg">
-        <h2 className="text-center mb-4">Login</h2>
-        <form onSubmit={handleLogin}>
+    <div className="card p-4 shadow-lg login-card">
+      <h2 className="text-center mb-4">Login</h2>
+      <form onSubmit={handleLogin}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
               Email
@@ -65,11 +65,11 @@ function Signin({ change, setUser }) {
               placeholder="Password"
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">
+          <button type="submit" className="login-btn btn btn-primary w-100">
             Accedi
           </button>
         </form>
-        <button className="btn btn-primary w-100 mt-2" onClick={change}>
+        <button className="register-btn btn btn-primary w-100 mt-2" onClick={change}>
           Registrati
         </button>
       </div>

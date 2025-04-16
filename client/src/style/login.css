@@ -46,7 +46,38 @@
 .login-card {
   width: 450px;       
   min-width: 350px;   
-  padding: 2rem;      
-  background-color: rgba(255, 255, 255, 0);
-  border-radius: 10px;
+  padding: 3rem;  
+  background-color: rgba(255, 255, 255, 10%);
+  color: rgba(255, 255, 255, 100%);
+  font-family:'Franklin Gothic ExtraLight', 'Arial Narrow', Arial, sans-serif;
+  border-radius: 10px;    
+}
+
+.login-card input {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.login-card input:focus{
+  background-color: transparent; 
+  border: 1px solid rgba(255, 255, 255, 0.5); 
+  color: rgba(255, 255, 255, 1); 
+  padding: 0.5rem;
+  outline: none;
+}
+
+.login-card input::placeholder {
+  color: lightgray;
+}
+
+.login-card button {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0.5rem 0 0;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
