@@ -1,35 +1,54 @@
-import React from "react";
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
+import ConfirmModal from './ConfirmModal';
 
 function RemoveNote({ noteId, userId, onSuccess }) {
-  const handleDelete = async () => {
-    const conferma = window.confirm("Sei sicuro di voler eliminare questa nota?");
-    if (!conferma) return;
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  const openConfirm = () => setShowConfirm(true);
+  const closeConfirm = () => setShowConfirm(false);
+
+  const handleConfirm = async () => {
+    setLoading(true);
     try {
-      const response = await fetch("/deletenote", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch('/deletenote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ noteid: noteId, userid: userId }),
       });
-
       if (response.ok) {
-        onSuccess(noteId); // Rimuove la nota dalla lista
+        onSuccess(noteId);
+        closeConfirm();
       } else {
         const data = await response.json();
-        alert("Errore durante l'eliminazione: " + data.message);
+        alert('Errore durante l\'eliminazione: ' + data.message);
       }
     } catch (err) {
-      console.error("Errore:", err);
-      alert("Errore di rete durante l'eliminazione");
+      console.error(err);
+      alert('Errore di rete durante l\'eliminazione');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <button className="btn btn-sm btn-outline-danger" onClick={handleDelete}>
-      Elimina
-    </button>
+    <>
+      <Button variant="outline-danger" size="sm" onClick={openConfirm}>
+        Elimina
+      </Button>
+
+      <ConfirmModal
+        show={showConfirm}
+        title="Elimina nota"
+        body="Sei sicuro di voler eliminare questa nota?"
+        confirmText="Elimina"
+        cancelText="Annulla"
+        loading={loading}
+        onConfirm={handleConfirm}
+        onCancel={closeConfirm}
+      />
+    </>
   );
 }
 

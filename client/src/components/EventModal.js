@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { RRule } from "rrule";
 
-function EventModal({ show, onClose, onSave, onDelete, initialData }) {
+function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
@@ -23,6 +23,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData }) {
   const [bymonth, setBymonth] = useState("1");
   const [bymonthdayYearly, setBymonthdayYearly] = useState("1");
   const [color, setColor] = useState("#3788d8");
+  const categories = user.settings.categoryEvents.split("/");
 
   useEffect(() => {
     if (initialData) {
@@ -160,11 +161,17 @@ function EventModal({ show, onClose, onSave, onDelete, initialData }) {
             </div>
             <div className="mb-3">
               <label className="form-label">Categoria</label>
-              <input
+              <select
                 className="form-control"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-              />
+              >
+                {categories.map((category, index) => (
+                  <option key={index} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="mb-3">
               <label className="form-label">Luogo</label>

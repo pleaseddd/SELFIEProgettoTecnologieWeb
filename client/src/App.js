@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import MainLayout from "./components/Layout";
 
@@ -84,7 +84,7 @@ const App = () => {
 					element={
 						user ?
 							<MainLayout user={user} logout={handleLogout}>
-								<Settings user={user} />
+								<Settings user={user} updateUser={handleSetUser}/>
 							</MainLayout>
 							: <Navigate to="/login"/>
 					}

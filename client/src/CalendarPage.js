@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -48,7 +48,7 @@ function CalendarPage({ user }) {
         console.error("Errore nel recupero orario dal server:", err);
       });
   }, []);
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     try {
       const response = await fetch("/events", {
         method: "POST",
@@ -103,14 +103,14 @@ function CalendarPage({ user }) {
     } catch (error) {
       console.error("Errore durante il recupero degli eventi:", error);
     }
-  };
+  },[serverTime,user._id]);
 
   
   useEffect(() => {
     if (serverTime) {
       loadEvents();
     }
-  }, [serverTime]);
+  }, [serverTime,loadEvents]);
   
   const handleSelectSlot = useCallback((slotInfo) => {
     const start = new Date(slotInfo.start);

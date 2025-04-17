@@ -9,7 +9,7 @@ function SystemNotification() {
         
         Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
-                const notification = new Notification("Notifica di prova", {
+                new Notification("Notifica di prova", {
                     body: "Questa è una notifica di prova.",
                     icon: "https://example.com/icon.png", // URL dell'icona della notifica
                 });

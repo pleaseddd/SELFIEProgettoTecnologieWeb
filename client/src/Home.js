@@ -6,7 +6,7 @@ import "./style/home.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Carousel } from "bootstrap";
-function Home({ user, logout }) {
+function Home({ user}) {
   const [notes, setNotes] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
@@ -17,7 +17,7 @@ function Home({ user, logout }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ userid: user._id, limit: 3 }),
+          body: JSON.stringify({ userid: user._id, limit: user.settings.homeNotes }),
         });
         const data = await response.json();
         if (response.ok) {
@@ -29,9 +29,9 @@ function Home({ user, logout }) {
         console.error("Errore durante il recupero delle note:", error);
       }
     };
-
+    
     fetchNotes();
-  }, []);
+  }, [user._id, user.settings.homeNotes]);
 
   useEffect(() => {
     const carouselElement = document.getElementById("noteCarousel");

@@ -1,12 +1,10 @@
-import { useEffect,useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 
 function Register({change}) {
-    const navigate = useNavigate();
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 

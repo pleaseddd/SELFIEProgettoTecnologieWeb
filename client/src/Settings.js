@@ -1,11 +1,11 @@
-import React, { useState} from 'react';
-import{ 
+import { useState } from "react";
+import {
   Container,
   Row,
   Col,
-  Card,
   Form,
   Button,
+  Card,
   Image,
 } from "react-bootstrap";
 

@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 function Signin({ change, setUser }) {
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -23,12 +22,11 @@ function Signin({ change, setUser }) {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess("Login effettuato con successo!");
         setUser(data.user);
         navigate("/home");
       } else {
         setError("Email o password errati!");
-        alert("Email o password errati!");
+        alert(error);
       }
     } catch (error) {
       console.error("Errore di rete:", error);
