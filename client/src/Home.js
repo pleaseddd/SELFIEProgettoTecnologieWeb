@@ -6,9 +6,11 @@ import "./style/home.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Carousel } from "bootstrap";
-function Home({ user}) {
+
+function Home({ user }) {
   const [notes, setNotes] = useState([]);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -29,7 +31,7 @@ function Home({ user}) {
         console.error("Errore durante il recupero delle note:", error);
       }
     };
-    
+
     fetchNotes();
   }, [user._id, user.settings.homeNotes]);
 
@@ -39,7 +41,7 @@ function Home({ user}) {
       new Carousel(carouselElement, {
         interval: 3000,
         ride: "carousel",
-        pause: false, // 👈 evita che si fermi al mouse hover
+        pause: false,
       });
     }
   }, [notes]);
@@ -58,35 +60,20 @@ function Home({ user}) {
               <div
                 key={nota._id}
                 className={`carousel-item ${index === 0 ? "active" : ""}`}
-                style={{
-                  minHeight: "300px", // assicura spazio sufficiente
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
               >
-                <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center note-card-wrapper">
                   <div
-                    className="card text-start shadow p-4"
-                    style={{
-                      width: "100%",
-                      maxWidth: "600px", // 👈 larghezza massima della card
-                      backgroundColor: "#ffffff",
-                      borderRadius: "1rem",
-                      cursor: "pointer",
-                    }}
+                    className="card text-start shadow p-4 note-card"
                     onClick={() => navigate("/Note")}
                   >
                     <div className="mb-3">
                       <span className="badge bg-primary me-2">
                         {nota.category || "Senza categoria"}
                       </span>
-                      <h5 className="card-title fw-bold mb-0">{nota.title}</h5>
+                      <h5 className="card-title fw-bold text-center mb-0">{nota.title}</h5>
                     </div>
-                    <p className="card-text mt-2">
-                      {nota.body.length > 100
-                        ? nota.body.substring(0, 100) + "..."
-                        : nota.body}
+                    <p className="card-text note-body text-truncate-multiline">
+                      {nota.body}
                     </p>
                   </div>
                 </div>
@@ -97,7 +84,7 @@ function Home({ user}) {
       ) : (
         <div
           className="card text-center p-5 shadow"
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer", maxWidth: "600px", margin: "0 auto" }}
           onClick={() => navigate("/Note")}
         >
           <h4>Non hai ancora note</h4>

@@ -3,9 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 function AddNote({ user, selectedNote, clearSelectedNote }) {
-  const [form, setForm] = useState({ title: "", category: "", text: "" });
-  const [message, setMessage] = useState("");
   const categories=user.settings.categoryNotes.split("/");
+  const [form, setForm] = useState({ title: "", category: categories[0], text: "" });
+  const [message, setMessage] = useState("");
   useEffect(() => {
     if (selectedNote) {
       setForm({
@@ -14,7 +14,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
         text: selectedNote.body,
       });
     } else {
-      setForm({ title: "", category: "", text: "" });
+      setForm({ title: "", category: categories[0], text: "" });
     }
   }, [selectedNote]);
 

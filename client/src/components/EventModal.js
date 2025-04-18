@@ -1,5 +1,4 @@
-// EventModal.js completo con supporto completo a tutte le opzioni RRule (DAILY, WEEKLY, MONTHLY, YEARLY)
-
+import ConfirmModal from "./ConfirmModal";
 import { useState, useEffect } from "react";
 import { RRule } from "rrule";
 
@@ -25,10 +24,18 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [color, setColor] = useState("#3788d8");
   const categories = user.settings.categoryEvents.split("/");
 
+
+  //MODALE DI CONFERMA
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const openConfirm = () => setShowConfirm(true);
+  const closeConfirm = () => setShowConfirm(false);
+
   useEffect(() => {
     if (initialData) {
       setTitle(initialData.title || "");
-      setCategory(initialData.category || "");
+      setCategory(initialData.category || categories[0]);
       setLocation(initialData.location || "");
       setUrgency(initialData.urgency || "non urgente");
       setStart(initialData.begin || "");
@@ -129,9 +136,10 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   };
 
   const confirmDelete = () => {
-    if (window.confirm("Sei sicuro di voler eliminare questo evento?")) {
-      onDelete();
-    }
+    setLoading(true);
+    closeConfirm();
+    onDelete();
+    setLoading(false);
   };
 
   if (!show) return null;
@@ -399,11 +407,21 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
             <button
               type="button"
               className="btn btn-danger me-auto"
-              onClick={confirmDelete}
+              onClick={openConfirm}
               style={{ display: initialData?._id ? "inline-block" : "none" }}
             >
               Elimina
             </button>
+            <ConfirmModal
+              show={showConfirm}
+              title="Elimina Evento"
+              body="Sei sicuro di voler eliminare questo evento?" 
+              confirmText="Elimina"
+              cancelText="Annulla"
+              loading={loading}
+              onConfirm={confirmDelete}
+              onCancel={closeConfirm}
+            />
             <div>
               <button
                 type="button"

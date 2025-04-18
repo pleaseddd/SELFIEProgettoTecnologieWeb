@@ -8,8 +8,9 @@ import {
   Card,
   Image,
 } from "react-bootstrap";
+import ConfirmModal from "./components/ConfirmModal";
 
-function Settings({ user ,updateUser}) {
+function Settings({ user, updateUser }) {
   const [form, setForm] = useState({
     name: user.name,
     email: user.email,
@@ -23,6 +24,12 @@ function Settings({ user ,updateUser}) {
 
   const [newEventCat, setNewEventCat] = useState("");
   const [newNoteCat, setNewNoteCat] = useState("");
+
+  // Modal per conferma
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const openConfirm = () => setShowConfirm(true);
+  const closeConfirm = () => setShowConfirm(false);
 
   const handleSingleChange = (name, value) => {
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -55,6 +62,7 @@ function Settings({ user ,updateUser}) {
   };
 
   const handleSaveSettings = async () => {
+    setLoading(true);
     const payload = {
       user: {
         id: user._id,
@@ -70,7 +78,7 @@ function Settings({ user ,updateUser}) {
         },
       },
     };
-  
+
     try {
       const res = await fetch("/updatesettings", {
         method: "POST",
@@ -79,27 +87,28 @@ function Settings({ user ,updateUser}) {
         },
         body: JSON.stringify(payload),
       });
-  
+
       const data = await res.json();
       console.log("Risposta server:", data);
-  
+
       const updatedUser = {
         ...user,
         name: form.name,
         email: form.email,
         settings: payload.user.settings,
       };
-  
+
       updateUser(updatedUser);
-  
+      closeConfirm();
       alert("Impostazioni salvate!");
     } catch (error) {
       console.error("Errore salvataggio:", error);
       alert("Errore durante il salvataggio.");
+    }finally {
+      setLoading(false);
     }
   };
-  
-  
+
   return (
     <Container className="mt-4">
       <Card className="p-4 shadow-sm">
@@ -158,7 +167,11 @@ function Settings({ user ,updateUser}) {
               value={newEventCat}
               onChange={(e) => setNewEventCat(e.target.value)}
             />
-            <Button variant="success" className="ms-2" onClick={addEventCategory}>
+            <Button
+              variant="success"
+              className="ms-2"
+              onClick={addEventCategory}
+            >
               Aggiungi
             </Button>
           </div>
@@ -196,7 +209,11 @@ function Settings({ user ,updateUser}) {
               value={newNoteCat}
               onChange={(e) => setNewNoteCat(e.target.value)}
             />
-            <Button variant="success" className="ms-2" onClick={addNoteCategory}>
+            <Button
+              variant="success"
+              className="ms-2"
+              onClick={addNoteCategory}
+            >
               Aggiungi
             </Button>
           </div>
@@ -273,9 +290,19 @@ function Settings({ user ,updateUser}) {
 
         {/* Pulsante Salva */}
         <div className="d-grid">
-          <Button variant="primary" size="lg" onClick={handleSaveSettings}>
+          <Button variant="primary" size="lg" onClick={openConfirm}>
             Salva tutte le impostazioni
           </Button>
+          <ConfirmModal
+            show={showConfirm}
+            title="Conferma"
+            body="Sei sicuro di voler salvare le impostazioni?"
+            confirmText="Salva"
+            cancelText="Annulla"
+            loading={loading}
+            onConfirm={handleSaveSettings}
+            onCancel={closeConfirm}
+          />
         </div>
       </Card>
 
