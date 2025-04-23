@@ -25,7 +25,7 @@ function Signin({ change, setUser }) {
         setUser(data.user);
         navigate("/home");
       } else {
-        setError("Email o password errati!");
+        setError("Email o Password errati!");
         alert(error);
       }
     } catch (error) {
