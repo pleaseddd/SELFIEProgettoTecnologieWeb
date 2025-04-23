@@ -48,44 +48,74 @@ function Register({change}) {
         
     };
 
-  return (  
+    return (
+        <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
+          <div className="card p-4 shadow-lg login-card">
+            <h2 className="text-center mb-4">Registrazione</h2>
     
-            <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
-            <div className="card p-4 shadow-lg">
-                <h2 className="text-center mb-4">Registrazione</h2>
-                <form onSubmit={handleregister}>
+            {error && <div className="error-message mb-3">{error}</div>}
+            {success && <div className="success-message mb-3">{success}</div>}
+    
+            <form onSubmit={handleregister}>
+              {/* Nome Utente */}
+              <div className="mb-3">
+                <label htmlFor="name" className="form-label">Nome Utente</label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  className="form-control"
+                  placeholder="Nome Utente"
+                />
+              </div>
+    
+              {/* Email */}
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  className="form-control"
+                  placeholder="Email"
+                />
+              </div>
+    
+              {/* Password */}
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  className="form-control"
+                  placeholder="Password"
+                />
+              </div>
+    
+              {/* Conferma Password */}
+              <div className="mb-3">
+                <label htmlFor="confirmPassword" className="form-label">Conferma Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  className="form-control"
+                  placeholder="Conferma Password"
+                />
+              </div>
+    
+              <div id="passwordHelpBlock" className="form-text mb-3">
+                Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+              </div>
+    
+              <button type="submit" className="btn btn-primary w-100 mb-2">Registrati</button>
+            </form>
+    
+            <button onClick={change} className="btn btn-secondary w-100">Indietro</button>
+          </div>
+        </div>
+      );
+    }    
 
-		{/* Nome */}
-                <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Nome Utente</label>
-                    <input type="text" name="name" className="form-control" id="name" placeholder="Nome Utente" />
-                </div>
-
-		{/* Email */}
-                <div className="mb-4">
-                    <label htmlFor="email" className="form-label">Email</label>
-                    <input type="email" name="email" className="form-control" id="email" placeholder="Email" />
-                </div>
-
-		{/* Password */}
-		<div className="mb-4">
-	                <label htmlFor="inputPassword5" className="form-label">Password</label>
-        	        <input type="password" name="password" id="inputPassword5" className="form-control" aria-describedby="passwordHelpBlock" placeholder="Password"></input>
-
-                   	 <label htmlFor="password" className="form-label">Conferma Password</label>
-			<input type="password" className="form-control" id="confirmPassword" name="confirmPassword" placeholder="Password" />
-
-			<div id="passwordHelpBlock" className="form-text">
-	                    Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
-			</div>
-                </div>
-                <button type="submit" className="btn btn-primary w-100">Registrati</button>
-                </form>
-                <button onClick={change} className="btn btn-primary w-100 mt-2">Indietro</button>
-            </div>
-            </div>
-      
-  );
-}
-
-export default Register;
+    export default Register;
