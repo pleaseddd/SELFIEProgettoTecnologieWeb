@@ -1,27 +1,24 @@
+//pacchetti node esterni
 const express = require("express");
+const mongoose = require("mongoose");
 const path = require("path");
 const webpush = require("web-push");
 const cors = require("cors");
-require('dotenv').config({ path: __dirname + "/../.env" });
+const cron = require("node-cron");
+require('dotenv').config({ path: __dirname + "/../client/.env" });
 
-const mongoose = require("mongoose");
-
+//file interni
 const users = require('./db/usersClass.js');
 const notes = require('./db/notesClass.js');
 const calendar = require('./db/calendarClass.js');
+const swsubs = require('./db/swsubsClass.js');
+const notifs = require('./db/notifClass.js');
 
-connectDatabase().catch(err => console.log(err));
 async function connectDatabase() {
-	// await mongoose.connect(process.env.TEST_MONGO_URL);
-	await mongoose.connect(process.env.MONGO_URL);
+	await mongoose.connect(process.env.TEST_MONGO_URL);
+	//await mongoose.connect(process.env.MONGO_URL);
 	console.log("database connesso");
 }
-
-webpush.setVapidDetails(
-	"https://site232479.tw.cs.unibo.it",
-	process.env.VPKEY_PUBLIC,
-	process.env.VPKEY_PRIVATE
-);
 
 const app = express();
 
@@ -34,29 +31,58 @@ app.get('/api/server-time', (req, res) => {
 	res.json({ now });
 });
 
-let subscriptions = [];
-app.post("/api/subscribe", (req, res) => {
-	subscriptions.push(req.body);
-	console.log("Nuova iscrizione salvata!");
-	res.status(201).json();
+app.post('/subscribe', swsubs.POST_subscribe);
+app.post('/unsubscribe', swsubs.POST_unsubscribe);
+app.post('/test-notification', async (req, res) => {
+	try {
+		const user = await users.findById(req.body.user_id);
+		const subs = await swsubs.find(req.body.user_id);
+
+		const notif = {
+			title: `Ciao ${user.name}!`,
+			body: "notifica di prova"
+		};
+
+		subs.forEach(sub => webpush.sendNotification(sub, JSON.stringify(notif)));
+
+		res.status(201).json({ message: "notifica mandata" });
+	}
+	catch(error) {
+		console.log("Errore nella notifica di prova:", error);
+	}
 });
 
-app.post("/api/schedule-notification", (req, res) => {
-	const { title, body, scheduledTime } = req.body;
+app.post('/schedule-notification', async (req, res) => {
+	const { data, user_id } = req.body;
 
-	const delay = new Date(scheduledTime).getTime() - Date.now();
-	if(delay <= 0)
-		res.status(400).json({ error: "L'orario deve essere nel futuro" });
-	
-	setTimeout(() => {
-		const payload = JSON.stringify({ title, body });
-		subscriptions.forEach(sub => {
-			webpush.sendNotification(sub, payload)
-				.catch(err => console.error("Errore nell'invio"));
+	await notifs.new_notif({
+		user: user_id,
+		title: data.title,
+		body: data.body,
+		time: data.time
+	});
+
+	res.status(201).json({ message: "notifica programmata" });
+});
+
+cron.schedule('0-59 * * * *', async () => {
+	const date = new Date();
+	const currentTime = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}T${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+
+	const pendingNotifications = await notifs.find(currentTime, false);
+
+	pendingNotifications.forEach(async (notif) => {
+		const subs = await swsubs.find(notif.user);
+		subs.forEach(async (sub) => {
+			await webpush.sendNotification(
+				sub, JSON.stringify( {title: notif.title, body: notif.body })
+			);
 		});
-	}, delay);
 
-	res.status(201).json({ message: `Notifica programamta per ${scheduledTime}` });
+		await notifs.notif_sent(notif._id);
+
+		console.log("notifica mandata con successo");
+	});
 });
 
 // users - CRUD
@@ -84,6 +110,9 @@ app.get("*", (req, res) => {
 	res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
-app.listen(8000, () => {
-	console.log("Server started on http://site23279.tw.cs.unibo.it");
+app.listen(process.env.PORT, async () => {
+	console.log(`Server started on ${process.env.WEB_URL}`);
+
+	await connectDatabase().catch(err => console.log(err));
+	notifs.setVapidKeys();
 });

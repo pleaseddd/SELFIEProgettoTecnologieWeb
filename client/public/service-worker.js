@@ -1,23 +1,22 @@
-self.addEventListener("push", event => {
-    const options = {
-        body: data.body,
-        icon: '/logo192.png',
-        badge: '/logo192.png',
-        vibrate: [100, 50, 100],
-        data: {
-            dateOfArrival: Date.now(),
-            primaryKey: 1
-        }
-    };
+// self.addEventListener('install', () => {
+// 	self.skipWaiting();
+// });
 
-    event.waitUntil(
-        self.registration.showNotification(data.title, options)
-    );
+self.addEventListener("push", event => {
+    const data = event.data.json();
+
+	self.registration.showNotification(data.title, {
+		body: data.body,
+		title: data.title
+	});
 });
 
 self.addEventListener("notificationclick", event => {
     event.notification.close();
-    event.waitUntil(
-        clients.openWindow("/")
-    );
+    clients.openWindow("/")
 });
+
+// self.addEventListener("activate", (event) => {
+// 	const tabs = await self.clients.matchAll({ type: 'window' });
+// 	tabs.forEach(tab => tab.navigate(tab.url));
+// });

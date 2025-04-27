@@ -1,118 +1,154 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-function SystemNotification() {
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-  const [time, setTime] = useState("");
+const SystemNotification = ({ user }) => {
 
-  useEffect(() => {
-    // Richiedi i permessi per le notifiche quando il componente viene montato
-    if ('Notification' in window) {
-      Notification.requestPermission();
-    }
-  }, []);
+	const urlBase64ToUint8Array = (base64String) => {
+		const padding = '='.repeat((4 - base64String.length%4) % 4);
+		const base64 = (base64String + padding)
+			.replace(/\-/g, '+')
+			.replace(/_/g, '/');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!('Notification' in window) || Notification.permission !== 'granted') {
-      alert('Permessi per le notifiche non concessi');
-      return;
-    }
+		const rawData = window.atob(base64);
+		const outputArray = new Uint8Array(rawData.length);
 
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      
-      if (!subscription) {
-        alert('Nessuna sottoscrizione push attiva');
-        return;
-      }
+		for(let i=0; i < rawData.length; ++i) {
+			outputArray[i] = rawData.charCodeAt(i);
+		}
 
-      // Calcola il tempo rimanente fino alla notifica
-      const notificationTime = new Date(time);
-      const now = new Date();
-      const timeUntilNotification = notificationTime - now;
+		return outputArray;
+	};
 
-      if (timeUntilNotification <= 0) {
-        alert('Seleziona un orario futuro per la notifica');
-        return;
-      }
+	const handleSubscribe = async () => {
+		if(!('serviceWorker' in navigator)) {
+			console.log("Nessun service worker presente");
+			return;
+		}
 
-      // Invia la notifica
-      const notificationData = {
-        title: title,
-        body: message,
-        icon: '/logo192.png',
-        badge: '/logo192.png',
-        vibrate: [100, 50, 100],
-        data: {
-          dateOfArrival: Date.now(),
-          primaryKey: 1
-        }
-      };
+		const registration = await navigator.serviceWorker.ready;
 
-      await registration.showNotification(notificationData.title, notificationData);
-      
-      // Reset del form
-      setTitle("");
-      setMessage("");
-      setTime("");
-      
-      alert('Notifica inviata con successo!');
-    } catch (error) {
-      console.error('Errore nell\'invio della notifica:', error);
-      alert('Errore nell\'invio della notifica');
-    }
-  };
+		if(!('Notification' in window)) {
+			console.log("Questo browser non supporta le notifiche");
+			return;
+		}
 
-  return (
-    <form className="container mt-3" onSubmit={handleSubmit}>
-      <div className="row">
-        <div className="col-md-6 mb-3">
-          <label htmlFor="notificationTitle" className="form-label">Titolo</label>
-          <input 
-            type="text" 
-            className="form-control" 
-            id="notificationTitle"
-            placeholder="Inserisci il titolo"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
+		const permission = await Notification.requestPermission();
+
+		if(permission === "granted") {
+			const subscription = await registration.pushManager.subscribe({
+				userVisibleOnly: true,
+				applicationServerKey: process.env.REACT_APP_VPKEY_PUBLIC
+			});
+
+			const subname = document.getElementById("subname").value;
+
+			const resp = await fetch('/subscribe', {
+				method: 'POST',
+				body: JSON.stringify({
+					user_id: user._id,
+					name: subname,
+					sub: subscription,
+				}),
+				headers: { 'content-type': 'application/json' }
+			}).then(resp => resp.json());
+
+			console.log(resp.message || resp.error);
+		}
+	};
+
+	const handleUnsubscribe = async () => {
+		if(!('serviceWorker' in navigator)) return;
+
+		const registration = await navigator.serviceWorker.ready;
+
+		let endpoint;
+		await registration.pushManager.getSubscription().then(sub => {
+			if(!sub) {
+				alert("Non sei ancora iscritto!");
+				return;
+			}
+
+			endpoint = sub.endpoint;
+			sub.unsubscribe();
+		});
+
+		const resp = await fetch('/unsubscribe', {
+			method: 'POST',
+			body: JSON.stringify({ endpoint }),
+			headers: { 'content-type': 'application/json' }
+		}).then(resp => resp.json());
+
+		console.log(resp.message);
+	};
+
+	const handleTestNotification = async () => {
+		if(!("serviceWorker" in navigator)) return;
+
+		const registration = await navigator.serviceWorker.ready;
+		const subscription = await registration.pushManager.getSubscription();
+
+		const resp = await fetch('/test-notification', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ user_id: user._id })
+		}).then(resp => resp.json());
+		console.log(resp.message);
+	};
+
+	const handleScheduleNotification = async () => {
+		const data = {
+			title: document.getElementById("title").value,
+			body: document.getElementById("text").value,
+			time: document.getElementById("time").value
+		};
+
+		const resp = await fetch('/schedule-notification', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({
+				user_id: user._id,
+				data: data
+			})
+		}).then(resp => resp.json());
+		console.log(resp.message);
+	};
+
+	if('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('./service-worker.js', { scope: '/' });
+		console.log("service worker registrato!");
+	}
+
+    return (
+        <div className="container-fluid border border-2 border-dark rounded p-4 mx-3 mx-sm-5 my-4">
+	        <input type="text" id="subname" />
+	        <button type="button" className="btn btn-light" onClick={handleSubscribe}>Subscribe</button>
+	        <button type="button" className="btn btn-dark" onClick={handleUnsubscribe}>Unsubscribe</button>
+	        <button type="button" className="btn btn-primary" onClick={handleTestNotification}>Manda notifica prova</button>
+
+            <h2 className="text-center mb-4">Programma una notifica</h2>
+
+            <form className="notif-form">
+                <div className="form-group mb-4 p-3">
+                    <label htmlFor="title" className="form-label">Titolo</label>
+                    <input type="text" className="form-control" id="title" name="title"/>
+                </div>
+
+                <div className="form-group mb-4 p-3">
+                    <label htmlFor="text" className="form-label">Testo</label>
+                    <textarea className="form-control" name="text" id="text" rows="3"></textarea>
+                </div>
+
+                <div className="form-group mb-4 p-3">
+                    <label htmlFor="time" className="form-label">Tempo</label>
+                    <input type="datetime-local" className="form-control" name="time" id="time"/>
+                </div>
+
+                <div className="d-grid gap-2 col-12 col-md-6 col-lg-4 mx-auto mt-4">
+                    <input type="submit" className="btn btn-primary" value="Programma" onClick={handleScheduleNotification}/>
+                </div>
+            </form>
         </div>
-        <div className="col-md-6 mb-3">
-          <label htmlFor="notificationTime" className="form-label">Orario</label>
-          <input 
-            type="datetime-local" 
-            className="form-control" 
-            id="notificationTime"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            required
-          />
-        </div>
-      </div>
-      <div className="mb-3">
-        <label htmlFor="notificationMessage" className="form-label">Messaggio</label>
-        <textarea 
-          className="form-control" 
-          id="notificationMessage" 
-          rows="3"
-          placeholder="Inserisci il messaggio della notifica"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          required
-        ></textarea>
-      </div>
-      <button 
-        type="submit" 
-        className="btn btn-primary"
-      >
-        Invia notifica
-      </button>
-    </form>
-  );
-}
+    );
+};
 
 export default SystemNotification;
