@@ -93,7 +93,7 @@ function Home({ user }) {
       )}
 
       <Weather />
-      <SystemNotification />
+      <SystemNotification user={user}/>
     </div>
   );
 }
