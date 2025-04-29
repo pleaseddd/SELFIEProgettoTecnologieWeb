@@ -9,6 +9,9 @@ import Home from "./Home";
 import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
 import Settings from "./Settings.js";
+import Pomodoro from "./Pomodoro.js";
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
     const [user, setUser] = useState(() => {
@@ -63,6 +66,17 @@ const App = () => {
 						user ?
 							<MainLayout user={user} logout={handleLogout}>
 								<NotesPage user={user}/>
+							</MainLayout>
+							: <Navigate to="/login"/>
+					}
+				/>
+
+				<Route
+	                path="/Pomodoro"
+					element={
+						user ?
+							<MainLayout user={user} logout={handleLogout}>
+								<Pomodoro user={user}/>
 							</MainLayout>
 							: <Navigate to="/login"/>
 					}
