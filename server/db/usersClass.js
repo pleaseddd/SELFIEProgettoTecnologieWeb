@@ -2,18 +2,62 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-	propic: { type: String,  default: "https://dummyimage.com/80x80/023430/fff.jpg&text=not a propic"},
+    name: {
+		type: String,
+		required: true
+	},
+
+    email: {
+		type: String,
+		required: true,
+		unique: true
+	},
+
+    password: {
+		type: String,
+		required: true
+	},
+
+	propic: {
+		type: String,
+		default: "https://dummyimage.com/80x80/023430/fff.jpg&text=not a propic"
+	},
+
 	settings: {
-		language: { type: String, default: "italian" },
-		categoryNotes: { type: String, default: "appunti/todo" },
-		categoryEvents: { type: String, default: "studio/lavoro/sport" },
-		theme: { type: Boolean, default: false}, // false chiario, true scuro
-		startDay: { type: Boolean, default: false }, // false lunedi, true domenica
-		position: { type: String, default: "world" },
-		homeNotes: { type: Number, default: 3 }
+		language: {
+			type: String,
+			default: "italian"
+		},
+
+		categoryNotes: {
+			type: String,
+			default: "appunti/todo"
+		},
+
+		categoryEvents: {
+			type: String,
+			default:"studio/lavoro/sport"
+		},
+
+		theme: {
+			type: Boolean,
+			default: false // false chiaro, true scuro
+		},
+
+		startDay: {
+			type: Boolean,
+			default: false // false lunedì, true domenica
+		},
+
+		position: {
+			type: String,
+			default: "world"
+		},
+
+		homeNotes: {
+			type: Number,
+			default: 3
+		}
 	}
 });
 
@@ -101,12 +145,15 @@ module.exports = {
 			};
 			const user = await User.findOneAndupdate(filter, update);
 
-			user.save();
 			res.status(201).json({ message: "Impostazioni cambiate con successo" });
 		}
 		catch(error) {
 			res.status(500).json({ error: "errore nel cambiaere le impostazioni" });
 		}
+	},
+
+	findById: async (id) => {
+		return await User.findById(id);
 	}
 };
 
