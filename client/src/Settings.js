@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -24,6 +24,20 @@ function Settings({ user, updateUser }) {
 
   const [newEventCat, setNewEventCat] = useState("");
   const [newNoteCat, setNewNoteCat] = useState("");
+
+  const [notifDevices, setNotifDevices] = useState(null);
+
+  useEffect(() => {
+	async function getNotifDevices() {
+		const devices = await fetch('/listsubs', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ user_id: user._id })
+		}).then(resp => resp.json());
+		setNotifDevices(devices);
+	}
+	getNotifDevices();
+   }, []);
 
   // Modal per conferma
   const [showConfirm, setShowConfirm] = useState(false);
@@ -287,6 +301,39 @@ function Settings({ user, updateUser }) {
             onChange={(e) => handleSingleChange("notesInHome", e.target.value)}
           />
         </Form.Group>
+
+        {/* Dispositivi delle notifiche */}
+        <Form.Group className="mb-3">
+          <Form.Label>Dispositivi registrati per le notifiche</Form.Label>
+          <div
+            style={{
+              maxHeight: "120px",
+              overflowY: "auto",
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+              padding: "0.5rem",
+            }}
+          >
+            {
+				/*
+				notifDevices.map((device, i) => (
+	              <div key={i} className="d-flex justify-content-between mb-1">
+	                <span>{device.name}</span>
+	                <Button
+	                  variant="outline-danger"
+	                  size="sm"
+	                  //onClick={() => removeEventCategory(i)}
+	                >
+	                  Elimina
+	                </Button>
+	              </div>
+	            ))
+				*/
+				JSON.stringify(notifDevices)
+			}
+          </div>
+        </Form.Group>
+
 
         {/* Pulsante Salva */}
         <div className="d-grid">
