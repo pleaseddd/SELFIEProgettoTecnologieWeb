@@ -15,8 +15,8 @@ const swsubs = require('./db/swsubsClass.js');
 const notifs = require('./db/notifClass.js');
 
 async function connectDatabase() {
-	await mongoose.connect(process.env.TEST_MONGO_URL);
-	//await mongoose.connect(process.env.MONGO_URL);
+	// mongoose.connect(process.env.TEST_MONGO_URL);
+	await mongoose.connect(process.env.MONGO_URL);
 	console.log("database connesso");
 }
 
@@ -31,12 +31,13 @@ app.get('/api/server-time', (req, res) => {
 	res.json({ now });
 });
 
+app.post('/listsubs', swsubs.POST_list);
 app.post('/subscribe', swsubs.POST_subscribe);
 app.post('/unsubscribe', swsubs.POST_unsubscribe);
 app.post('/test-notification', async (req, res) => {
 	try {
 		const user = await users.findById(req.body.user_id);
-		const subs = await swsubs.find(req.body.user_id);
+		const subs = await swsubs.findByUser(req.body.user_id);
 
 		const notif = {
 			title: `Ciao ${user.name}!`,
@@ -72,7 +73,7 @@ cron.schedule('0-59 * * * *', async () => {
 	const pendingNotifications = await notifs.find(currentTime, false);
 
 	pendingNotifications.forEach(async (notif) => {
-		const subs = await swsubs.find(notif.user);
+		const subs = await swsubs.findByUser(notif.user);
 		subs.forEach(async (sub) => {
 			await webpush.sendNotification(
 				sub, JSON.stringify( {title: notif.title, body: notif.body })

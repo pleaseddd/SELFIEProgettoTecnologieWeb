@@ -91,7 +91,8 @@ const SystemNotification = ({ user }) => {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({ user_id: user._id })
-		}).then(resp => resp.json());
+		}).then(resp => resp.json())
+		  .catch(err => console.error(err));
 		console.log(resp.message);
 	};
 
@@ -114,8 +115,13 @@ const SystemNotification = ({ user }) => {
 	};
 
 	if('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('./service-worker.js', { scope: '/' });
-		console.log("service worker registrato!");
+		try {
+			navigator.serviceWorker.register('./service-worker.js', { scope: '/' });
+			console.log("service worker registrato!");
+		}
+		catch(error) {
+			console.error(error);
+		}
 	}
 
     return (
