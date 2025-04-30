@@ -26,18 +26,17 @@ function Settings({ user, updateUser }) {
   const [newEventCat, setNewEventCat] = useState("");
   const [newNoteCat, setNewNoteCat] = useState("");
 
-
   useEffect(() => {
-	async function getNotifDevices() {
-		const devices = await fetch('/listsubs', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({ user_id: user._id })
-		}).then(resp => resp.json());
-		setForm((prev) => ({ ...prev, notifDevices: devices }));
-	}
-  getNotifDevices();
-   }, []);
+    async function getNotifDevices() {
+      const devices = await fetch("/listsubs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ user_id: user._id }),
+      }).then((resp) => resp.json());
+      setForm((prev) => ({ ...prev, notifDevices: devices }));
+    }
+    getNotifDevices();
+  }, []);
 
   // Modal per conferma
   const [showConfirm, setShowConfirm] = useState(false);
@@ -118,7 +117,7 @@ function Settings({ user, updateUser }) {
     } catch (error) {
       console.error("Errore salvataggio:", error);
       alert("Errore durante il salvataggio.");
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -314,28 +313,24 @@ function Settings({ user, updateUser }) {
               padding: "0.5rem",
             }}
           >
-            {
-				notifDevices.length > 0 ? (
-          notifDevices.map((device, i) => (
-            <div key={i} className="d-flex justify-content-between mb-1">
-              <span>{device.name}</span>
-              <Button
-                variant="outline-danger"
-                size="sm"
-                /* onClick={} */
-              >
-                Elimina
-              </Button>
-            </div>
-          ))
-        ) : (
-          <p>Nessun dispositivo registrato.</p>
-        )
-				
-			}
+            {form.notifDevices.length > 0 ? (
+              form.notifDevices.map((device, i) => (
+                <div key={i} className="d-flex justify-content-between mb-1">
+                  <span>{device.name}</span>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    /* onClick={} */
+                  >
+                    Elimina
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <p>Nessun dispositivo registrato.</p>
+            )}
           </div>
         </Form.Group>
-
 
         {/* Pulsante Salva */}
         <div className="d-grid">
