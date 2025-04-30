@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './style/pomodoro.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 // componente principale Pomodoro
 export default function Pomodoro({ userId }) {
   // stato iniziale

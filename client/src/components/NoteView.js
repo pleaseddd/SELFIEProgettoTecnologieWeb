@@ -1,7 +1,6 @@
 import {React, useState}from "react";
 import { Modal, Button } from "react-bootstrap";
 import ConfirmModal from "./ConfirmModal";
-import { FaRegTrashCan,FaPencil  } from "react-icons/fa6";
 
 
 function NoteView({ show, onClose, note, onEdit, onDelete }) {
@@ -35,7 +34,7 @@ function NoteView({ show, onClose, note, onEdit, onDelete }) {
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between">
         <Button variant="danger" onClick={openConfirm}>
-          <FaRegTrashCan />
+          Elimina
         </Button>
 
         <Button
@@ -44,7 +43,7 @@ function NoteView({ show, onClose, note, onEdit, onDelete }) {
             onEdit(note);
           }}
         >
-          <FaPencil />
+          Modifica
         </Button>
       </Modal.Footer>
       <ConfirmModal
