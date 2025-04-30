@@ -5,6 +5,8 @@ import AddNote from "./components/AddNote";
 import RemoveNote from "./components/RemoveNote";
 import NoteView from "./components/NoteView";
 import "./style/note.css";
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import { BsArrowsFullscreen } from "react-icons/bs";
 
 function NotesPages({ user }) {
   const [notes, setNotes] = useState([]);
@@ -34,29 +36,38 @@ function NotesPages({ user }) {
 
   // Categories list
   const categories = Array.from(
-    new Set(notes.map(n => n.category || "Senza categoria"))
+    new Set(notes.map((n) => n.category || "Senza categoria"))
   );
 
   // Handle checkbox toggle
   const handleCategoryChange = (e) => {
     const { value, checked } = e.target;
-    setSelectedCategories(prev =>
-      checked ? [...prev, value] : prev.filter(c => c !== value)
+    setSelectedCategories((prev) =>
+      checked ? [...prev, value] : prev.filter((c) => c !== value)
     );
   };
 
   // Filtered notes
-  const displayedNotes = notes.filter(note => {
+  const displayedNotes = notes.filter((note) => {
     const cat = note.category || "Senza categoria";
     return selectedCategories.length === 0 || selectedCategories.includes(cat);
   });
 
   // Modal controls
-  const openNoteView = note => { setSelectedNote(note); setShowNoteView(true); };
-  const closeNoteView = () => { setSelectedNote(null); setShowNoteView(false); };
+  const openNoteView = (note) => {
+    setSelectedNote(note);
+    setShowNoteView(true);
+  };
+  const closeNoteView = () => {
+    setSelectedNote(null);
+    setShowNoteView(false);
+  };
 
   // Remove after delete
-  const handleNoteRemoved = id => { setNotes(notes.filter(n => n._id !== id)); closeNoteView(); };
+  const handleNoteRemoved = (id) => {
+    setNotes(notes.filter((n) => n._id !== id));
+    closeNoteView();
+  };
 
   const handleDeleteModal = async () => {
     try {
@@ -72,7 +83,7 @@ function NotesPages({ user }) {
     }
   };
 
-  const handleEdit = note => {
+  const handleEdit = (note) => {
     setSelectedNote(note);
     setShowNoteView(false);
     setTimeout(() => {
@@ -97,7 +108,7 @@ function NotesPages({ user }) {
         <div className="col-md-8">
           <div className="row">
             {displayedNotes.length > 0 ? (
-              displayedNotes.map(note => (
+              displayedNotes.map((note) => (
                 <div key={note._id} className="col-lg-6 col-xl-4 mb-3">
                   <div
                     className="card shadow-sm h-100 d-flex flex-column"
@@ -112,7 +123,7 @@ function NotesPages({ user }) {
                       <p className="card-text">{note.body}</p>
                     </div>
                     <div className="card-footer bg-transparent border-top-0 d-flex justify-content-between px-3 pb-3">
-                      <div onClick={e => e.stopPropagation()}>
+                      <div onClick={(e) => e.stopPropagation()}>
                         <RemoveNote
                           noteId={note._id}
                           userId={user._id}
@@ -120,10 +131,18 @@ function NotesPages({ user }) {
                         />
                       </div>
                       <button
-                        className="btn btn-sm btn-outline-primary"
-                        onClick={e => { e.stopPropagation(); openNoteView(note); }}
+                        className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          padding: 0,
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openNoteView(note);
+                        }}
                       >
-                        Visualizza
+                        <BsArrowsFullscreen />
                       </button>
                     </div>
                   </div>
@@ -148,33 +167,41 @@ function NotesPages({ user }) {
 
       {/* Floating Filter Toggle */}
       <button
-        className="btn btn-primary"
-        style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}
-        onClick={() => setShowFilterPanel(prev => !prev)}
+        className="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          zIndex: 1000,
+          width: "50px", // larghezza
+          height: "50px", // altezza uguale alla larghezza
+          padding: 0, // rimuove padding interno di default
+        }}
+        onClick={() => setShowFilterPanel((prev) => !prev)}
       >
-        Filtra
+        <FaMagnifyingGlass size={20} />
       </button>
 
       {/* Filter Panel Overlay */}
       {showFilterPanel && (
         <div
           style={{
-            position: 'fixed',
-            bottom: '70px',
-            right: '20px',
-            width: '220px',
-            maxHeight: '300px',
-            overflowY: 'auto',
-            background: '#ffffff',
-            border: '1px solid #ccc',
-            borderRadius: '8px',
-            padding: '10px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            position: "fixed",
+            bottom: "70px",
+            right: "20px",
+            width: "220px",
+            maxHeight: "300px",
+            overflowY: "auto",
+            background: "#ffffff",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            padding: "10px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
             zIndex: 1000,
           }}
         >
           <h6>Filtra categorie</h6>
-          {categories.map(cat => (
+          {categories.map((cat) => (
             <div className="form-check" key={cat}>
               <input
                 className="form-check-input"
