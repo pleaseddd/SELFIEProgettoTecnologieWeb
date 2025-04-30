@@ -19,10 +19,7 @@ function Home({ user }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            userid: user._id,
-            limit: user.settings.homeNotes,
-          }),
+          body: JSON.stringify({ userid: user._id, limit: user.settings.homeNotes }),
         });
         const data = await response.json();
         if (response.ok) {
@@ -50,15 +47,7 @@ function Home({ user }) {
   }, [notes]);
 
   return (
-    <div
-      className="container mt-5"
-      style={{
-        backgroundColor: "#586ba4",
-        minHeight: "100vh",
-        padding: "2rem",
-        borderRadius: "10px",
-      }}
-    >
+    <div className="container mt-5">
       {notes.length > 0 ? (
         <div
           id="noteCarousel"
@@ -76,28 +65,12 @@ function Home({ user }) {
                   <div
                     className="card text-start shadow p-4 note-card"
                     onClick={() => navigate("/Note")}
-                    style={{
-                      backgroundColor: "#324376",
-                      color: "#f68e5f",
-                      border: "none",
-                      width: "100%",
-                      maxWidth: "500px",
-                      cursor: "pointer",
-                    }}
                   >
                     <div className="mb-3">
-                      <span
-                        className="badge me-2"
-                        style={{ backgroundColor: "#f5dd90", color: "#000" }}
-                      >
+                      <span className="badge bg-primary me-2">
                         {nota.category || "Senza categoria"}
                       </span>
-                      <h5
-                        className="card-title fw-bold text-center mb-0"
-                        style={{ color: "#f5dd90" }}
-                      >
-                        {nota.title}
-                      </h5>
+                      <h5 className="card-title fw-bold text-center mb-0">{nota.title}</h5>
                     </div>
                     <p className="card-text note-body text-truncate-multiline">
                       {nota.body}
@@ -111,13 +84,7 @@ function Home({ user }) {
       ) : (
         <div
           className="card text-center p-5 shadow"
-          style={{
-            backgroundColor: "#f76c5e",
-            color: "white",
-            cursor: "pointer",
-            maxWidth: "600px",
-            margin: "0 auto",
-          }}
+          style={{ cursor: "pointer", maxWidth: "600px", margin: "0 auto" }}
           onClick={() => navigate("/Note")}
         >
           <h4>Non hai ancora note</h4>
@@ -126,7 +93,7 @@ function Home({ user }) {
       )}
 
       <Weather />
-      <SystemNotification user={user} />
+      <SystemNotification user={user}/>
     </div>
   );
 }
