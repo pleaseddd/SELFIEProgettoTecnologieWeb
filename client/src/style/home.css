@@ -33,7 +33,7 @@
   position: relative;
 }
 
-.text-truncate-multiline::after {
+/* .text-truncate-multiline::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -41,7 +41,7 @@
   height: 2rem;
   width: 100%;
   background: linear-gradient(to bottom, transparent, #ffffff);
-}
+} */
 
 /* Responsive per smartphone */
 @media (max-width: 576px) {
