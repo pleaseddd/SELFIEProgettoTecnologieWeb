@@ -35,7 +35,7 @@ function Signin({ change, setUser }) {
     
   };
   return (
-    <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
+    <div className="col-md-4 d-flex justify-content-center align-items-center mb-4 mb-md-0">
     <div className="card p-4 shadow-lg login-card">
       <h2 className="text-center mb-4">Login</h2>
       <form onSubmit={handleLogin}>
