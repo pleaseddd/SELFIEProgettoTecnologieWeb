@@ -20,12 +20,12 @@ function Settings({ user, updateUser }) {
     weekStart: user.settings.startDay ? "sunday" : "monday",
     location: user.settings.position,
     notesInHome: user.settings.homeNotes,
+    notifDevices: [],
   });
 
   const [newEventCat, setNewEventCat] = useState("");
   const [newNoteCat, setNewNoteCat] = useState("");
 
-  const [notifDevices, setNotifDevices] = useState(null);
 
   useEffect(() => {
 	async function getNotifDevices() {
@@ -34,9 +34,9 @@ function Settings({ user, updateUser }) {
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({ user_id: user._id })
 		}).then(resp => resp.json());
-		setNotifDevices(devices);
+		setForm((prev) => ({ ...prev, notifDevices: devices }));
 	}
-	getNotifDevices();
+  getNotifDevices();
    }, []);
 
   // Modal per conferma
@@ -315,21 +315,23 @@ function Settings({ user, updateUser }) {
             }}
           >
             {
-				/*
-				notifDevices.map((device, i) => (
-	              <div key={i} className="d-flex justify-content-between mb-1">
-	                <span>{device.name}</span>
-	                <Button
-	                  variant="outline-danger"
-	                  size="sm"
-	                  //onClick={() => removeEventCategory(i)}
-	                >
-	                  Elimina
-	                </Button>
-	              </div>
-	            ))
-				*/
-				JSON.stringify(notifDevices)
+				notifDevices.length > 0 ? (
+          notifDevices.map((device, i) => (
+            <div key={i} className="d-flex justify-content-between mb-1">
+              <span>{device.name}</span>
+              <Button
+                variant="outline-danger"
+                size="sm"
+                /* onClick={} */
+              >
+                Elimina
+              </Button>
+            </div>
+          ))
+        ) : (
+          <p>Nessun dispositivo registrato.</p>
+        )
+				
 			}
           </div>
         </Form.Group>
