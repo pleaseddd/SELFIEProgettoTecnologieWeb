@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
-import ConfirmModal from './ConfirmModal';
+import React, { useState } from "react";
+import { Button } from "react-bootstrap";
+import ConfirmModal from "./ConfirmModal";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 function RemoveNote({ noteId, userId, onSuccess }) {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -12,9 +13,9 @@ function RemoveNote({ noteId, userId, onSuccess }) {
   const handleConfirm = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/deletenote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/deletenote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ noteid: noteId, userid: userId }),
       });
       if (response.ok) {
@@ -22,11 +23,11 @@ function RemoveNote({ noteId, userId, onSuccess }) {
         closeConfirm();
       } else {
         const data = await response.json();
-        alert('Errore durante l\'eliminazione: ' + data.message);
+        alert("Errore durante l'eliminazione: " + data.message);
       }
     } catch (err) {
       console.error(err);
-      alert('Errore di rete durante l\'eliminazione');
+      alert("Errore di rete durante l'eliminazione");
     } finally {
       setLoading(false);
     }
@@ -34,8 +35,16 @@ function RemoveNote({ noteId, userId, onSuccess }) {
 
   return (
     <>
-      <Button variant="outline-danger" size="sm" onClick={openConfirm}>
-        Elimina
+      <Button
+        className="btn btn-outline-danger bg-transparent  d-flex align-items-center justify-content-center"
+        style={{
+          width: "40px",
+          height: "40px",
+          padding: 0,
+        }}
+        onClick={openConfirm}
+      >
+        <FaRegTrashCan />
       </Button>
 
       <ConfirmModal
