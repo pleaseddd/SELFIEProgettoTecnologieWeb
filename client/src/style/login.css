@@ -44,9 +44,9 @@
 }
 
 .login-card {
-  width: 450px;       
-  min-width: 350px;   
-  padding: 2rem;      
+  width: 320px;       
+  min-width: 280px;   
+  padding: 1.5rem;      
   background-color: rgba(255, 255, 255, 0);
   border-radius: 10px;
   color: #ffffff;
