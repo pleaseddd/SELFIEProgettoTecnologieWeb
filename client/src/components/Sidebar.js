@@ -13,6 +13,7 @@ function Sidebar({ toggleSidebar, logout }) {
             <li><a href="/Note" className="nav-link btn btn-outline-secondary">Note</a></li>
             <li><a href="/Calendario" className="nav-link btn btn-outline-secondary">Calendario</a></li>
             <li><a href="/settings" className="nav-link btn btn-outline-secondary">Impostazioni</a></li>
+            <li><a href="/Pomodoro" className="nav-link btn btn-outline-secondary">Pomodoro</a></li>
           </ul>
           <button className="btn btn-danger logout" onClick={logout}>Logout</button>
         </div>

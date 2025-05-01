@@ -23,12 +23,18 @@ const SubSchema = new mongoose.Schema({
 		auth: String
 	}
 }, {
+	collection: "swsubs",
 	timestamps: true
 });
 
 const Subscription = mongoose.model('Subscription', SubSchema);
 
 module.exports = {
+	POST_list: async (req, res) => {
+		const subs = await Subscription.find({ user: req.body.user_id });
+		res.status(201).json(subs);
+	},
+
 	"POST_subscribe": (req, res) => {
 		try {
 			const sub = Object.assign(req.body.sub, {
@@ -42,6 +48,7 @@ module.exports = {
 			res.status(201).json({ message: "Iscrizione salvata" });
 		}
 		catch(error) {
+			res.status(500).json({ error: error });
 			console.error("Errore nell'iscrizione:", error);
 		}
 	},
@@ -62,7 +69,7 @@ module.exports = {
 		return await Subscription.findOne({ endpoint });
 	},
 
-	find: async (user_id) => {
+	findByUser: async (user_id) => {
 		return await Subscription.find({ user: user_id });
 	}
 };
