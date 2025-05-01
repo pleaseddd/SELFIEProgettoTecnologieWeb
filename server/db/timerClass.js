@@ -41,8 +41,13 @@ const PomodoroSessionSchema = new mongoose.Schema({
   completed: {
     type: Boolean,
     default: false
+  },
+  savedState: {
+    type: Object,
+    default: null
   }
-}, { timestamps: true });
+});
+
 
 const TimerConfig = mongoose.model('TimerConfig', TimerConfigSchema);
 const PomodoroSession = mongoose.model('PomodoroSession', PomodoroSessionSchema);
@@ -100,14 +105,31 @@ module.exports = {
   //aggiorna una sessione pomodoro esistente
   PATCH_session: async (req, res) => {
     try {
+      const updates = req.body;
+      if (updates.savedState) {
+        updates.savedState.lastUpdated = Date.now();
+      }
+      
       const session = await PomodoroSession.findByIdAndUpdate(
         req.params.id,
-        req.body,
+        updates,
         { new: true }
       );
       res.json(session);
     } catch (err) {
       res.status(400).json({ message: err.message });
+    }
+  },
+
+  GET_session_state: async (req, res) => {
+    try {
+      const session = await PomodoroSession.findOne({ 
+        user: req.query.userId,
+        completed: false 
+      });
+      res.json(session?.savedState || null);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
   }
 };

@@ -1,28 +1,82 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './style/pomodoro.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 // componente principale Pomodoro
 export default function Pomodoro({ userId }) {
-  // stato iniziale
+  // Recupera stato iniziale da localStorage se presente
   const [totalMinutes, setTotalMinutes] = useState(200);
   const [generatedCycles, setGeneratedCycles] = useState([]);
-  const [activeConfig, setActiveConfig] = useState({ work: 25, break: 5 });
-  const [currentCycle, setCurrentCycle] = useState(0);
+  const [activeConfig, setActiveConfig] = useState(() => 
+    JSON.parse(localStorage.getItem('pomodoroActiveConfig')) || { work: 25, break: 5 });
+  const [currentCycle, setCurrentCycle] = useState(() => 
+    parseInt(localStorage.getItem('pomodoroCurrentCycle')) || 0);
   const [completedCycles, setCompletedCycles] = useState(0);
-  const [selectedWorkOptions, setSelectedWorkOptions] = useState([]);
-  const [selectedBreakOptions, setSelectedBreakOptions] = useState([]);
-  const [phase, setPhase] = useState('work');
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [selectedWorkOptions, setSelectedWorkOptions] = useState(() => 
+    JSON.parse(localStorage.getItem('selectedWorkOptions')) || []);
+  const [selectedBreakOptions, setSelectedBreakOptions] = useState(() => 
+    JSON.parse(localStorage.getItem('selectedBreakOptions')) || []);
+  const [phase, setPhase] = useState(() => 
+    localStorage.getItem('pomodoroPhase') || 'work');
+  const [timeLeft, setTimeLeft] = useState(() => 
+    parseInt(localStorage.getItem('pomodoroTimeLeft')) || 0);
   const [running, setRunning] = useState(false);
   const [finished, setFinished] = useState(false);
   const [showConfig, setShowConfig] = useState(true);
 
   const intervalRef = useRef(null);
   const circleRef = useRef(null);
+  const startTimeRef = useRef(null);
 
   const presetWorkOptions = [10, 20, 25, 30, 35];
   const presetBreakOptions = [5, 10, 15];
+
+  // Salva automaticamente le preferenze
+  useEffect(() => {
+    localStorage.setItem('selectedWorkOptions', JSON.stringify(selectedWorkOptions));
+    localStorage.setItem('selectedBreakOptions', JSON.stringify(selectedBreakOptions));
+  }, [selectedWorkOptions, selectedBreakOptions]);
+
+  // salva lo stato del timer
+  const saveTimerState = () => {
+    const state = {
+      activeConfig,
+      currentCycle,
+      phase,
+      timeLeft,
+      startTime: startTimeRef.current
+    };
+    localStorage.setItem('pomodoroState', JSON.stringify(state));
+  };
+
+  // Ripristina timer al caricamento
+  useEffect(() => {
+    const savedState = JSON.parse(localStorage.getItem('pomodoroState'));
+    if (savedState) {
+      const elapsed = savedState.startTime ? Math.floor((Date.now() - savedState.startTime) / 1000) : 0;
+      const remaining = savedState.timeLeft - elapsed;
+      
+      if (remaining > 0) {
+        setTimeLeft(remaining);
+        setRunning(true);
+        startTimeRef.current = Date.now() - (savedState.timeLeft - remaining) * 1000;
+      } else {
+        localStorage.removeItem('pomodoroState');
+      }
+    }
+  }, []);
+
+  // Aggiorna salvataggio timer
+  useEffect(() => {
+    if (running) {
+      startTimeRef.current = Date.now();
+      saveTimerState();
+    }
+  }, [running, phase, currentCycle, activeConfig]);
+
+  // Resto del codice rimane identico...
+  // (generateCycles, startCycle, nextPhase, useEffect per countdown, render...)
+
 
   // genera cicli suggeriti
   const generateCycles = () => {
@@ -41,6 +95,7 @@ export default function Pomodoro({ userId }) {
 
   // avvia un nuovo ciclo con configurazione scelta
   const startCycle = ({ work, break: brk }) => {
+    startTimeRef.current = Date.now();
     // salva la configurazione attiva
     setActiveConfig({ work, break: brk });
     setCurrentCycle(0);
@@ -49,14 +104,21 @@ export default function Pomodoro({ userId }) {
     setTimeLeft(work * 60);
     setRunning(true);
     setFinished(false);
-
+    
     // reset animazione
     const el = circleRef.current;
     el.style.animation = 'none';
     void el.offsetWidth;
     el.style.animation = `workGradient ${work * 60}s linear forwards`;
+    saveTimerState();
   };
 
+  useEffect(() => {
+    return () => {
+      if (!running) localStorage.removeItem('pomodoroState');
+    };
+  }, [running]);
+  
   // gestione cambio fase work/break
   const nextPhase = () => {
     const { work, break: brk } = activeConfig;
@@ -89,10 +151,19 @@ export default function Pomodoro({ userId }) {
   // gestione countdown
   useEffect(() => {
     if (!running) return;
-    const tick = () => setTimeLeft(prev => {
-      if (prev <= 1) { nextPhase(); return 0; }
-      return prev - 1;
-    });
+  
+    const tick = () => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          nextPhase();
+          return 0;
+        }
+        return prev - 1;
+      });
+      // **Salva lo stato AD OGNI TICK****
+      saveTimerState();
+    };
+  
     intervalRef.current = setInterval(tick, 1000);
     return () => clearInterval(intervalRef.current);
   }, [running, phase, currentCycle, activeConfig]);
