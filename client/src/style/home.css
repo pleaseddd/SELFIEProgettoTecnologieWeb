@@ -43,6 +43,11 @@
   background: linear-gradient(to bottom, transparent, #ffffff);
 } */
 
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: #586ba4;
+}
 
 
 /* Responsive per smartphone */
