@@ -15,8 +15,8 @@ const swsubs = require('./db/swsubsClass.js');
 const notifs = require('./db/notifClass.js');
 
 async function connectDatabase() {
-	 await mongoose.connect(process.env.TEST_MONGO_URL);
-	// await mongoose.connect(process.env.MONGO_URL);
+	// mongoose.connect(process.env.TEST_MONGO_URL);
+	await mongoose.connect(process.env.MONGO_URL);
 	console.log("database connesso");
 }
 
@@ -65,17 +65,6 @@ app.post('/schedule-notification', async (req, res) => {
 
 	res.status(201).json({ message: "notifica programmata" });
 });
-
-const toISOLocalTime = (date) => {
-	let tzo = -date.getTimezoneOffset();
-	let dif = tzp >= 0 ? '+' : '-';
-	const pad = (num) => (num > 10 ? '0' : '') + num;
-
-	return date.getFullYear() +
-		'-' + pad(date.getMonth()+1) +
-		'-' + pad(date.getDate()) +
-		'T' + pad(date.getMinutes())
-};
 
 cron.schedule('* * * * *', async () => {
 	const pendings = await notifs.findCurrentPendings();

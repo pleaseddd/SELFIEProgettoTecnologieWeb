@@ -100,7 +100,7 @@ const SystemNotification = ({ user }) => {
 		const data = {
 			title: document.getElementById("title").value,
 			body: document.getElementById("text").value,
-			time: document.getElementById("time").value
+			time: new Date(document.getElementById("time").value)
 		};
 
 		const resp = await fetch('/schedule-notification', {

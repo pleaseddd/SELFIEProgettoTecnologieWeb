@@ -19,7 +19,7 @@ const NotifSchema = new mongoose.Schema({
 	},
 
 	time: {
-		type: String,
+		type: Date,
 		required: true
 	},
 
@@ -28,6 +28,7 @@ const NotifSchema = new mongoose.Schema({
 		default: false
 	}
 }, {
+	collection: "notifs",
 	timestamps: true
 });
 
@@ -39,8 +40,16 @@ module.exports = {
 		return newnotif.save();
 	},
 
-	find: async (time, sent) => {
-		return await Notification.find({ time, sent });
+	findCurrentPendings: async () => {
+		const now = new Date().setSeconds(0, 0);
+		return await Notification.find({ 
+			time: now,
+			sent: false
+		});
+	},
+
+	findAll: async () => {
+		return await Notification.find();
 	},
 
 	notif_sent: async (id) => {

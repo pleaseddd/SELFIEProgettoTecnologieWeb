@@ -3,7 +3,6 @@ import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/;
 
 function Register({change}) {
     const [error, setError] = useState("");
@@ -16,17 +15,9 @@ function Register({change}) {
         const password = e.target.password.value;
         const confirmPassword = e.target.confirmPassword.value;
 
-        if (!passwordRegex.test(password)) {
-          const msg = "La password deve essere lunga 8–20 caratteri, contenere almeno una lettera e un numero, e non contenere spazi o caratteri speciali.";
-          setError(msg);
-          alert(msg);
-          return;
-        }
-
         if (password !== confirmPassword) {
-          const msg = "Le password non corrispondono!";
-            setError(msg);
-            alert(msg);
+            setError("Le password non corrispondono!");
+            alert("Le password non corrispondono!");
             return;
         }
 
@@ -41,11 +32,9 @@ function Register({change}) {
 
             const data = await response.json();
             if (response.ok) {
-              const msg = "Registrazione avvenuta con successo!";
-              setSuccess(msg);
-              setError("");
-              alert(msg);
-              console.log(success);
+                setSuccess("Registrazione completata con successo!");
+                setError("");
+                console.log(success);
 				change();
             } else {
                 alert(data.message || " Errore durante la registrazione");
@@ -60,9 +49,13 @@ function Register({change}) {
     };
 
     return (
-        <div className="col-md-4 d-flex justify-content-center align-items-center mb-4 mb-md-0">
+        <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
           <div className="card p-4 shadow-lg login-card">
             <h2 className="text-center mb-4">Registrazione</h2>
+    
+            {error && <div className="error-message mb-3">{error}</div>}
+            {success && <div className="success-message mb-3">{success}</div>}
+    
             <form onSubmit={handleregister}>
               {/* Nome Utente */}
               <div className="mb-3">
@@ -110,6 +103,10 @@ function Register({change}) {
                   className="form-control"
                   placeholder="Conferma Password"
                 />
+              </div>
+    
+              <div id="passwordHelpBlock" className="form-text mb-3">
+                Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
               </div>
     
               <button type="submit" className="btn btn-primary w-100 mb-2">Registrati</button>
