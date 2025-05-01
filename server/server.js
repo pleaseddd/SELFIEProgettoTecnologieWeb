@@ -15,8 +15,8 @@ const swsubs = require('./db/swsubsClass.js');
 const notifs = require('./db/notifClass.js');
 
 async function connectDatabase() {
-	// mongoose.connect(process.env.TEST_MONGO_URL);
-	await mongoose.connect(process.env.MONGO_URL);
+	 await mongoose.connect(process.env.TEST_MONGO_URL);
+	// await mongoose.connect(process.env.MONGO_URL);
 	console.log("database connesso");
 }
 
