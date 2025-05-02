@@ -111,6 +111,7 @@ app.post('/events', calendar.POST_list);
 app.post('/newevent', calendar.POST_new);
 app.post('/updateevent', calendar.POST_update);
 app.post('/deleteevent', calendar.POST_delete);
+app.post('/upcoming', calendar.POST_upcoming);
 
 
 app.use(express.static(path.join(__dirname, "../client/build")));
