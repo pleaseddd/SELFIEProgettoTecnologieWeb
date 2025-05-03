@@ -95,6 +95,28 @@ export default function Pomodoro({ userId }) {
     return () => clearInterval(intervalRef.current);
   }, [running, phase, currentCycle, activeConfig]);
 
+  useEffect(() => {
+    // Calcola il numero totale di tick in base alla fase corrente
+    const totalTicks = phase === 'work' 
+      ? activeConfig.work * 60 
+      : activeConfig.break * 60;
+    
+    // Genera array di tick con posizione angolare
+    const newTicks = Array.from({ length: totalTicks }).map((_, i) => ({
+      angle: (i / totalTicks) * 360,
+      elapsed: i < (totalTicks - timeLeft)
+    }));
+  
+    // Salva i ticks nello state se necessario
+  }, [phase, activeConfig, timeLeft]);
+
+  useEffect(() => {
+    // Forza un reflow all'inizio di ogni nuova fase
+    if (circleRef.current) {
+      void circleRef.current.offsetWidth;
+    }
+  }, [phase]);
+
   //salva dati essenziali nel localStorage
   function persistState() {
     const state = {
@@ -135,17 +157,6 @@ export default function Pomodoro({ userId }) {
       setFinished(false);
   };
 
-  function handleFinish() {
-    setFinished(true);
-    setRunning(false);
-    // fai partire il pulso singolo
-    circle.classList.add('pulse-once');
-    // dopo 1s, rimuovi il flag per ripristinare lo stato originale
-    setTimeout(() => {
-      circle.classList.remove('pulse-once');
-    }, 1000);
-  }
-  
   // -- AVVIO NUOVO CICLO --
   const startCycle = ({ work, break: brk }) => {
     setActiveConfig({ work, break: brk });
@@ -211,8 +222,22 @@ const nextPhase = () => {
       <div className="timer-container">
         <div className="timer-section">
         <div ref={circleRef} className="timer-circle">
-            <span className="timer-text">{formatTime(timeLeft)}</span>
-          </div>
+    <span className="timer-text">{formatTime(timeLeft)}</span>
+
+    {/* → CERCHIO DI 60 TICK */}
+    <div className="ticks-container">
+  {Array.from({ length: 120 }).map((_, i) => {
+    const totalSeconds = phase === 'work' 
+      ? activeConfig.work * 60 
+      : activeConfig.break * 60;
+    const progress = ((totalSeconds - timeLeft) / totalSeconds) * 60;
+    
+    return (
+      <div key={i} className={`tick ${i > 119 - Math.floor(progress) ? 'hidden' : ''}`}
+        style={{ transform: `rotate(${i * (360 / 120)}deg) translateY(-103px)` }} /> );
+  })}
+</div>
+  </div>
           <div className="phase-box">
             <strong>{phase === 'work' ? 'Studio' : 'Pausa'}</strong> – Ciclo{' '}
             {currentCycle + 1}
