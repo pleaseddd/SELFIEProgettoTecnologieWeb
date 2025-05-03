@@ -41,6 +41,7 @@ export default function Pomodoro({ userId }) {
   const presetBreakOptions = [5, 10, 15];
 
   const circle = circleRef.current;
+  const tickCount = 120;
 
   // --- SINCRONIZZA SU localStorage A CAMBIO DI generatedCycles ---
   useEffect(() => {
@@ -226,15 +227,15 @@ const nextPhase = () => {
 
     {/* → CERCHIO DI 60 TICK */}
     <div className="ticks-container">
-  {Array.from({ length: 120 }).map((_, i) => {
+  {Array.from({ length: tickCount }).map((_, i) => {
     const totalSeconds = phase === 'work' 
       ? activeConfig.work * 60 
       : activeConfig.break * 60;
-    const progress = ((totalSeconds - timeLeft) / totalSeconds) * 60;
+    const progress = ((totalSeconds - timeLeft) / totalSeconds) * tickCount;
     
     return (
-      <div key={i} className={`tick ${i > 119 - Math.floor(progress) ? 'hidden' : ''}`}
-        style={{ transform: `rotate(${i * (360 / 120)}deg) translateY(-103px)` }} /> );
+      <div key={i} className={`tick ${i > (tickCount -1) - Math.floor(progress) ? 'hidden' : ''}`}
+        style={{ transform: `rotate(${i * (360 / tickCount)}deg) translateY(-103px)` }} /> );
   })}
 </div>
   </div>
