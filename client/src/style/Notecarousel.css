@@ -1,0 +1,50 @@
+.note-card-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px; /* altezza fissa uniforme */
+}
+
+.note-card {
+  width: 100%;
+  max-width: 600px;
+  height: 250px; /* altezza fissa uniforme */
+  background-color: #ffffff;
+  border-radius: 1rem;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.note-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Troncamento multilinea */
+.text-truncate-multiline {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: #586ba4;
+}
+
+
+/* Responsive per smartphone */
+@media (max-width: 576px) {
+  .note-card {
+    max-width: 90vw;
+    height: 200px; /* altezza relativa su schermo piccolo */
+  }
+}

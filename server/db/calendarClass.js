@@ -125,4 +125,25 @@ module.exports = {
 			res.status(400).json({ error: err.message });
 		}
 	},
+
+	// Elenco eventi futuri
+	POST_upcoming: async (req, res) => {
+		try {
+			const { userid } = req.body;
+			const now = new Date();
+	
+			const events = await Event.find({
+				author: userid,
+				begin: { $gte: now }
+			})
+			.sort({ begin: 1 }) 
+			.limit(3); 
+	
+			res.status(200).json(events);
+		}
+		catch (err) {
+			res.status(500).json({ error: err.message });
+		}
+	},
+
 };
