@@ -15,8 +15,8 @@ const swsubs = require('./db/swsubsClass.js');
 const notifs = require('./db/notifClass.js');
 
 async function connectDatabase() {
-	// mongoose.connect(process.env.TEST_MONGO_URL);
-	await mongoose.connect(process.env.MONGO_URL);
+	mongoose.connect(process.env.TEST_MONGO_URL);
+	//await mongoose.connect(process.env.MONGO_URL);
 	console.log("database connesso");
 }
 
@@ -32,6 +32,7 @@ app.get('/api/server-time', (req, res) => {
 });
 
 app.post('/listsubs', swsubs.POST_list);
+app.post('/getswsub', swsubs.POST_getswsub);
 app.post('/subscribe', swsubs.POST_subscribe);
 app.post('/unsubscribe', swsubs.POST_unsubscribe);
 app.post('/test-notification', async (req, res) => {

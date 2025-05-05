@@ -35,6 +35,11 @@ module.exports = {
 		res.status(201).json(subs);
 	},
 
+	POST_getswsub: async (req, res) => {
+		const sub = await Subscription.findOne({ endpoint: req.body.endpoint });
+		res.status(201).json(sub);
+	},
+
 	"POST_subscribe": (req, res) => {
 		try {
 			const sub = Object.assign(req.body.sub, {
@@ -58,7 +63,7 @@ module.exports = {
 			const endpoint = req.body.endpoint;
 			await Subscription.findOneAndDelete({ endpoint });
 
-			res.statis(201).json({ message: "Iscrizione cancellata" });
+			res.status(201).json({ message: "Iscrizione cancellata" });
 		}
 		catch(error) {
 			console.error("Errore nell'eliminare l'iscrizione:", error);

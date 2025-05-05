@@ -17,7 +17,7 @@ self.addEventListener("notificationclick", event => {
     clients.openWindow("/")
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate", () => {
 	// const tabs = await self.clients.matchAll({ type: 'window' });
 	// tabs.forEach(tab => tab.navigate(tab.url));
 	console.log('service worker attivato');
