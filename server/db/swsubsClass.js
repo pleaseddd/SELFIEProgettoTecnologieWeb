@@ -40,7 +40,7 @@ module.exports = {
 		res.status(201).json(sub);
 	},
 
-	"POST_subscribe": (req, res) => {
+	POST_subscribe: (req, res) => {
 		try {
 			const sub = Object.assign(req.body.sub, {
 				name: req.body.name,
@@ -58,7 +58,7 @@ module.exports = {
 		}
 	},
 
-	"POST_unsubscribe": async (req, res) => {
+	POST_unsubscribe: async (req, res) => {
 		try {
 			const endpoint = req.body.endpoint;
 			await Subscription.findOneAndDelete({ endpoint });

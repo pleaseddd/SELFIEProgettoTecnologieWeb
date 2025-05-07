@@ -9,8 +9,10 @@ import {
   Image,
 } from "react-bootstrap";
 import ConfirmModal from "./components/ConfirmModal";
+import NotifSection from "./components/settings/NotifSection.js";
 
 function Settings({ user, updateUser }) {
+
   const [form, setForm] = useState({
     name: user.name,
     email: user.email,
@@ -302,7 +304,10 @@ function Settings({ user, updateUser }) {
         </Form.Group>
 
         {/* Dispositivi delle notifiche */}
+        <NotifSection user={user} />
+        {/*
         <Form.Group className="mb-3">
+		  <NotifSection user={user}/>
           <Form.Label>Dispositivi registrati per le notifiche</Form.Label>
           <div
             style={{
@@ -320,7 +325,6 @@ function Settings({ user, updateUser }) {
                   <Button
                     variant="outline-danger"
                     size="sm"
-                    /* onClick={} */
                   >
                     Elimina
                   </Button>
@@ -331,6 +335,7 @@ function Settings({ user, updateUser }) {
             )}
           </div>
         </Form.Group>
+        */}
 
         {/* Pulsante Salva */}
         <div className="d-grid">

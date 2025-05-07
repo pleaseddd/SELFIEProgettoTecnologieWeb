@@ -22,3 +22,7 @@ self.addEventListener("activate", () => {
 	// tabs.forEach(tab => tab.navigate(tab.url));
 	console.log('service worker attivato');
 });
+
+self.addEventListener('fetch', event => {
+	event.respondWith(fetch(event.request));
+});

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const SystemNotification = ({ user }) => {
-
-	const [device, setDevice] = useState("");
+	const [device, setDevice] = useState(null);
 
 	useEffect(() => {
 		const getDevice = async() => {
@@ -12,22 +11,27 @@ const SystemNotification = ({ user }) => {
 				return;
 			}
 
-			navigator.serviceWorker.ready.then(registration => {
-				registration.pushManager.getSubscription().then(sub => {
-					if(!sub) {
-						setDevice("Nessuna iscrizione");
-						return;
-					}
+			try {
+				navigator.serviceWorker.ready.then(registration => {
+					registration.pushManager.getSubscription().then(sub => {
+						if(!sub) {
+							setDevice("Nessuna iscrizione");
+							return;
+						}
 
-					fetch('/getswsub', {
-						method: 'POST',
-						headers: { 'content-type': 'application/json' },
-						body: JSON.stringify({ endpoint: sub.endpoint })
-					})
-					.then(resp => resp.json())
-					.then(data => setDevice(data.name));
+						fetch('/getswsub', {
+							method: 'POST',
+							headers: { 'content-type': 'application/json' },
+							body: JSON.stringify({ endpoint: sub.endpoint })
+						})
+						.then(resp => resp.json())
+						.then(data => setDevice(data.name));
+					});
 				});
-			});
+			}
+			catch(error) {
+				console.log("Erroe:", error);
+			}
 		};
 		getDevice();
 	});
@@ -38,7 +42,6 @@ const SystemNotification = ({ user }) => {
 			return;
 		}
 
-
 		if(!('Notification' in window)) {
 			console.log("Questo browser non supporta le notifiche");
 			return;
@@ -48,6 +51,7 @@ const SystemNotification = ({ user }) => {
 
 		if(permission === "granted") {
 			navigator.serviceWorker.ready.then(registration => {
+
 				registration.pushManager.subscribe({
 					userVisibleOnly: true,
 					applicationServerKey: process.env.REACT_APP_VPKEY_PUBLIC
@@ -75,24 +79,29 @@ const SystemNotification = ({ user }) => {
 			return;
 		}
 
-		navigator.serviceWorker.ready.then(registration => {
-			registration.pushManager.getSubscription().then(sub => {
-				if(!sub) {
-					console.log("Nessuna iscrizione trovata");
-					return;
-				}
+		try {
+			navigator.serviceWorker.ready.then(registration => {
+				registration.pushManager.getSubscription().then(sub => {
+					if(!sub) {
+						console.log("Nessuna iscrizione trovata");
+						return;
+					}
 
-				fetch('/unsubscribe', {
-					method: 'POST',
-					body: JSON.stringify({ endpoint: sub.endpoint }),
-					headers: { 'content-type': 'application/json' }
-				})
-				.then(resp => resp.json())
-				.then(data => console.log(data.message));
+					fetch('/unsubscribe', {
+						method: 'POST',
+						body: JSON.stringify({ endpoint: sub.endpoint }),
+						headers: { 'content-type': 'application/json' }
+					})
+					.then(resp => resp.json())
+					.then(data => console.log(data.message));
 
-				sub.unsubscribe();
+					sub.unsubscribe();
+				});
 			});
-		});
+		}
+		catch(error) {
+			console.log("Errore nell'iscriziione:", error);
+		}
 	};
 
 	const handleTestNotification = async () => {
@@ -127,16 +136,6 @@ const SystemNotification = ({ user }) => {
 		}).then(resp => resp.json());
 		console.log(resp.message);
 	};
-
-	if('serviceWorker' in navigator) {
-		try {
-			navigator.serviceWorker.register('./service-worker.js', { scope: '/' });
-			console.log("service worker registrato!");
-		}
-		catch(error) {
-			console.error(error);
-		}
-	}
 
     return (
         <div className="container-fluid border border-2 border-dark rounded p-4 mx-3 mx-sm-5 my-4">

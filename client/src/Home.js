@@ -2,6 +2,7 @@ import NotesCarousel from "./components/home/NotesCarousel.js";
 import Weather from "./components/home/Weather.js";
 import SystemNotification from "./components/SystemNotification.js";
 import CalendarCarousel from "./components/home/CalendarCarousel.js";
+
 function Home({ user }) {
   return (
     <div
@@ -17,7 +18,7 @@ function Home({ user }) {
       <CalendarCarousel user={user} />
       <Weather />
       <NotesCarousel user={user} />
-      <SystemNotification user={user} />
+      {/*<SystemNotification user={user} />*/}
     </div>
   );
 }
