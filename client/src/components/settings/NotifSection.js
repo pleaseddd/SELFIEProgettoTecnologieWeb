@@ -1,55 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { Card, Form, Button } from "react-bootstrap";
 import SwSubSwitch from "./switch-swsub.js";
-import useDeviceName from "../../hooks/useDeviceName.js";
+import { useDevice, useAlldevices } from "../../hooks/swsubsHooks.js";
 
 const NotifSection = ({ user }) => {
-	const [device, setDevice] = useState("");
-	const [alldevices, setAlldevices] = useState([]);
-	const deviceName = useDeviceName();
 
-	useEffect(() => {
-		const getDevice = async () => {
-			if(!('serviceWorker' in navigator)) {
-				console.log("Nessun service worker manager");
-				return;
-			}
-
-			try {
-				navigator.serviceWorker.ready.then(registration => {
-					registration.pushManager.getSubscription().then(sub => {
-						if(!sub) {
-							setDevice("Nessuna iscrizione");
-							return;
-						}
-
-						fetch('/getswsub', {
-							method: 'POST',
-							headers: { 'content-type': 'application/json' },
-							body: JSON.stringify({ endpoint: sub.endpoint })
-						})
-						.then(resp => resp.json())
-						.then(data => setDevice(data.name));
-					});
-				});
-			}
-			catch(error) {
-				console.log("Erroe:", error);
-			}
-		};
-		getDevice();
-	});
-
-	useEffect(() => {
-		async function getAlldevices() {
-			const devices = await fetch("/listsubs", {
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ user_id: user._id }),
-			}).then(resp => resp.json());
-			setAlldevices(devices);
-		}
-		getAlldevices();
-	});
+	const device = useDevice();
+	const devices = useAlldevices(user, device);
 
 	const handleTestNotification = async () => {
 		if(!('serviceWorker' in navigator)) {
@@ -67,29 +24,73 @@ const NotifSection = ({ user }) => {
 	};
 
 	return (
-		<div style={{ border: "2px solid #000 p-3" }}>
-			<SwSubSwitch deviceName={deviceName} user={user}/>
-			<button type="button" className="btn btn-primary" onClick={handleTestNotification}>Manda notifica prova</button>
+		<Card className="mb-4 shadow-sm">
+			<Card.Body>
+				<div className="d-flex align-items-center mb-4">
+					<h5>
+						Gestione notifiche
+					</h5>
+				</div>
 
-			<label>Dispositivi iscritti alle notifiche</label>
-			<div
-				style={{
-					maxHeight: "120px",
-					overflowY: "auto",
-					border: "1px solid #ccc",
-					borderRadius: "5px",
-					padding: "0.5rem",
-				}}
-			>
-			{alldevices.length > 0 ? (
-				alldevices.map((device, i) => (
-					<div key={i} className="d-flex justify-content-between mb-1">
-						<span>{device.name}</span>
+				<SwSubSwitch label="Consenso per le notifiche" user={user} deviceName={device}/>
+
+				<Form.Group className="mb-3 py-2">
+					<Form.Label className="mb-2">
+						Nome del dispositivo
+					</Form.Label>
+					<div className="d-flex mb-2">
+						<Form.Control
+							type="text"
+							value={device}
+							placeholder="Inserisci il nome"
+						/>
+						<Button
+							variant="success"
+							className="ms-2"
+						>
+							Cambia
+						</Button>
 					</div>
-				))
-			) : (<p>Nessun altro dispositivo iscritto</p>)}
-			</div>
-		</div>
+				</Form.Group>
+
+
+				{/*<Button
+					variant="primary"
+					onClick={handleTestNotification}
+				>
+					Manda notifica prova
+				</Button>*/}
+
+				<h6>
+					Dispositivi iscritti alle notifiche
+				</h6>
+
+				<div
+					style={{
+						maxHeight: "120px",
+						overflowY: "auto",
+						border: "1px solid #ccc",
+						borderRadius: "5px",
+						padding: "0.5rem",
+					}}
+				>
+					{
+						devices.length > 0 ?
+						(
+							devices.map((device, i) => (
+								<div
+									key={i}
+									className="d-flex justify-content-between mb-1"
+								>
+									<span>{device}</span>
+								</div>
+							))
+						)
+						: ( <p>Nessun altro dispositivo iscritto</p> )
+					}
+				</div>
+			</Card.Body>
+		</Card>
 	);
 };
 

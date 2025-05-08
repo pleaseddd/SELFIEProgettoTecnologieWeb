@@ -42,7 +42,7 @@ const useDeviceName = () => {
 		};
 
 		load();
-	});
+	}, []);
 
 	return deviceName;
 };

@@ -48,12 +48,11 @@ class SwSubSwitch extends Component {
 					userVisibleOnly: true,
 					applicationServerKey: process.env.REACT_APP_VPKEY_PUBLIC
 				}).then(sub => {
-					const subname = this.props.deviceName;
 					fetch('/subscribe', {
 						method: 'POST',
 						body: JSON.stringify({
 							user_id: this.props.user._id,
-							name: subname,
+							name: this.props.deviceName,
 							sub: sub,
 						}),
 						headers: { 'content-type': 'application/json' }
@@ -98,8 +97,8 @@ class SwSubSwitch extends Component {
 
 	render() {
 		return (
-			<label className="d-flex align-items-center justify-content-between gap-3 w-100">
-				<span className="fs-6 text-nowrap">{this.props.deviceName}</span>
+			<label className="d-flex align-items-center justify-content-between">
+				<span className="fs-6 text-nowrap">{this.props.label}</span>
 				<Switch onChange={this.handleChange} checked={this.state.checked}/>
 			</label>
 		);
