@@ -70,6 +70,20 @@ module.exports = {
 		}
 	},
 
+	POST_updateswsubname: async (req, res) => {
+		try {
+			const filter = { endpoint: req.body.endpoint };
+			const update = { $set: { name: req.body.name } };
+
+			await Subscription.findOneAndUpdate(filter, update);
+
+			res.status(201).json({ message: "Iscrizione aggiornata" });
+		}
+		catch(err) {
+			console.error("Errore nell'aggiornare l'iscrizione:", err);
+		}
+	},
+
 	findOne: async (endpoint) => {
 		return await Subscription.findOne({ endpoint });
 	},

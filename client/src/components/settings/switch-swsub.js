@@ -5,17 +5,21 @@ class SwSubSwitch extends Component {
 	constructor(props) {
 		super(props);
 
-		let checked = false;
+		this.state = {
+			checked: false,
+			initialized: false
+		};
 
 		if('serviceWorker' in navigator) {
 			navigator.serviceWorker.ready.then(registration => {
 				registration.pushManager.getSubscription().then(sub => {
-					checked = sub ? true : false;
+					this.setState({
+						checked: !!sub,
+						initialized: true
+					});
 				});
 			});
 		}
-
-		this.state = { checked: [checked] };
 
 		this.handleChange = this.handleChange.bind(this);
 	}
@@ -96,6 +100,9 @@ class SwSubSwitch extends Component {
 	}
 
 	render() {
+		if(!this.state.initialized)
+			return <div>Loading...</div>;
+
 		return (
 			<label className="d-flex align-items-center justify-content-between">
 				<span className="fs-6 text-nowrap">{this.props.label}</span>

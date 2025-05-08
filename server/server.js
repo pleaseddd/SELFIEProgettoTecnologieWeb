@@ -35,6 +35,7 @@ app.post('/listsubs', swsubs.POST_list);
 app.post('/getswsub', swsubs.POST_getswsub);
 app.post('/subscribe', swsubs.POST_subscribe);
 app.post('/unsubscribe', swsubs.POST_unsubscribe);
+app.post('/updateswsubname', swsubs.POST_updateswsubname);
 app.post('/test-notification', async (req, res) => {
 	try {
 		const user = await users.findById(req.body.user_id);

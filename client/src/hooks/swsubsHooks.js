@@ -14,7 +14,7 @@ export const useDevice = () => {
 			navigator.serviceWorker.ready.then(registration => {
 				registration.pushManager.getSubscription().then(sub => {
 					if(!sub) {
-						setDevice(generateFinalDeviceName());
+						setDevice({ name: generateFinalDeviceName() });
 						return;
 					}
 
@@ -24,37 +24,12 @@ export const useDevice = () => {
 						body: JSON.stringify({ endpoint: sub.endpoint })
 					})
 					.then(resp => resp.json())
-					.then(data => setDevice(data.name));
+					.then(data => setDevice(data));
 				});
 			});
 		};
 		getDevice();
 	}, []);
 
-	return device;
-};
-
-export const useAlldevices = (user, deviceName) => {
-	const [alldevices, setAlldevices] = useState([]);
-
-	useEffect(() => {
-		async function getAlldevices() {
-			const devices = await fetch("/listsubs", {
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ user_id: user._id }),
-			})
-			.then(resp => resp.json());
-
-			const devicesNames = devices.map(dev => dev.name);
-			const devIndex = devicesNames.indexOf(deviceName);
-			if(devIndex > -1)
-				devicesNames.splice(devIndex, 1);
-
-			setAlldevices(devicesNames);
-		}
-		getAlldevices();
-	}, [alldevices]);
-
-	return alldevices;
+	return { device, setDevice };
 };
