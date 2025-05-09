@@ -32,24 +32,11 @@ const NotifSection = ({ user }) => {
 		setDevice(prev => ({...prev, name: newName}));
 	};
 
-	const handleTestNotification = async () => {
-		if(!('serviceWorker' in navigator)) {
-			console.log("Nessun service worker manager");
-			return;
-		}
-
-		const resp = await fetch('/test-notification', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({ user_id: user._id })
-		}).then(resp => resp.json())
-		  .catch(err => console.error(err));
-		console.log(resp.message);
-	};
-
 	return (
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
+
+				{/* Titolo della card */}
 				<div className="d-flex align-items-center mb-4">
 					<h5>
 						Gestione notifiche

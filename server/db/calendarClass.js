@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { RRule } = require("rrule");
-
+const { Time, dateSubTime } = require("../utils/timeManager.js");
 const notifs = require('./notifClass.js');
 
 const EventSchema = new mongoose.Schema({
@@ -60,18 +60,27 @@ module.exports = {
   // Nuovo evento
 	POST_new: async (req, res) => {
 		try {
-			const newEvent = new Event(req.body);
+			const author = req.body.userid;
+			const newEvent = new Event({...req.body, author});
 			await newEvent.save();
 
+			const date = new Date(req.body.begin);
 			switch(req.body.urgency) {
 				case "urgente":
-					for(let i=0; i<3; i++) {
-// 						notifs.new_notif({
-// 							userid: req.body.author,
-// 							title: req.body.title,
-//
-// 						});
-					}
+					[
+						new Time({ days: 1 }),
+						new Time({ hours: 12 }),
+						new Time({ hours: 1 }),
+						new Time({ minutes: 10 })
+					].forEach(async (time) => {
+						const sendDate = dateSubTime(date, time);
+						await notifs.new_notif({
+							user: author,
+							title: req.body.title,
+							body: time.toString(),
+							time: sendDate
+						});
+					});
 				break;
 
 				case "non troppo urgente":
@@ -119,7 +128,6 @@ module.exports = {
 				return res.status(403).json({ error: "Accesso negato" });
 
 			res.json({ message: "Evento eliminato" });
-
 		}
 		catch(err) {
 			res.status(400).json({ error: err.message });

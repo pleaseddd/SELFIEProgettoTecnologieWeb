@@ -26,6 +26,12 @@ class SwSubSwitch extends Component {
 
 	async handleChange(checked) {
 		this.setState({ checked });
+
+		if(!('serviceWorker' in navigator)) {
+			console.log("Nessun service worker presente");
+			return;
+		}
+
 		if(checked)
 			await this.handleSubscribe();
 		else
@@ -33,11 +39,6 @@ class SwSubSwitch extends Component {
 	}
 
 	async handleSubscribe() {
-		if(!('serviceWorker' in navigator)) {
-			console.log("Nessun service worker presente");
-			return;
-		}
-
 		if(!('Notification' in window)) {
 			console.log("Questo browser non supporta le notifiche");
 			return;
@@ -69,34 +70,24 @@ class SwSubSwitch extends Component {
 	}
 
 	async handleUnubscribe() {
-		if(!('serviceWorker' in navigator)) {
-			console.log("Nessun service worker manager");
-			return;
-		}
+		navigator.serviceWorker.ready.then(registration => {
+			registration.pushManager.getSubscription().then(sub => {
+				if(!sub) {
+					console.log("Nessuna iscrizione trovata");
+					return;
+				}
 
-		try {
-			navigator.serviceWorker.ready.then(registration => {
-				registration.pushManager.getSubscription().then(sub => {
-					if(!sub) {
-						console.log("Nessuna iscrizione trovata");
-						return;
-					}
+				fetch('/unsubscribe', {
+					method: 'POST',
+					body: JSON.stringify({ endpoint: sub.endpoint }),
+					headers: { 'content-type': 'application/json' }
+				})
+				.then(resp => resp.json())
+				.then(data => console.log(data.message));
 
-					fetch('/unsubscribe', {
-						method: 'POST',
-						body: JSON.stringify({ endpoint: sub.endpoint }),
-						headers: { 'content-type': 'application/json' }
-					})
-					.then(resp => resp.json())
-					.then(data => console.log(data.message));
-
-					sub.unsubscribe();
-				});
+				sub.unsubscribe();
 			});
-		}
-		catch(error) {
-			console.log("Errore nell'iscrizione:", error);
-		}
+		});
 	}
 
 	render() {
