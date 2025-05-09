@@ -34,6 +34,16 @@ const App = () => {
         localStorage.removeItem("user");
     };
 
+	if('serviceWorker' in navigator) {
+		try {
+			navigator.serviceWorker.register('./service-worker.js', { scope: '/' });
+			console.log("service worker registrato!");
+		}
+		catch(error) {
+			console.log("Errore nel service worker:",error);
+		}
+	}
+
     return (
         <Router>
             <Routes>

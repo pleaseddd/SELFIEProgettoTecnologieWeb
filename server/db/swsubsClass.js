@@ -35,7 +35,12 @@ module.exports = {
 		res.status(201).json(subs);
 	},
 
-	"POST_subscribe": (req, res) => {
+	POST_getswsub: async (req, res) => {
+		const sub = await Subscription.findOne({ endpoint: req.body.endpoint });
+		res.status(201).json(sub);
+	},
+
+	POST_subscribe: (req, res) => {
 		try {
 			const sub = Object.assign(req.body.sub, {
 				name: req.body.name,
@@ -53,15 +58,29 @@ module.exports = {
 		}
 	},
 
-	"POST_unsubscribe": async (req, res) => {
+	POST_unsubscribe: async (req, res) => {
 		try {
 			const endpoint = req.body.endpoint;
 			await Subscription.findOneAndDelete({ endpoint });
 
-			res.statis(201).json({ message: "Iscrizione cancellata" });
+			res.status(201).json({ message: "Iscrizione cancellata" });
 		}
 		catch(error) {
 			console.error("Errore nell'eliminare l'iscrizione:", error);
+		}
+	},
+
+	POST_updateswsubname: async (req, res) => {
+		try {
+			const filter = { endpoint: req.body.endpoint };
+			const update = { $set: { name: req.body.name } };
+
+			await Subscription.findOneAndUpdate(filter, update);
+
+			res.status(201).json({ message: "Iscrizione aggiornata" });
+		}
+		catch(err) {
+			console.error("Errore nell'aggiornare l'iscrizione:", err);
 		}
 	},
 

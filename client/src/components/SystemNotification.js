@@ -2,30 +2,45 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const SystemNotification = ({ user }) => {
+	const [device, setDevice] = useState(null);
 
-	const urlBase64ToUint8Array = (base64String) => {
-		const padding = '='.repeat((4 - base64String.length%4) % 4);
-		const base64 = (base64String + padding)
-			.replace(/\-/g, '+')
-			.replace(/_/g, '/');
+	useEffect(() => {
+		const getDevice = async() => {
+			if(!('serviceWorker' in navigator)) {
+				console.log("Nessun service worker manager");
+				return;
+			}
 
-		const rawData = window.atob(base64);
-		const outputArray = new Uint8Array(rawData.length);
+			try {
+				navigator.serviceWorker.ready.then(registration => {
+					registration.pushManager.getSubscription().then(sub => {
+						if(!sub) {
+							setDevice("Nessuna iscrizione");
+							return;
+						}
 
-		for(let i=0; i < rawData.length; ++i) {
-			outputArray[i] = rawData.charCodeAt(i);
-		}
-
-		return outputArray;
-	};
+						fetch('/getswsub', {
+							method: 'POST',
+							headers: { 'content-type': 'application/json' },
+							body: JSON.stringify({ endpoint: sub.endpoint })
+						})
+						.then(resp => resp.json())
+						.then(data => setDevice(data.name));
+					});
+				});
+			}
+			catch(error) {
+				console.log("Erroe:", error);
+			}
+		};
+		getDevice();
+	});
 
 	const handleSubscribe = async () => {
 		if(!('serviceWorker' in navigator)) {
 			console.log("Nessun service worker presente");
 			return;
 		}
-
-		const registration = await navigator.serviceWorker.ready;
 
 		if(!('Notification' in window)) {
 			console.log("Questo browser non supporta le notifiche");
@@ -35,57 +50,65 @@ const SystemNotification = ({ user }) => {
 		const permission = await Notification.requestPermission();
 
 		if(permission === "granted") {
-			const subscription = await registration.pushManager.subscribe({
-				userVisibleOnly: true,
-				applicationServerKey: process.env.REACT_APP_VPKEY_PUBLIC
+			navigator.serviceWorker.ready.then(registration => {
+
+				registration.pushManager.subscribe({
+					userVisibleOnly: true,
+					applicationServerKey: process.env.REACT_APP_VPKEY_PUBLIC
+				}).then(sub => {
+					const subname = document.getElementById("subname").value;
+					fetch('/subscribe', {
+						method: 'POST',
+						body: JSON.stringify({
+							user_id: user._id,
+							name: subname,
+							sub: sub,
+						}),
+						headers: { 'content-type': 'application/json' }
+					})
+					.then(x => x.json())
+					.then(data => console.log(data.message || data.error));
+				});
 			});
-
-			const subname = document.getElementById("subname").value;
-
-			const resp = await fetch('/subscribe', {
-				method: 'POST',
-				body: JSON.stringify({
-					user_id: user._id,
-					name: subname,
-					sub: subscription,
-				}),
-				headers: { 'content-type': 'application/json' }
-			}).then(resp => resp.json());
-
-			console.log(resp.message || resp.error);
 		}
 	};
 
 	const handleUnsubscribe = async () => {
-		if(!('serviceWorker' in navigator)) return;
+		if(!('serviceWorker' in navigator)) {
+			console.log("Nessun service worker manager");
+			return;
+		}
 
-		const registration = await navigator.serviceWorker.ready;
+		try {
+			navigator.serviceWorker.ready.then(registration => {
+				registration.pushManager.getSubscription().then(sub => {
+					if(!sub) {
+						console.log("Nessuna iscrizione trovata");
+						return;
+					}
 
-		let endpoint;
-		await registration.pushManager.getSubscription().then(sub => {
-			if(!sub) {
-				alert("Non sei ancora iscritto!");
-				return;
-			}
+					fetch('/unsubscribe', {
+						method: 'POST',
+						body: JSON.stringify({ endpoint: sub.endpoint }),
+						headers: { 'content-type': 'application/json' }
+					})
+					.then(resp => resp.json())
+					.then(data => console.log(data.message));
 
-			endpoint = sub.endpoint;
-			sub.unsubscribe();
-		});
-
-		const resp = await fetch('/unsubscribe', {
-			method: 'POST',
-			body: JSON.stringify({ endpoint }),
-			headers: { 'content-type': 'application/json' }
-		}).then(resp => resp.json());
-
-		console.log(resp.message);
+					sub.unsubscribe();
+				});
+			});
+		}
+		catch(error) {
+			console.log("Errore nell'iscriziione:", error);
+		}
 	};
 
 	const handleTestNotification = async () => {
-		if(!("serviceWorker" in navigator)) return;
-
-		const registration = await navigator.serviceWorker.ready;
-		const subscription = await registration.pushManager.getSubscription();
+		if(!('serviceWorker' in navigator)) {
+			console.log("Nessun service worker manager");
+			return;
+		}
 
 		const resp = await fetch('/test-notification', {
 			method: 'POST',
@@ -114,18 +137,9 @@ const SystemNotification = ({ user }) => {
 		console.log(resp.message);
 	};
 
-	if('serviceWorker' in navigator) {
-		try {
-			navigator.serviceWorker.register('./service-worker.js', { scope: '/' });
-			console.log("service worker registrato!");
-		}
-		catch(error) {
-			console.error(error);
-		}
-	}
-
     return (
         <div className="container-fluid border border-2 border-dark rounded p-4 mx-3 mx-sm-5 my-4">
+	        <h1 id="device">sei su: {device}</h1>
 	        <input type="text" id="subname" />
 	        <button type="button" className="btn btn-light" onClick={handleSubscribe}>Subscribe</button>
 	        <button type="button" className="btn btn-dark" onClick={handleUnsubscribe}>Unsubscribe</button>

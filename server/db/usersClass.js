@@ -143,7 +143,7 @@ module.exports = {
 					settings: req.body.user.settings
 				}
 			};
-			const user = await User.findOneAndupdate(filter, update);
+			const user = await User.findOneAndUpdate(filter, update);
 
 			res.status(201).json({ message: "Impostazioni cambiate con successo" });
 		}
