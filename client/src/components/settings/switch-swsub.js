@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Switch from "react-switch";
+import Switch from 'react-switch';
 
 class SwSubSwitch extends Component {
 	constructor(props) {

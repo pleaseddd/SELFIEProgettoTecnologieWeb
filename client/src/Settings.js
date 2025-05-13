@@ -9,7 +9,7 @@ import {
   Image,
 } from "react-bootstrap";
 import ConfirmModal from "./components/ConfirmModal";
-import GoogleLoginButton from "./components/settings/GoogleAPI.js";
+import ExternalCalsSection from "./components/settings/ExternalCalendars.js";
 import NotifSection from "./components/settings/NotifSection.js";
 
 function Settings({ user, updateUser }) {
@@ -279,7 +279,7 @@ function Settings({ user, updateUser }) {
 	        </Card.Body>
         </Card>
 
-        {/* Sezione delle altre impostazioni */}
+				{/* Sezione delle altre impostazioni */}
 				<Card className="mb-4 shadow-sm">
 					<Card.Body>
 
@@ -339,7 +339,7 @@ function Settings({ user, updateUser }) {
 
         <NotifSection user={user} />
 
-        <GoogleLoginButton user={user} updateUser={updateUser} />
+        <ExternalCalsSection user={user} updateUser={updateUser} />
 
         {/* Pulsante Salva */}
         <div className="d-grid mb-4">
