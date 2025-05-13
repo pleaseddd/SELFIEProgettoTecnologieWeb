@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const webpush = require("web-push");
 const cors = require("cors");
-require('dotenv').config({ path: __dirname + "/../client/.env" });
+require('dotenv').config({ path: __dirname + "/.env" });
 
 //file interni
 const users = require('./db/usersClass.js');
@@ -13,6 +13,7 @@ const calendar = require('./db/calendarClass.js');
 const swsubs = require('./db/swsubsClass.js');
 const notifs = require('./db/notifClass.js');
 const timeManager = require('./utils/timeManager.js');
+const googleCalendar = require('./utils/googleCalendar.js');
 
 async function connectDatabase() {
 	 await mongoose.connect(process.env.TEST_MONGO_URL);
@@ -31,6 +32,10 @@ app.get('/api/server-time', (req, res) => {
 	res.json({ now });
 });
 
+app.get('/auth/google', googleCalendar.auth);
+app.get('/auth/google/callback', googleCalendar.auth_callback);
+app.post('/google/events', googleCalendar.events);
+
 // service worker subscriptions - CRUD
 app.post('/listsubs', swsubs.POST_list);
 app.post('/getswsub', swsubs.POST_getswsub);
@@ -42,6 +47,7 @@ app.post('/updateswsubname', swsubs.POST_updateswsubname);
 app.post('/newuser', users.POST_new);
 app.post('/userlogin', users.POST_login);
 app.post('/updatesettings', users.POST_settings);
+app.post('/updateUser', users.POST_updateUser);
 
 // note - CRUD
 app.post('/notes', notes.POST_list);
