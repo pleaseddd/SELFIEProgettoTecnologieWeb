@@ -10,11 +10,10 @@ function Home({ user }) {
 		const resp = await fetch('/google/events', {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({ googleTokens: user.google })
+			body: JSON.stringify({ googleTokens: user.google.tokens })
 		}).then(resp => resp.json());
 		setGevents(resp);
 	};
-
 
   return (
     <div

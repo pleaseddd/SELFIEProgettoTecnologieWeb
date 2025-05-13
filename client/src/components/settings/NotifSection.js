@@ -38,9 +38,7 @@ const NotifSection = ({ user }) => {
 
 				{/* Titolo della card */}
 				<div className="d-flex align-items-center mb-4">
-					<h5>
-						Gestione notifiche
-					</h5>
+					<h5>Gestione notifiche</h5>
 				</div>
 
 				<SwSubSwitch label="Consenso per le notifiche" user={user} deviceName={device?.name} />

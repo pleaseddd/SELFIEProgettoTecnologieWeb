@@ -24,7 +24,18 @@ async function connectDatabase() {
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+	origin: '*',
+	credentials: true,
+	allowHeaders: ['Content-Type', 'Authorization']
+}));
+app.use((req, res, next) => {
+	res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+	res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+	res.setHeader('Access-Control-Allow-Credentials', 'true');
+	next();
+});
+
 
 //Prendo l'orario
 app.get('/api/server-time', (req, res) => {
@@ -35,6 +46,7 @@ app.get('/api/server-time', (req, res) => {
 app.get('/auth/google', googleCalendar.auth);
 app.get('/auth/google/callback', googleCalendar.auth_callback);
 app.post('/google/events', googleCalendar.events);
+app.post('/google/logout', googleCalendar.logout);
 
 // service worker subscriptions - CRUD
 app.post('/listsubs', swsubs.POST_list);

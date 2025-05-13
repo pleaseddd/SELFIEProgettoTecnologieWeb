@@ -24,8 +24,15 @@ const UserSchema = new mongoose.Schema({
 	},
 
 	google: {
-		accessToken: String,
-		refreshToken: String
+		isLogged: {
+			type: Boolean,
+			default: false
+		},
+
+		tokens: {
+			access_token: String,
+			refresh_token: String
+		}
 	},
 
 	settings: {
@@ -163,14 +170,14 @@ module.exports = {
 
 	updateGoogleTokens: async (email, tokens) => {
 		const filter = { email };
-		const update = {
-			$set: {
-				google: {
-					accessToken: tokens.access_token,
-					refreshToken: tokens.refresh_token
-				}
-			}
-		};
+		const update = { $set: { google: { isLogged: true, tokens } } };
+
+		return await User.findOneAndUpdate(filter, update);
+	},
+
+	googleLogout: async (id) => {
+		const filter = { _id: id };
+		const update = { $set: { google: { isLogged: false, tokens: {} } } };
 
 		return await User.findOneAndUpdate(filter, update);
 	},
