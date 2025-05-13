@@ -23,6 +23,11 @@ const UserSchema = new mongoose.Schema({
 		default: "https://dummyimage.com/80x80/023430/fff.jpg&text=not a propic"
 	},
 
+	google: {
+		accessToken: String,
+		refreshToken: String
+	},
+
 	settings: {
 		language: {
 			type: String,
@@ -154,6 +159,25 @@ module.exports = {
 
 	findById: async (id) => {
 		return await User.findById(id);
+	},
+
+	updateGoogleTokens: async (email, tokens) => {
+		const filter = { email };
+		const update = {
+			$set: {
+				google: {
+					accessToken: tokens.access_token,
+					refreshToken: tokens.refresh_token
+				}
+			}
+		};
+
+		return await User.findOneAndUpdate(filter, update);
+	},
+
+	POST_updateUser: async (req, res) => {
+		const user = await User.findById(req.body.user_id);
+		res.status(201).json(user);
 	}
 };
 

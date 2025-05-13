@@ -1,10 +1,21 @@
+import { useState } from 'react';
 import NotesCarousel from "./components/home/NotesCarousel.js";
 import Weather from "./components/home/Weather.js";
-import SystemNotification from "./components/SystemNotification.js";
 import CalendarCarousel from "./components/home/CalendarCarousel.js";
-import GoogleAPI from "./components/home/GoogleAPI.js";
 
 function Home({ user }) {
+	const [gevents, setGevents] = useState([]);
+
+	const handleGetEvents = async () => {
+		const resp = await fetch('/google/events', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ googleTokens: user.google })
+		}).then(resp => resp.json());
+		setGevents(resp);
+	};
+
+
   return (
     <div
       style={{
@@ -20,7 +31,17 @@ function Home({ user }) {
       <Weather />
       <NotesCarousel user={user} />
 
-		<GoogleAPI />
+      <button onClick={handleGetEvents}>
+	      Mostra eventi
+      </button>
+
+		<div>
+		{
+			gevents.map(event => (
+				<div key={event.id}>{event.summary}</div>
+			))
+		}
+		</div>
 
     </div>
   );

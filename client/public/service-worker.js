@@ -23,6 +23,6 @@ self.addEventListener("activate", () => {
 	console.log('service worker attivato');
 });
 
-self.addEventListener('fetch', event => {
-	event.respondWith(fetch(event.request));
-});
+// self.addEventListener('fetch', event => {
+// 	event.respondWith(fetch(event.request));
+// });
