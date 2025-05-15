@@ -5,9 +5,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { RRule } from "rrule";
 import { Temporal } from "@js-temporal/polyfill";
 import EventModal from "./components/EventModal";
-
+import { useNavigate } from "react-router-dom";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import it from "date-fns/locale/it";
+import ConfirmModal from "./components/ConfirmModal";
 
 const locales = {
   "it-IT": it,
@@ -27,15 +28,16 @@ function toLocalInput(date) {
   return local.toISOString().slice(0, 16);
 }
 
-
-
-
 function CalendarPage({ user }) {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [serverTime, setServerTime] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showPomodoroConfirm, setShowPomodoroConfirm] = useState(false);
+  const [pomodoroData, setPomodoroData] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     fetch("/api/server-time")
@@ -60,7 +62,7 @@ function CalendarPage({ user }) {
       const data = await response.json();
       if (response.ok) {
         const allEvents = [];
-        if (!serverTime) return; 
+        if (!serverTime) return;
         const now = serverTime.toZonedDateTimeISO("UTC");
         const oneYearLater = now.add({ years: 1 });
 
@@ -103,24 +105,26 @@ function CalendarPage({ user }) {
     } catch (error) {
       console.error("Errore durante il recupero degli eventi:", error);
     }
-  },[serverTime,user._id]);
+  }, [serverTime, user._id]);
 
-  
   useEffect(() => {
     if (serverTime) {
       loadEvents();
     }
-  }, [serverTime,loadEvents]);
-  
+  }, [serverTime, loadEvents]);
+
   const handleSelectSlot = useCallback((slotInfo) => {
     const start = new Date(slotInfo.start);
     const end = new Date(slotInfo.end - 1);
 
-    if (start.toDateString() === end.toDateString() && (end.getTime()-start.getTime()) > 23 * 60 * 60 * 1000) {
+    if (
+      start.toDateString() === end.toDateString() &&
+      end.getTime() - start.getTime() > 23 * 60 * 60 * 1000
+    ) {
       start.setHours(9, 0, 0, 0);
       end.setHours(10, 0, 0, 0);
-    }else if (start.toDateString() === end.toDateString()) {
-      end.setTime(end.getTime() +1);
+    } else if (start.toDateString() === end.toDateString()) {
+      end.setTime(end.getTime() + 1);
     }
 
     setModalData({
@@ -131,17 +135,37 @@ function CalendarPage({ user }) {
     setModalOpen(true);
   }, []);
 
-  const handleSelectEvent = useCallback((event) => {
-    const beginDate = new Date(event.start);
-    const endDate = new Date(event.end);
-
-    setModalData({
-      ...event,
-      begin: toLocalInput(beginDate),
-      end: toLocalInput(endDate),
+  const handlePomodoroRedirect = () => {
+    setShowPomodoroConfirm(false);
+    navigate("/pomodoro", {
+      state: {
+        work: pomodoroData.work,
+        break: pomodoroData.break,
+        duration: pomodoroData.duration,
+      },
     });
-    setIsEditing(true);
-    setModalOpen(true);
+  };
+
+  const handleSelectEvent = useCallback((event) => {
+    if (event.pomodoro?.on === true) {
+      setPomodoroData({
+        work: event.pomodoro.workoption,
+        break: event.pomodoro.breakoption,
+        duration: event.pomodoro.duration,
+      });
+      setSelectedEvent(event); // salva evento completo per riuso
+      setShowPomodoroConfirm(true);
+    } else {
+      const beginDate = new Date(event.start);
+      const endDate = new Date(event.end);
+      setModalData({
+        ...event,
+        begin: toLocalInput(beginDate),
+        end: toLocalInput(endDate),
+      });
+      setIsEditing(true);
+      setModalOpen(true);
+    }
   }, []);
 
   const handleModalSave = async (eventData) => {
@@ -231,6 +255,27 @@ function CalendarPage({ user }) {
         onSave={handleModalSave}
         onDelete={handleModalDelete}
         initialData={modalData}
+      />
+
+      <ConfirmModal
+        show={showPomodoroConfirm}
+        title="Evento Pomodoro"
+        body="Vuoi avviare il timer Pomodoro o modificare l'evento?"
+        confirmText="Vai al Pomodoro"
+        cancelText="Modifica Evento"
+        onConfirm={handlePomodoroRedirect}
+        onCancel={() => {
+          setShowPomodoroConfirm(false);
+          if (!selectedEvent) return;
+
+          setModalData({
+            ...selectedEvent,
+            begin: toLocalInput(new Date(selectedEvent.start)),
+            end: toLocalInput(new Date(selectedEvent.end)),
+          });
+          setIsEditing(true);
+          setModalOpen(true);
+        }}
       />
     </div>
   );

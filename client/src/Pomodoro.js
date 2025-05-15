@@ -1,25 +1,35 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './style/pomodoro.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
+import React, { useState, useEffect, useRef } from "react";
+import "./style/pomodoro.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { useLocation } from "react-router-dom";
 //componente principale Pomodoro
 export default function Pomodoro({ userId }) {
+  const location = useLocation();
   //inizializzazione stato dal local storage
-  const [totalMinutes, setTotalMinutes] = useState(200);
-  const [generatedCycles, setGeneratedCycles] = useState(() =>
-    JSON.parse(localStorage.getItem('pomodoroGeneratedCycles')) || []
+  const [totalMinutes, setTotalMinutes] = useState(
+    () => location.state?.duration || 200
   );
-  const [activeConfig, setActiveConfig] = useState(() =>
-    JSON.parse(localStorage.getItem('pomodoroActiveConfig')) || { work: 25, break: 5 }
+  console.log("Pomodoro received:", location.state);
+  const [generatedCycles, setGeneratedCycles] = useState(
+    () => JSON.parse(localStorage.getItem("pomodoroGeneratedCycles")) || []
   );
-  const [currentCycle, setCurrentCycle] = useState(() =>
-    parseInt(localStorage.getItem('pomodoroCurrentCycle')) || 0
+  const [activeConfig, setActiveConfig] = useState(
+    () =>
+      JSON.parse(localStorage.getItem("pomodoroActiveConfig")) || {
+        work: 25,
+        break: 5,
+      }
   );
-  const [phase, setPhase] = useState(() =>
-    localStorage.getItem('pomodoroPhase') || 'work'
+  const [currentCycle, setCurrentCycle] = useState(
+    () => parseInt(localStorage.getItem("pomodoroCurrentCycle")) || 0
   );
-  const [timeLeft, setTimeLeft] = useState(() =>
-    parseInt(localStorage.getItem('pomodoroTimeLeft')) || activeConfig.work * 60
+  const [phase, setPhase] = useState(
+    () => localStorage.getItem("pomodoroPhase") || "work"
+  );
+  const [timeLeft, setTimeLeft] = useState(
+    () =>
+      parseInt(localStorage.getItem("pomodoroTimeLeft")) ||
+      activeConfig.work * 60
   );
   const [completedCycles, setCompletedCycles] = useState(0);
   const [running, setRunning] = useState(false);
@@ -27,10 +37,14 @@ export default function Pomodoro({ userId }) {
   const [showConfig, setShowConfig] = useState(true);
 
   const [selectedWorkOptions, setSelectedWorkOptions] = useState(() =>
-    JSON.parse(localStorage.getItem('selectedWorkOptions')) || []
+    location.state?.work
+      ? [location.state.work]
+      : JSON.parse(localStorage.getItem("selectedWorkOptions")) || []
   );
   const [selectedBreakOptions, setSelectedBreakOptions] = useState(() =>
-    JSON.parse(localStorage.getItem('selectedBreakOptions')) || []
+    location.state?.break
+      ? [location.state.break]
+      : JSON.parse(localStorage.getItem("selectedBreakOptions")) || []
   );
 
   const intervalRef = useRef(null);
@@ -45,18 +59,27 @@ export default function Pomodoro({ userId }) {
 
   // --- SINCRONIZZA SU localStorage A CAMBIO DI generatedCycles ---
   useEffect(() => {
-    localStorage.setItem('pomodoroGeneratedCycles', JSON.stringify(generatedCycles));
+    localStorage.setItem(
+      "pomodoroGeneratedCycles",
+      JSON.stringify(generatedCycles)
+    );
   }, [generatedCycles]);
 
   // --- SALVA LE SCELTE DELL’UTENTE SU localStorage ---
   useEffect(() => {
-    localStorage.setItem('selectedWorkOptions', JSON.stringify(selectedWorkOptions));
-    localStorage.setItem('selectedBreakOptions', JSON.stringify(selectedBreakOptions));
+    localStorage.setItem(
+      "selectedWorkOptions",
+      JSON.stringify(selectedWorkOptions)
+    );
+    localStorage.setItem(
+      "selectedBreakOptions",
+      JSON.stringify(selectedBreakOptions)
+    );
   }, [selectedWorkOptions, selectedBreakOptions]);
 
   // --- RIPRISTINO STATO DA localStorage ALLA MONTAGGIO COMPONENTE ---
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('pomodoroState'));
+    const saved = JSON.parse(localStorage.getItem("pomodoroState"));
     if (saved) {
       const elapsed = Math.floor((Date.now() - saved.startTime) / 1000);
       const rem = saved.timeLeft - elapsed;
@@ -68,7 +91,7 @@ export default function Pomodoro({ userId }) {
         setRunning(true);
         startTimeRef.current = Date.now() - (saved.timeLeft - rem) * 1000;
       } else {
-        localStorage.removeItem('pomodoroState');
+        localStorage.removeItem("pomodoroState");
       }
     }
   }, []);
@@ -82,7 +105,7 @@ export default function Pomodoro({ userId }) {
 
     startTimeRef.current = Date.now();
     const tick = () => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         if (prev <= 1) {
           nextPhase();
           return 0;
@@ -98,16 +121,15 @@ export default function Pomodoro({ userId }) {
 
   useEffect(() => {
     // Calcola il numero totale di tick in base alla fase corrente
-    const totalTicks = phase === 'work' 
-      ? activeConfig.work * 60 
-      : activeConfig.break * 60;
-    
+    const totalTicks =
+      phase === "work" ? activeConfig.work * 60 : activeConfig.break * 60;
+
     // Genera array di tick con posizione angolare
     const newTicks = Array.from({ length: totalTicks }).map((_, i) => ({
       angle: (i / totalTicks) * 360,
-      elapsed: i < (totalTicks - timeLeft)
+      elapsed: i < totalTicks - timeLeft,
     }));
-  
+
     // Salva i ticks nello state se necessario
   }, [phase, activeConfig, timeLeft]);
 
@@ -125,25 +147,30 @@ export default function Pomodoro({ userId }) {
       currentCycle,
       phase,
       timeLeft,
-      startTime: startTimeRef.current
+      startTime: startTimeRef.current,
     };
-    localStorage.setItem('pomodoroState', JSON.stringify(state));
-    localStorage.setItem('pomodoroActiveConfig', JSON.stringify(activeConfig));
-    localStorage.setItem('pomodoroCurrentCycle', String(currentCycle));
-    localStorage.setItem('pomodoroPhase', phase);
-    localStorage.setItem('pomodoroTimeLeft', String(timeLeft));
+    localStorage.setItem("pomodoroState", JSON.stringify(state));
+    localStorage.setItem("pomodoroActiveConfig", JSON.stringify(activeConfig));
+    localStorage.setItem("pomodoroCurrentCycle", String(currentCycle));
+    localStorage.setItem("pomodoroPhase", phase);
+    localStorage.setItem("pomodoroTimeLeft", String(timeLeft));
   }
 
   // -- GENERAZIONE SUGGERIMENTI CICLI --
   const generateCycles = () => {
     const total = Number(totalMinutes);
-    const works = selectedWorkOptions.length ? selectedWorkOptions : presetWorkOptions;
-    const breaks = selectedBreakOptions.length ? selectedBreakOptions : presetBreakOptions;
+    const works = selectedWorkOptions.length
+      ? selectedWorkOptions
+      : presetWorkOptions;
+    const breaks = selectedBreakOptions.length
+      ? selectedBreakOptions
+      : presetBreakOptions;
     const sugg = [];
-    works.forEach(w =>
-      breaks.forEach(b => {
+    works.forEach((w) =>
+      breaks.forEach((b) => {
         const maxC = Math.floor(total / (w + b));
-        if (maxC > 0) sugg.push({ work: w, break: b, cycles: maxC, total: maxC * (w + b) });
+        if (maxC > 0)
+          sugg.push({ work: w, break: b, cycles: maxC, total: maxC * (w + b) });
       })
     );
     sugg.sort((a, b) => {
@@ -153,122 +180,143 @@ export default function Pomodoro({ userId }) {
         return aIsLongBreak ? 1 : -1;
       }
       return b.cycles - a.cycles;
-      });
-      setGeneratedCycles(sugg);
-      setFinished(false);
+    });
+    setGeneratedCycles(sugg);
+    setFinished(false);
   };
 
   // -- AVVIO NUOVO CICLO --
   const startCycle = ({ work, break: brk }) => {
     setActiveConfig({ work, break: brk });
-    setPhase('work');
+    setPhase("work");
     setTimeLeft(work * 60);
     setRunning(true);
     setFinished(false);
     setCurrentCycle(0);
 
     const circle = circleRef.current;
-    circle.classList.add('working');
-    circle.style.setProperty('--dur', `${work * 60}s`);
+    circle.classList.add("working");
+    circle.style.setProperty("--dur", `${work * 60}s`);
     persistState();
   };
 
   // -- GESTIONE PASSAGGIO FASI --
-const nextPhase = () => {
-  const { work, break: brk } = activeConfig;
+  const nextPhase = () => {
+    const { work, break: brk } = activeConfig;
 
-  if (phase === 'work') {
-    //dal work va in pausa    
-    setPhase('break');
-    setTimeLeft(brk * 60);
-    circle.classList.remove('working');
-    circle.classList.add('onbreak');
-    circle.style.setProperty('--dur', `${brk * 60}s`);
-  } else {
-    const max = generatedCycles.find(c => c.work === work && c.break === brk)?.cycles || 0;
-    setCurrentCycle(prev => {
-      if (prev + 1 >= max) {
-        setFinished(true);
-        setRunning(false);
-        setTimeLeft(work * 60);
-        return prev;
-      } else {
-        // prosegue al work successivo 
-        setPhase('work');
-        setTimeLeft(work * 60);
-        circle.classList.remove('onbreak');
-        circle.classList.add('working');
-        circle.style.setProperty('--dur', `${work * 60}s`);
-        return prev+1;
-      }
-    });
-  }
-  circle.classList.add('pulse-once');
-  setTimeout(() => { circle.classList.remove('pulse-once'); }, 1000);
-};
+    if (phase === "work") {
+      //dal work va in pausa
+      setPhase("break");
+      setTimeLeft(brk * 60);
+      circle.classList.remove("working");
+      circle.classList.add("onbreak");
+      circle.style.setProperty("--dur", `${brk * 60}s`);
+    } else {
+      const max =
+        generatedCycles.find((c) => c.work === work && c.break === brk)
+          ?.cycles || 0;
+      setCurrentCycle((prev) => {
+        if (prev + 1 >= max) {
+          setFinished(true);
+          setRunning(false);
+          setTimeLeft(work * 60);
+          return prev;
+        } else {
+          // prosegue al work successivo
+          setPhase("work");
+          setTimeLeft(work * 60);
+          circle.classList.remove("onbreak");
+          circle.classList.add("working");
+          circle.style.setProperty("--dur", `${work * 60}s`);
+          return prev + 1;
+        }
+      });
+    }
+    circle.classList.add("pulse-once");
+    setTimeout(() => {
+      circle.classList.remove("pulse-once");
+    }, 1000);
+  };
 
   // -- FORMATTATORE ORE:MINUTI --
-  const formatTime = secs =>
-    `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`;
+  const formatTime = (secs) =>
+    `${String(Math.floor(secs / 60)).padStart(2, "0")}:${String(
+      secs % 60
+    ).padStart(2, "0")}`;
 
   return (
-    <div className={`pomodoro-root ${showConfig ? '' : 'config-closed'}`}>
+    <div className={`pomodoro-root ${showConfig ? "" : "config-closed"}`}>
       <button
-          className={`gear-btn ${showConfig ? '' : 'rotated'}`}
-          onClick={() => setShowConfig(!showConfig)}
-        >
-          <i className="bi bi-gear-fill" />
-        </button>
+        className={`gear-btn ${showConfig ? "" : "rotated"}`}
+        onClick={() => setShowConfig(!showConfig)}
+      >
+        <i className="bi bi-gear-fill" />
+      </button>
       {/* TIMER */}
       <div className="timer-container">
         <div className="timer-section">
-        <div ref={circleRef} className="timer-circle">
-    <span className="timer-text">{formatTime(timeLeft)}</span>
+          <div ref={circleRef} className="timer-circle">
+            <span className="timer-text">{formatTime(timeLeft)}</span>
 
-    {/* → CERCHIO DI 60 TICK */}
-    <div className="ticks-container">
-  {Array.from({ length: tickCount }).map((_, i) => {
-    const totalSeconds = phase === 'work' 
-      ? activeConfig.work * 60 
-      : activeConfig.break * 60;
-    const progress = ((totalSeconds - timeLeft) / totalSeconds) * tickCount;
-    
-    return (
-      <div key={i} className={`tick ${i > (tickCount -1) - Math.floor(progress) ? 'hidden' : ''}`}
-        style={{ transform: `rotate(${i * (360 / tickCount)}deg) translateY(-103px)` }} /> );
-  })}
-</div>
-  </div>
+            {/* → CERCHIO DI 60 TICK */}
+            <div className="ticks-container">
+              {Array.from({ length: tickCount }).map((_, i) => {
+                const totalSeconds =
+                  phase === "work"
+                    ? activeConfig.work * 60
+                    : activeConfig.break * 60;
+                const progress =
+                  ((totalSeconds - timeLeft) / totalSeconds) * tickCount;
+
+                return (
+                  <div
+                    key={i}
+                    className={`tick ${
+                      i > tickCount - 1 - Math.floor(progress) ? "hidden" : ""
+                    }`}
+                    style={{
+                      transform: `rotate(${
+                        i * (360 / tickCount)
+                      }deg) translateY(-103px)`,
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
           <div className="phase-box">
-            <strong>{phase === 'work' ? 'Studio' : 'Pausa'}</strong> – Ciclo{' '}
+            <strong>{phase === "work" ? "Studio" : "Pausa"}</strong> – Ciclo{" "}
             {currentCycle + 1}
           </div>
           <div className="controls">
-          <button
-            onClick={() => {
-              if (finished && !running) {
-                //se la sessione è finita e viene premuto “▶️”, rilancia la configurazione
-                startCycle(activeConfig);
-                // startCycle() al suo interno resetta setFinished(false)
-              } else {
-                //altrimenti  come prima (play/pause)
-                setRunning(r => !r);
-              }
-            }}
-          >
-            {running ? '⏸️' : '▶️'}
-          </button>
+            <button
+              onClick={() => {
+                if (finished && !running) {
+                  //se la sessione è finita e viene premuto “▶️”, rilancia la configurazione
+                  startCycle(activeConfig);
+                  // startCycle() al suo interno resetta setFinished(false)
+                } else {
+                  //altrimenti  come prima (play/pause)
+                  setRunning((r) => !r);
+                }
+              }}
+            >
+              {running ? "⏸️" : "▶️"}
+            </button>
             <button
               onClick={() =>
                 setTimeLeft(
-                  (phase === 'work' ? activeConfig.work : activeConfig.break) * 60
+                  (phase === "work" ? activeConfig.work : activeConfig.break) *
+                    60
                 )
               }
             >
               🔄
             </button>
             <button
-              onClick={() => { if (finished) { if (running) {
+              onClick={() => {
+                if (finished) {
+                  if (running) {
                     setFinished(false);
                   } else {
                     startCycle(activeConfig);
@@ -276,14 +324,17 @@ const nextPhase = () => {
                 } else {
                   nextPhase();
                 }
-              }} > {finished ? (running ? '⏭️' : '⏮️') : '⏭️'}
+              }}
+            >
+              {" "}
+              {finished ? (running ? "⏭️" : "⏮️") : "⏭️"}
             </button>
           </div>
         </div>
       </div>
 
       {/* CONFIGURAZIONE */}
-      <div className={`config-wrapper ${showConfig ? '' : 'collapsed'}`}>
+      <div className={`config-wrapper ${showConfig ? "" : "collapsed"}`}>
         <div className="config-header">
           <h2>Configurazione Manuale</h2>
         </div>
@@ -296,8 +347,8 @@ const nextPhase = () => {
                 type="number"
                 className="form-control form-control-sm"
                 value={totalMinutes}
-                onChange={e =>
-                  setTotalMinutes(e.target.value.replace(/\D/g, ''))
+                onChange={(e) =>
+                  setTotalMinutes(e.target.value.replace(/\D/g, ""))
                 }
               />
             </div>
@@ -315,7 +366,7 @@ const nextPhase = () => {
           {/* opzioni lavoro */}
           <div className="mt-2">
             <div className="btn-group" role="group">
-              {presetWorkOptions.map(w => {
+              {presetWorkOptions.map((w) => {
                 const id = `work-${w}`;
                 return (
                   <React.Fragment key={w}>
@@ -326,9 +377,9 @@ const nextPhase = () => {
                       autoComplete="off"
                       checked={selectedWorkOptions.includes(w)}
                       onChange={() =>
-                        setSelectedWorkOptions(prev =>
+                        setSelectedWorkOptions((prev) =>
                           prev.includes(w)
-                            ? prev.filter(x => x !== w)
+                            ? prev.filter((x) => x !== w)
                             : [...prev, w]
                         )
                       }
@@ -348,7 +399,7 @@ const nextPhase = () => {
           {/* opzioni pausa */}
           <div className="mt-2">
             <div className="btn-group" role="group">
-              {presetBreakOptions.map(b => {
+              {presetBreakOptions.map((b) => {
                 const id = `break-${b}`;
                 return (
                   <React.Fragment key={b}>
@@ -359,9 +410,9 @@ const nextPhase = () => {
                       autoComplete="off"
                       checked={selectedBreakOptions.includes(b)}
                       onChange={() =>
-                        setSelectedBreakOptions(prev =>
+                        setSelectedBreakOptions((prev) =>
                           prev.includes(b)
-                            ? prev.filter(x => x !== b)
+                            ? prev.filter((x) => x !== b)
                             : [...prev, b]
                         )
                       }
@@ -384,14 +435,12 @@ const nextPhase = () => {
               {generatedCycles.map((c, i) => (
                 <div key={i} className="cycle-suggestion">
                   <p>
-                    {c.cycles} cicli da: {c.work} minuti + {c.break} minuti ={' '}
+                    {c.cycles} cicli da: {c.work} minuti + {c.break} minuti ={" "}
                     {c.total} minuti
                   </p>
                   <button
                     className="btn btn-sm btn-outline-success"
-                    onClick={() =>
-                      startCycle({ work: c.work, break: c.break })
-                    }
+                    onClick={() => startCycle({ work: c.work, break: c.break })}
                   >
                     ▶️
                   </button>

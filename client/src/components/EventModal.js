@@ -1,6 +1,7 @@
 import ConfirmModal from "./ConfirmModal";
 import { useState, useEffect } from "react";
 import { RRule } from "rrule";
+import Switch from "react-switch";
 
 function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [title, setTitle] = useState("");
@@ -10,6 +11,13 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [isRecurring, setIsRecurring] = useState(false);
+  const [Pomodoro, setPomodoro] = useState({
+    on: false,
+    duration: 0,
+    workoption: 25,
+    breakoption: 5,
+  });
+
   const [freq, setFreq] = useState("");
   const [interval, setInterval] = useState(1);
   const [byweekday, setByweekday] = useState([]);
@@ -23,8 +31,8 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [bymonthdayYearly, setBymonthdayYearly] = useState("1");
   const [color, setColor] = useState("#3788d8");
   const categories = user.settings.categoryEvents.split("/");
-
-
+  const presetWorkOptions = [10, 20, 25, 30, 35];
+  const presetBreakOptions = [5, 10, 15];
   //MODALE DI CONFERMA
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,6 +50,12 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       setEnd(initialData.end || "");
       setIsRecurring(initialData.isRecurring || false);
       setColor(initialData.color || "#3788d8");
+      setPomodoro({
+        on: initialData.pomodoro?.on || false,
+        duration: initialData.pomodoro?.duration || 0,
+        workoption: initialData.pomodoro?.workoption || 25,
+        breakoption: initialData.pomodoro?.breakoption || 5,
+      });
 
       if (initialData.rruleStr) {
         const rule = RRule.fromString(initialData.rruleStr);
@@ -81,6 +95,15 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       }
     }
   }, [initialData]);
+
+  useEffect(() => {
+    if (Pomodoro.on && start && end) {
+      const startTime = new Date(start);
+      const endTime = new Date(end);
+      const minutes = Math.floor((endTime - startTime) / 60000);
+      setPomodoro((prev) => ({ ...prev, duration: minutes }));
+    }
+  }, [Pomodoro.on, start, end, category]);
 
   const handleCheckboxChange = (day) => {
     setByweekday((prev) =>
@@ -131,6 +154,12 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       isRecurring,
       rruleStr: isRecurring ? buildRRuleString() : null,
       color,
+      pomodoro: {
+        on: Pomodoro.on,
+        duration: Pomodoro.duration,
+        workoption: Pomodoro.workoption,
+        breakoption: Pomodoro.breakoption,
+      },
     };
     onSave(event);
   };
@@ -181,6 +210,82 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
                 ))}
               </select>
             </div>
+
+            <div className="mb-3">
+              <div className="d-flex align-items-center">
+                <Switch
+                  className="me-2"
+                  id="pomodoroCheck"
+                  onChange={() =>
+                    setPomodoro((prev) => ({ ...prev, on: !prev.on }))
+                  }
+                  checked={Pomodoro.on}
+                  onColor="#3788d8"
+                  offColor="#ccc"
+                  uncheckedIcon={false}
+                  checkedIcon={false}
+                />
+                <label
+                  className="form-check-label mb-0"
+                  htmlFor="pomodoroCheck"
+                >
+                  Pomodoro
+                </label>
+              </div>
+            </div>
+
+            {Pomodoro.on && (
+              <div className="border rounded p-2">
+                <div className="mb-2">
+                  <strong>Durata evento:</strong> {Pomodoro.duration} minuti
+                </div>
+                <div className="mb-2">
+                  <label className="form-label">
+                    Durata sessione di <strong>{category}</strong>:
+                  </label>
+                  <div className="d-flex flex-wrap gap-2">
+                    {presetWorkOptions.map((opt) => (
+                      <button
+                        key={opt}
+                        type="button"
+                        className={`btn ${
+                          Pomodoro.workoption === opt
+                            ? "btn-primary"
+                            : "btn-outline-primary"
+                        }`}
+                        onClick={() =>
+                          setPomodoro((prev) => ({ ...prev, workoption: opt }))
+                        }
+                      >
+                        {opt} min
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="mb-2">
+                  <label className="form-label">Durata pausa:</label>
+                  <div className="d-flex flex-wrap gap-2">
+                    {presetBreakOptions.map((opt) => (
+                      <button
+                        key={opt}
+                        type="button"
+                        className={`btn ${
+                          Pomodoro.breakoption === opt
+                            ? "btn-success"
+                            : "btn-outline-success"
+                        }`}
+                        onClick={() =>
+                          setPomodoro((prev) => ({ ...prev, breakoption: opt }))
+                        }
+                      >
+                        {opt} min
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="mb-3">
               <label className="form-label">Luogo</label>
               <input
@@ -230,17 +335,25 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
               />
             </div>
 
-            <div className="form-check mb-3">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                checked={isRecurring}
-                onChange={() => setIsRecurring(!isRecurring)}
-                id="recurringCheck"
-              />
-              <label className="form-check-label" htmlFor="recurringCheck">
-                Evento ricorrente
-              </label>
+            <div className="mb-3">
+              <div className="d-flex align-items-center">
+                <Switch
+                  className="me-2"
+                  id="recurringCheck"
+                  onChange={() => setIsRecurring(!isRecurring)}
+                  checked={isRecurring}
+                  onColor="#3788d8"
+                  offColor="#ccc"
+                  uncheckedIcon={false}
+                  checkedIcon={false}
+                />
+                <label
+                  className="form-check-label mb-0"
+                  htmlFor="recurringCheck"
+                >
+                  Evento ricorrente
+                </label>
+              </div>
             </div>
 
             {isRecurring && (
@@ -415,7 +528,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
             <ConfirmModal
               show={showConfirm}
               title="Elimina Evento"
-              body="Sei sicuro di voler eliminare questo evento?" 
+              body="Sei sicuro di voler eliminare questo evento?"
               confirmText="Elimina"
               cancelText="Annulla"
               loading={loading}
