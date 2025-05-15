@@ -1,7 +1,17 @@
 const cron = require("node-cron");
+const webpush = require('web-push');
+const notifs = require('../db/notifClass.js');
+const swsubs = require('../db/swsubsClass.js');
+require('dotenv').config({ path: __dirname + '/../.env' });
 
 module.exports = {
 	setCronFunc: () => {
+		webpush.setVapidDetails(
+			"mailto:isabella.amaducci3@studio.unibo.it",
+			process.env.VPKEY_PUBLIC,
+			process.env.VPKEY_PRIVATE
+		);
+
 		cron.schedule('* * * * *', async () => {
 			const pendings = await notifs.findCurrentPendings();
 
@@ -18,7 +28,8 @@ module.exports = {
 				console.log("notifica mandata con successo");
 			});
 		});
-		console.log("node-cron settato");
+
+		console.log("in ascolto per mandare notifiche");
 	},
 
 	Time: class Time {
