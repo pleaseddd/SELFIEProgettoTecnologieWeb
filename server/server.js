@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 const path = require("path");
 const webpush = require("web-push");
 const cors = require("cors");
-require('dotenv').config({ path: __dirname + "/.env" });
+
+const test = true;
+require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
 
 //file interni
 const users = require('./db/usersClass.js');
@@ -16,8 +18,7 @@ const timeManager = require('./utils/timeManager.js');
 const googleCalendar = require('./utils/googleCalendar.js');
 
 async function connectDatabase() {
-	 await mongoose.connect(process.env.TEST_MONGO_URL);
-	// await mongoose.connect(process.env.MONGO_URL);
+	await mongoose.connect(process.env.MONGO_URL);
 	console.log("database connesso");
 }
 
@@ -47,6 +48,7 @@ app.get('/auth/google', googleCalendar.auth);
 app.get('/auth/google/callback', googleCalendar.auth_callback);
 app.post('/google/events', googleCalendar.events);
 app.post('/google/logout', googleCalendar.logout);
+app.post('/google/getcalendars', googleCalendar.getCalendars);
 
 // service worker subscriptions - CRUD
 app.post('/listsubs', swsubs.POST_list);
@@ -83,9 +85,8 @@ app.get("*", (req, res) => {
 });
 
 app.listen(process.env.PORT, async () => {
-	console.log(`Server started on ${process.env.WEB_URL}`);
+	console.log(`Server started on ${process.env.WEB_URL}:${process.env.PORT}`);
 
 	await connectDatabase().catch(err => console.log(err));
-	notifs.setVapidKeys();
 	timeManager.setCronFunc();
 });

@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const webpush = require('web-push');
-require('dotenv').config({ path: __dirname + "/../client/.env" });
+
+const options = {
+	collection: 'notifs',
+	timestamps: true,
+	discriminatorKey: 'kind'
+};
 
 const NotifSchema = new mongoose.Schema({
 	user: {
@@ -28,12 +33,27 @@ const NotifSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	}
-}, {
-	collection: "notifs",
-	timestamps: true
-});
+}, options);
 
 const Notification = mongoose.model('Notification', NotifSchema);
+
+/*
+const EventNotif = Notification.discriminator(
+	'EventNotif',
+	new mongoose.Schema({
+		event: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Event'
+		},
+	}, options)
+);
+
+const PomodoroNotif = Notification.discriminator(
+	'PomodoroNotif',
+	new mongoose.Schema({
+		pomodoro: {}
+	}, options)
+);*/
 
 module.exports = {
 	new_notif: async (notif) => {
@@ -58,14 +78,5 @@ module.exports = {
 		const update = { sent: true };
 
 		await Notification.findOneAndUpdate(filter, update);
-	},
-
-	setVapidKeys: () => {
-		webpush.setVapidDetails(
-			"mailto:isabella.amaducci3@studio.unibo.it",
-			process.env.VPKEY_PUBLIC,
-			process.env.VPKEY_PRIVATE
-		);
-		console.log("web-push settato");
 	}
 };

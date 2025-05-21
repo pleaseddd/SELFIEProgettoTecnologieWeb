@@ -57,7 +57,7 @@ module.exports = {
 			.then(resp => resp.data.items);
 
 		const resp = await calendar.events.list({
-			calendarId: '12e1bcc906241278fe37f5a035e685ea59b79798f1d8350bd1a7809593fcad13@group.calendar.google.com',
+			calendarId: calslist[calslist.length-1].id,
 			timeMin: new Date().toISOString(),
 			maxResults: 5,
 			orderBy: 'startTime',
@@ -65,5 +65,30 @@ module.exports = {
 		});
 
 		res.json(resp.data.items);
+	},
+
+	getCalendars: async (req, res) => {
+		oauth2Client.setCredentials(req.body.googleTokens);
+
+		const calendar = google.calendar({
+			version: 'v3',
+			auth: oauth2Client
+		});
+
+		const calslist = await calendar.calendarList.list()
+			.then(resp => resp.data.items);
+
+		res.status(200).json(calslist);
+	},
+
+	newEvent: async (tokens) => {
+		oauth2Client.setCredentials(tokens);
+
+		const calendar = google.calendar({
+			version: 'v3',
+			auth: oauth2Client
+		});
+
+
 	}
 };

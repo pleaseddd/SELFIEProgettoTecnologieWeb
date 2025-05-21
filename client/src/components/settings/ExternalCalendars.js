@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { Card } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
+import { Card, Form } from 'react-bootstrap';
 import GoogleButton from 'react-google-button';
 
 const GoogleAuth = ({ user, updateUser }) => {
@@ -42,6 +42,51 @@ const GoogleAuth = ({ user, updateUser }) => {
 	);
 };
 
+const GoogleCalendarUsed = ({ user }) => {
+	const [calslist, setCalslist] = useState([]);
+
+	useEffect(() => {
+		const load = async () => {
+			const data = await fetch('/google/getcalendars', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ googleTokens: user.google.tokens })
+			}).then(resp => resp.json());
+			setCalslist(data);
+		}
+		load();
+	}, []);
+
+	return (
+		<div>
+			<Form.Label className="my-2">
+				Gli eventi saranno salvati in
+			</Form.Label>
+			<div
+				style={{
+					maxHeight: "120px",
+					overflowY: "auto",
+					border: "1px solid #ccc",
+					borderRadius: "5px",
+					padding: "0.5rem",
+				}}
+			>
+			{
+				calslist.map(cal => (
+					<div key={cal.id}>
+						<Form.Check
+							type="radio"
+							name="cals"
+							label={cal.summary}
+						/>
+					</div>
+				))
+			}
+			</div>
+		</div>
+	);
+};
+
 const ExternalCalsSection = ({ user, updateUser }) => {
 	return (
 		<Card className="mb-4 shadow-sm">
@@ -51,6 +96,7 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 				</div>
 
 				<GoogleAuth user={user} updateUser={updateUser} />
+				<GoogleCalendarUsed user={user} />
 			</Card.Body>
 		</Card>
 	);
