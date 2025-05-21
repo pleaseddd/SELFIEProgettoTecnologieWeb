@@ -9,7 +9,6 @@ export default function Pomodoro({ userId }) {
   const [totalMinutes, setTotalMinutes] = useState(
     () => location.state?.duration || 200
   );
-  console.log("Pomodoro received:", location.state);
   const [generatedCycles, setGeneratedCycles] = useState(
     () => JSON.parse(localStorage.getItem("pomodoroGeneratedCycles")) || []
   );
@@ -56,6 +55,13 @@ export default function Pomodoro({ userId }) {
 
   const circle = circleRef.current;
   const tickCount = 120;
+
+  useEffect(() => {
+  if (location.state !== null) {
+    generateCycles();
+  }
+}, []); // Solo al primo render
+
 
   // --- SINCRONIZZA SU localStorage A CAMBIO DI generatedCycles ---
   useEffect(() => {
