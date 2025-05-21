@@ -534,6 +534,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
               loading={loading}
               onConfirm={confirmDelete}
               onCancel={closeConfirm}
+              onClose={closeConfirm}
             />
             <div>
               <button
