@@ -56,6 +56,7 @@ function RemoveNote({ noteId, userId, onSuccess }) {
         loading={loading}
         onConfirm={handleConfirm}
         onCancel={closeConfirm}
+        onClose={closeConfirm}
       />
     </>
   );

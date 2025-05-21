@@ -56,6 +56,7 @@ function NoteView({ show, onClose, note, onEdit, onDelete }) {
         loading={loading}
         onConfirm={confirmDelete}
         onCancel={closeConfirm}
+        onClose={closeConfirm}
       />
     </Modal>
   );
