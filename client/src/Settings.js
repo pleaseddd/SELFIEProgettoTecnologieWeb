@@ -337,9 +337,6 @@ function Settings({ user, updateUser }) {
 	        </Card.Body>
         </Card>
 
-        <NotifSection user={user} />
-
-        <ExternalCalsSection user={user} updateUser={updateUser} />
 
         {/* Pulsante Salva */}
         <div className="d-grid mb-4">
@@ -358,6 +355,9 @@ function Settings({ user, updateUser }) {
           />
         </div>
 
+        <NotifSection user={user} />
+
+        <ExternalCalsSection user={user} updateUser={updateUser} />
 
       </Card>
 

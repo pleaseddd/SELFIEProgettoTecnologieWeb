@@ -40,7 +40,7 @@ const App = () => {
 			console.log("service worker registrato!");
 		}
 		catch(error) {
-			console.log("Errore nel service worker:",error);
+			console.log("Errore nel service worker:", error);
 		}
 	}
 

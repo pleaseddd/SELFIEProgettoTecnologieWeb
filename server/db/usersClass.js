@@ -32,6 +32,11 @@ const UserSchema = new mongoose.Schema({
 		tokens: {
 			access_token: String,
 			refresh_token: String
+		},
+
+		cal: {
+			id: String,
+			name: String
 		}
 	},
 
