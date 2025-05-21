@@ -3,6 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useNavigate } from "react-router-dom";
 import { Carousel } from "bootstrap";
+import { FaRegCalendarDays } from "react-icons/fa6";
+import { FaRegHourglassHalf } from "react-icons/fa6";
 
 function CalendarCarousel({ user }) {
   const [events, setEvents] = useState([]);
@@ -56,17 +58,30 @@ function CalendarCarousel({ user }) {
         interval: 5000,
         ride: "carousel",
         pause: false,
-        wrap: true
+        wrap: true,
       });
       carousel.cycle(); // forza l'inizio immediato
     }
   }, [events]);
-  return (
+  return events.length === 0 ? (
+    <div
+      className="d-flex justify-content-center align-items-center flex-column p-4"
+      style={{ minHeight: "200px", cursor: "pointer" }}
+      onClick={() => navigate("/Calendario")}
+    >
+      <div className="alert alert-info text-center shadow-sm">
+        <span className="d-inline-flex align-items-center gap-2">
+          Non hai nessun evento in arrivo. Clicca qui per andare al calendario
+          <FaRegCalendarDays />
+        </span>
+      </div>
+    </div>
+  ) : (
     <div
       id="eventCarousel"
       className="carousel slide"
       data-bs-ride="carousel"
-      data-bs-interval="5000" // auto slide ogni 5 secondi
+      data-bs-interval="5000"
     >
       <div className="carousel-inner">
         {events.map((event, index) => (
@@ -101,7 +116,7 @@ function CalendarCarousel({ user }) {
                 })}
               </p>
               <span className="badge bg-warning text-dark">
-                ⏳ {countdowns[index]}
+                <FaRegHourglassHalf /> {countdowns[index]}
               </span>
             </div>
           </div>

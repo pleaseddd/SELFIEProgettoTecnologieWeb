@@ -276,6 +276,10 @@ function CalendarPage({ user }) {
           setIsEditing(true);
           setModalOpen(true);
         }}
+        onClose={() => {
+          setShowPomodoroConfirm(false);
+          if (!selectedEvent) return;
+        }}
       />
     </div>
   );

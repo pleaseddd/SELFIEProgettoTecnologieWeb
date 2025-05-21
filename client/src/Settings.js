@@ -352,6 +352,7 @@ function Settings({ user, updateUser }) {
             loading={loading}
             onConfirm={handleSaveSettings}
             onCancel={closeConfirm}
+			onClose={closeConfirm}
           />
         </div>
 

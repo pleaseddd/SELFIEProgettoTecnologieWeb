@@ -9,10 +9,11 @@ function ConfirmModal({
   cancelText = 'Annulla',
   onConfirm,
   onCancel,
+  onClose,
   loading = false,
 }) {
   return (
-    <Modal show={show} onHide={onCancel} centered>
+    <Modal show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
