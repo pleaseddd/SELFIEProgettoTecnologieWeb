@@ -1,13 +1,13 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 
-
 function MainLayout({ children, user, logout }) {
   const [showSidebar, setShowSidebar] = useState(false);
   const toggleSidebar = () => setShowSidebar(!showSidebar);
 
   return (
     <div>
+
 			{/* Immagine profilo cliccabile */}
 			<img
 				src={user?.propic || "https://dummyimage.com/80x80/000/fff.jpg&text=404"}
