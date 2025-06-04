@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Card, Form } from 'react-bootstrap';
+import { Card, Form, Button } from 'react-bootstrap';
 import GoogleButton from 'react-google-button';
+import SaveButton from './SaveButton';
 
 const GoogleAuth = ({ user, updateUser }) => {
 	useEffect(async () => {
@@ -44,6 +45,8 @@ const GoogleAuth = ({ user, updateUser }) => {
 
 const GoogleCalendarUsed = ({ user }) => {
 	const [calslist, setCalslist] = useState([]);
+	const [selcal, setSelcal] = useState('');
+
 
 	useEffect(() => {
 		const load = async () => {
@@ -56,6 +59,22 @@ const GoogleCalendarUsed = ({ user }) => {
 		}
 		load();
 	}, []);
+
+	const onOptionChange = e => {
+		setSelcal(e.target.value);
+	};
+
+	const handleSave = async () => {
+		const resp = await fetch('google/setGcal', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({
+				user_id: user._id,
+				calname: selcal
+			})
+		}).then(resp => resp.json());
+		console.log(resp.message);
+	}
 
 	return (
 		<div>
@@ -78,11 +97,20 @@ const GoogleCalendarUsed = ({ user }) => {
 							type="radio"
 							name="cals"
 							label={cal.summary}
+							value={cal.summary}
+							onChange={onOptionChange}
+							checked={selcal===cal.summary}
 						/>
 					</div>
 				))
 			}
 			</div>
+
+			<SaveButton
+				handleSave={handleSave}
+				label="Salva i calendari esterni"
+				confirmLabel="Confermi di voler salvare?"
+			/>
 		</div>
 	);
 };

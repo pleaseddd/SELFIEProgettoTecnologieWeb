@@ -68,17 +68,22 @@ module.exports = {
 	},
 
 	getCalendars: async (req, res) => {
-		oauth2Client.setCredentials(req.body.googleTokens);
+		try {
+			oauth2Client.setCredentials(req.body.googleTokens);
 
-		const calendar = google.calendar({
-			version: 'v3',
-			auth: oauth2Client
-		});
+			const calendar = google.calendar({
+				version: 'v3',
+				auth: oauth2Client
+			});
 
-		const calslist = await calendar.calendarList.list()
-			.then(resp => resp.data.items);
+			const calslist = await calendar.calendarList.list()
+				.then(resp => resp.data.items);
 
-		res.status(200).json(calslist);
+			res.status(200).json(calslist);
+		}
+		catch(err) {
+			console.error('Errore:', err);
+		}
 	},
 
 	newEvent: async (tokens) => {

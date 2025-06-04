@@ -188,8 +188,16 @@ module.exports = {
 	},
 
 	POST_updateUser: async (req, res) => {
-		const user = await User.findById(req.body.user_id);
-		res.status(201).json(user);
+	},
+
+	POST_setGCal: async (req, res) => {
+		const filter = { _id: req.body.user_id };
+		const update: {
+			$set: {
+
+			}};
+
+		res.status(201).json({ message: 'tutto ok' });
 	}
 };
 

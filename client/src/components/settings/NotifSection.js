@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, Form, Button } from "react-bootstrap";
+
+import SaveButton from './SaveButton';
+
 import SwSubSwitch from "./switch-swsub.js";
 import { useDevice } from "../../hooks/swsubsHooks.js";
 
@@ -32,6 +35,10 @@ const NotifSection = ({ user }) => {
 		setDevice(prev => ({...prev, name: newName}));
 	};
 
+	const handleSave = () => {
+		console.log('ho salvato');
+	}
+
 	return (
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
@@ -63,6 +70,12 @@ const NotifSection = ({ user }) => {
 						</Button>
 					</div>
 				</Form.Group>
+
+				<SaveButton
+					handleSave={handleSave}
+					label="Salva impostazioni notifiche"
+					confirmLabel="Confermi di voler salvare?"
+				/>
 			</Card.Body>
 		</Card>
 	);
