@@ -1,10 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
-
 import MainLayout from "./components/Layout";
-
 import Login from "./Login";
-
 import Home from "./Home";
 import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
