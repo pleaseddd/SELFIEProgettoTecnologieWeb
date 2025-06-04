@@ -7,6 +7,7 @@ import NoteView from "./components/NoteView";
 import "./style/note.css";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { BsArrowsFullscreen } from "react-icons/bs";
+import { FaArrowUp } from "react-icons/fa6";
 
 function NotesPages({ user }) {
   const [notes, setNotes] = useState([]);
@@ -87,6 +88,7 @@ function NotesPages({ user }) {
     setSelectedNote(note);
     setShowNoteView(false);
     setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
       const editForm = document.getElementById("addNoteForm");
       if (editForm) editForm.scrollIntoView({ behavior: "smooth" });
     }, 300);
@@ -113,14 +115,15 @@ function NotesPages({ user }) {
                   <div
                     className="card shadow-sm h-100 d-flex flex-column"
                     style={{ cursor: "pointer" }}
-                    onClick={() => openNoteView(note)}
                   >
                     <div className="card-body flex-grow-1">
                       <h5 className="card-title">{note.title}</h5>
                       <h6 className="card-subtitle mb-2 text-muted">
                         {note.category || "Senza categoria"}
                       </h6>
-                      <p className="card-text">{note.body}</p>
+                      <p className="card-text">
+                        <div dangerouslySetInnerHTML={{ __html: note.body }} />
+                      </p>
                     </div>
                     <div className="card-footer bg-transparent border-top-0 d-flex justify-content-between px-3 pb-3">
                       <div onClick={(e) => e.stopPropagation()}>
@@ -180,6 +183,25 @@ function NotesPages({ user }) {
         onClick={() => setShowFilterPanel((prev) => !prev)}
       >
         <FaMagnifyingGlass size={20} />
+      </button>
+
+      {/* Scroll to Top Button */}
+      <button
+        className="btn btn-secondary rounded-circle d-flex align-items-center justify-content-center"
+        style={{
+          position: "fixed",
+          bottom: "80px",
+          right: "20px",
+          zIndex: 1000,
+          width: "50px",
+          height: "50px",
+          padding: 0,
+        }}
+        onClick={() => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      >
+        <FaArrowUp />
       </button>
 
       {/* Filter Panel Overlay */}
