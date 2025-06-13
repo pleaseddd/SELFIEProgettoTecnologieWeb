@@ -79,7 +79,7 @@ function CalendarCarousel({ user }) {
   ) : (
     <div
       id="eventCarousel"
-      className="carousel slide"
+      className="carousel slide carousel-fade"
       data-bs-ride="carousel"
       data-bs-interval="5000"
     >

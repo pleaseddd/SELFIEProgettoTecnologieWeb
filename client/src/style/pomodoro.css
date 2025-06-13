@@ -168,6 +168,7 @@
 
 /* circle styling */
 .timer-circle {
+  box-sizing: border-box;
   position: relative;
   width: 200px;
   height: 200px;
@@ -179,8 +180,8 @@
 }
 
 .ticks-container {
-  top: 44%;  
-  left: 50%; 
+  top: 45%;  
+  left: 49.5%; 
   position: absolute;
   width: 120%;
   height: 120%;
@@ -197,7 +198,7 @@
   width: 2px;
   height: 11px;
   transform-origin: 50% 100%;
-  transform: translateY(-102px);
+  transform: translateY(-103px);
   top: 50%;
   transition: opacity 0.5s ease;
   border-radius: 2px;
@@ -344,11 +345,6 @@
     width: 100%;
     max-width: 300px;
     height: auto;
-  }
-
-  .timer-circle {
-    width: 180px;
-    height: 180px;
   }
 
   .timer-text {

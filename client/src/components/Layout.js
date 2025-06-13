@@ -7,13 +7,6 @@ function MainLayout({ children, user, logout }) {
 
   return (
     <div>
-			<div style={{
-        position: 'fixed',
-        bottom: '16px',
-        right: '16px',
-        zIndex: 1200,
-      }}>
-      </div>
 
 			{/* Immagine profilo cliccabile */}
 			<img
