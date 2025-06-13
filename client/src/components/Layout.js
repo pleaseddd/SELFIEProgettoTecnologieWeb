@@ -1,13 +1,14 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
+import TimeMachine from "./TimeMachine";  // <-- import nuovo
 
 function MainLayout({ children, user, logout }) {
-  const [showSidebar, setShowSidebar] = useState(false);
-  const toggleSidebar = () => setShowSidebar(!showSidebar);
+	const [showSidebar, setShowSidebar] = useState(false);
+	const toggleSidebar = () => setShowSidebar(!showSidebar);
 
-  return (
-    <div>
-
+	return (
+		<div>
+			<TimeMachine />
 			{/* Immagine profilo cliccabile */}
 			<img
 				src={user?.propic || "https://dummyimage.com/80x80/000/fff.jpg&text=404"}
@@ -18,7 +19,7 @@ function MainLayout({ children, user, logout }) {
 					left: "15px",
 					zIndex: 1100,
 					width: '40px',
-					height:'40px',
+					height: '40px',
 					cursor: "pointer"
 				}}
 				alt="Foto profilo"
@@ -37,8 +38,8 @@ function MainLayout({ children, user, logout }) {
 			>
 				{children}
 			</div>
-    </div>
-  );
+		</div>
+	);
 }
 
 export default MainLayout;

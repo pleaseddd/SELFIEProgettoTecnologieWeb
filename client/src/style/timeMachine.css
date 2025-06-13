@@ -1,0 +1,100 @@
+/* Posizione pulsante: mobile (basso a sinistra), desktop (in alto a destra) */
+.tm-toggle-btn {
+    position: fixed;
+    z-index: 1000;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* mobile */
+@media (max-width: 767px) {
+    .tm-toggle-btn {
+        bottom: 20px;
+        left: 20px;
+    }
+
+    .tm-panel {
+        position: fixed;
+        bottom: 80px;
+        left: 20px;
+        width: 90vw;
+        max-width: 280px;
+    }
+}
+
+/* desktop */
+@media (min-width: 768px) {
+    .tm-toggle-btn {
+        top: 20px;
+        right: 20px;
+    }
+
+    .tm-panel {
+        position: fixed;
+        top: 100px;
+        left: 100px;
+        width: 280px;
+    }
+
+    .draggable-panel {
+        cursor: default;
+    }
+}
+
+.tm-toggle-btn:hover {
+    background-color: #0056b3;
+}
+
+.tm-panel {
+    z-index: 1000;
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+}
+
+.tm-title {
+    margin: 0 0 8px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.tm-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.tm-label {
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.tm-input {
+    margin-bottom: 8px;
+    padding: 4px 8px;
+    font-size: 14px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.tm-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tm-btn {
+    flex: 1;
+    margin: 0 2px;
+    font-size: 13px;
+}
