@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 
 //Prendo l'orario
 app.get('/api/server-time', (req, res) => {
-	const nowTimestamp = getCurrentTimestamp();       // numero di millisecondi
+	const nowTimestamp = getCurrentTimestamp();       // numero in millisecondi
 	const now = new Date(nowTimestamp).toISOString();
 	res.json({ now });
 });
@@ -91,7 +91,7 @@ app.post('/updateevent', calendar.POST_update);
 app.post('/deleteevent', calendar.POST_delete);
 app.post('/upcoming', calendar.POST_upcoming);
 
-console.log('tutto ok');
+console.log('tutto ok!');
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
