@@ -39,6 +39,7 @@ app.use((req, res, next) => {
 
 
 //Prendo l'orario
+
 app.get('/api/server-time', (req, res) => {
 	const now = new Date().toISOString();
 	res.json({ now });
