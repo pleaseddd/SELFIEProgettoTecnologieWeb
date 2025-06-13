@@ -32,6 +32,10 @@ const UserSchema = new mongoose.Schema({
 		tokens: {
 			access_token: String,
 			refresh_token: String
+		},
+
+		cal: {
+			id: String
 		}
 	},
 
@@ -175,6 +179,11 @@ module.exports = {
 		return await User.findOneAndUpdate(filter, update);
 	},
 
+	POST_updateGoogleCal: async (req, res) => {
+		const filter = { _id: req.body.user_id };
+		const update = { $set: {  } };
+	},
+
 	googleLogout: async (id) => {
 		const filter = { _id: id };
 		const update = { $set: { google: { isLogged: false, tokens: {} } } };
@@ -184,6 +193,7 @@ module.exports = {
 
 	POST_updateUser: async (req, res) => {
 		const user = await User.findById(req.body.user_id);
+		console.log(user);
 		res.status(201).json(user);
 	}
 };

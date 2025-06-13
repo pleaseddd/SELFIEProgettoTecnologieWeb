@@ -17,8 +17,6 @@ const NotifSection = ({ user }) => {
 		if(!newName.trim())
 			return;
 
-		console.log();
-
 		const update = await fetch("/updateswsubname", {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },

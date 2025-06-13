@@ -14,36 +14,20 @@ const GoogleAuth = ({ user, updateUser }) => {
 			}).then(resp => resp.json())
 			updateUser(data);
 		}
-
 	}, []);
-
-	const handleLogout = async () => {
-		const resp = await fetch('/google/logout', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({ user_id: user._id })
-		}).then(resp => resp.json());
-		updateUser(resp);
-	};
 
 	return (
 		<div>
-		{
-			user.google.isLogged ?
-			(<button className="btn btn-danger" onClick={handleLogout}>
-				Google - Logout
-			</button>)
-			:
-			(<GoogleButton
+			<GoogleButton
 				onClick={() => window.location = `/auth/google?email=${user.email}`}
-			/>)
-		}
+			/>
 		</div>
 	);
 };
 
 const GoogleCalendarUsed = ({ user }) => {
 	const [calslist, setCalslist] = useState([]);
+	const [selCal, setSelCal] = useState("");
 
 	useEffect(() => {
 		const load = async () => {
@@ -57,12 +41,26 @@ const GoogleCalendarUsed = ({ user }) => {
 		load();
 	}, []);
 
+	const handleChangeCal = async () =>  {
+		const update = await fetch("/", {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({
+				user_id: user._id,
+				googleCal: selCal
+			})
+		}).then(resp => resp.json());
+		console.log(update.message);
+	};
+
 	return (
 		<div>
 			<Form.Label className="my-2">
 				Gli eventi saranno salvati in
 			</Form.Label>
-			<div
+			<Form.Select
+				aria-label="default select"
+				onChange={e=>{setSelCal(e.target.value);console.log(selCal);}}
 				style={{
 					maxHeight: "120px",
 					overflowY: "auto",
@@ -74,20 +72,34 @@ const GoogleCalendarUsed = ({ user }) => {
 			{
 				calslist.map(cal => (
 					<div key={cal.id}>
-						<Form.Check
-							type="radio"
-							name="cals"
-							label={cal.summary}
-						/>
+						<option value={cal.id}>
+							{cal.summary}
+						</option>
 					</div>
 				))
 			}
-			</div>
+			</Form.Select>
+			<Button
+				variant="success"
+				className="ms-2"
+				onClick={handleChangeCal}
+			>
+				Imposta
+			</Button>
 		</div>
 	);
 };
 
 const ExternalCalsSection = ({ user, updateUser }) => {
+	const handleLogout = async () => {
+		const resp = await fetch('/google/logout', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ user_id: user._id })
+		}).then(resp => resp.json());
+		updateUser(resp);
+	};
+
 	return (
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
@@ -95,8 +107,17 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 					<h5>Calendari esterni</h5>
 				</div>
 
-				<GoogleAuth user={user} updateUser={updateUser} />
-				<GoogleCalendarUsed user={user} />
+				{
+					user?.google?.isLogged ?
+					(<div>
+						<button className="btn btn-danger" onClick={handleLogout}>
+							Google - Logout
+						</button>
+						<GoogleCalendarUsed user={user} />
+					</div>)
+					:
+					(<GoogleAuth user={user} updateUser={updateUser} />)
+				}
 			</Card.Body>
 		</Card>
 	);

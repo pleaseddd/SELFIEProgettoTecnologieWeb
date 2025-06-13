@@ -34,7 +34,7 @@ function Home({ user }) {
 	      Mostra eventi
       </button>
 
-		<div>
+	<div>
 		{
 			gevents.map(event => (
 				<div key={event.id}>{event.summary}</div>

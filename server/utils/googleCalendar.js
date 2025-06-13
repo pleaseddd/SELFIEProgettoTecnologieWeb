@@ -9,12 +9,6 @@ const oauth2Client = new google.auth.OAuth2(
 	process.env.GOOGLE_REDIRECT_URI
 );
 
-// oauth2Client.on('tokens', tokens => {
-// 	if(tokens.refresh_tokens) {
-//
-// 	}
-// });
-
 const scopes = ['https://www.googleapis.com/auth/calendar'];
 
 module.exports = {

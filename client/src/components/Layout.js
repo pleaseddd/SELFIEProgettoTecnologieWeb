@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
-import TimeMachine from "./TimeMachine"; 
 
 function MainLayout({ children, user, logout }) {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -14,7 +13,6 @@ function MainLayout({ children, user, logout }) {
         right: '16px',
         zIndex: 1200,
       }}>
-        <TimeMachine />                
       </div>
 
 			{/* Immagine profilo cliccabile */}
