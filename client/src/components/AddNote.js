@@ -1,11 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "trix/dist/trix.css";
+import "trix";
 
 function AddNote({ user, selectedNote, clearSelectedNote }) {
-  const categories=user.settings.categoryNotes.split("/");
-  const [form, setForm] = useState({ title: "", category: categories[0], text: "" });
+  const categories = user.settings.categoryNotes.split("/");
+  const [form, setForm] = useState({
+    title: "",
+    category: categories[0],
+    text: "",
+  });
+  const editorRef = useRef(null);
   const [message, setMessage] = useState("");
+
   useEffect(() => {
     if (selectedNote) {
       setForm({
@@ -13,10 +21,59 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
         category: selectedNote.category,
         text: selectedNote.body,
       });
+      setTimeout(() => {
+        const editor = document.querySelector("trix-editor");
+        if (editor && selectedNote.body) {
+          editor.editor.loadHTML(selectedNote.body);
+        }
+      }, 100);
     } else {
       setForm({ title: "", category: categories[0], text: "" });
     }
   }, [selectedNote]);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    const handleChange = () => {
+      const value = document.querySelector("#trix_input").value;
+      setForm((prev) => ({ ...prev, text: value }));
+    };
+
+    editor?.addEventListener("trix-change", handleChange);
+
+    return () => {
+      editor?.removeEventListener("trix-change", handleChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+    trix-toolbar .trix-button {
+      font-size: 1.25rem;
+      padding: 0.4rem 0.6rem;
+    }
+
+    .trix-button-row {
+      display: flex;
+      gap: 0.3rem; /* spazio tra TUTTI i bottoni, puoi metterlo anche a 0 */
+    }
+
+    .trix-button-group {
+      margin-right: 0; /* elimina spazio tra gruppi */
+    }
+      trix-editor {
+      min-height: 200px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 1rem;
+      font-size: 1.1rem;
+      border: 1px solid #ced4da;
+      border-radius: 0.375rem;
+  }
+  `;
+    document.head.appendChild(style);
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -79,31 +136,112 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
         <div className="mb-3">
           <label className="form-label">Categoria</label>
           <select
-            type="select"
             className="form-control"
             name="category"
             value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value })}
             required
           >
-            {
-              categories.map((category, index) => (
-                <option key={index} value={category}>
-                  {category}
-                </option>
-              ))
-            }
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
           </select>
         </div>
         <div className="mb-3">
           <label className="form-label">Corpo</label>
-          <textarea
-            id="text"
-            className="form-control"
-            name="text"
-            rows="4"
+          <trix-toolbar id="custom-toolbar">
+            <div className="trix-button-row">
+              {/* Testo */}
+              <span className="trix-button-group trix-button-group--text-tools">
+                <button
+                  type="button"
+                  data-trix-attribute="bold"
+                  className="trix-button"
+                  title="Grassetto"
+                  tabIndex="-1"
+                >
+                  B
+                </button>
+                <button
+                  type="button"
+                  data-trix-attribute="italic"
+                  className="trix-button"
+                  title="Corsivo"
+                  tabIndex="-1"
+                >
+                  <i>I</i>
+                </button>
+                <button
+                  type="button"
+                  data-trix-attribute="strike"
+                  className="trix-button"
+                  title="Barrato"
+                  tabIndex="-1"
+                >
+                  S
+                </button>
+              </span>
+
+              {/* Liste */}
+              <span className="trix-button-group trix-button-group--list-tools">
+                <button
+                  type="button"
+                  data-trix-attribute="bullet"
+                  className="trix-button"
+                  title="Elenco puntato"
+                  tabIndex="-1"
+                >
+                  •
+                </button>
+                <button
+                  type="button"
+                  data-trix-attribute="number"
+                  className="trix-button"
+                  title="Elenco numerato"
+                  tabIndex="-1"
+                >
+                  1.
+                </button>
+              </span>
+
+              {/* Storico */}
+              <span className="trix-button-group trix-button-group--history-tools">
+                <button
+                  type="button"
+                  data-trix-action="undo"
+                  className="trix-button"
+                  title="Annulla"
+                  tabIndex="-1"
+                >
+                  ↺
+                </button>
+                <button
+                  type="button"
+                  data-trix-action="redo"
+                  className="trix-button"
+                  title="Ripeti"
+                  tabIndex="-1"
+                >
+                  ↻
+                </button>
+              </span>
+            </div>
+          </trix-toolbar>
+
+          <input
+            id="trix_input"
+            type="hidden"
             value={form.text}
-            onChange={(e) => setForm({ ...form, text: e.target.value })}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, text: e.target.value }))
+            }
+          />
+          <trix-editor
+            input="trix_input"
+            toolbar="custom-toolbar"
+            ref={editorRef}
           />
         </div>
         <button type="submit" className="btn btn-primary w-100">

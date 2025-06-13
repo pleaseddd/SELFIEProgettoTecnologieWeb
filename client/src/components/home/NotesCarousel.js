@@ -91,7 +91,7 @@ function NotesCarousel({ user }) {
                       </h5>
                     </div>
                     <p className="card-text note-body text-truncate-multiline">
-                      {nota.body}
+                      <div dangerouslySetInnerHTML={{ __html: nota.body }} />
                     </p>
                   </div>
                 </div>
