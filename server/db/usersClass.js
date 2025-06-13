@@ -136,7 +136,6 @@ module.exports = {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "7d",
       });
-      console.log("Arrivato qui");
       res.cookie("token", token, {
         httpOnly: true,
         secure: true, 

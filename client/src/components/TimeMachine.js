@@ -7,7 +7,7 @@ import "../style/timeMachine.css";
 const TimeMachine = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [dateTime, setDateTime] = useState("");
-  const panelRef = useRef(null);
+  const nodeRef = useRef(null);
 
   // Al montaggio, prendo l’ora corrente dal server per popolare l’input
   useEffect(() => {
@@ -72,7 +72,7 @@ const TimeMachine = () => {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (panelRef.current && !panelRef.current.contains(e.target)) {
+      if (nodeRef.current && !nodeRef.current.contains(e.target)) {
         setIsOpen(false);
       }
     };
@@ -98,7 +98,7 @@ const TimeMachine = () => {
 
       {/* Mobile: pannello visibile solo se isOpen */}
       {isMobile && isOpen && (
-        <div className="tm-panel" ref={panelRef}>
+        <div className="tm-panel" ref={nodeRef}>
           <h5 className="tm-title">Time Machine</h5>
           <form onSubmit={handleSubmit} className="tm-form">
             <label htmlFor="tm-datetime" className="tm-label">
@@ -130,8 +130,8 @@ const TimeMachine = () => {
 
       {/* Desktop: pannello sempre visibile e trascinabile */}
       {!isMobile && (
-        <Draggable handle=".tm-title">
-          <div className="tm-panel draggable-panel" ref={panelRef}>
+        <Draggable handle=".tm-title" nodeRef={nodeRef}>
+          <div className="tm-panel draggable-panel" ref={nodeRef}>
             <h5 className="tm-title" style={{ cursor: "move" }}>Time Machine</h5>
             <form onSubmit={handleSubmit} className="tm-form">
               <label htmlFor="tm-datetime" className="tm-label">
