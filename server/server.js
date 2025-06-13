@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 
 //Prendo l'orario
 app.get('/api/server-time', (req, res) => {
-	const nowTimestamp = getCurrentTimestamp();       // numero in millisecondi
+	const nowTimestamp = getCurrentTimestamp();       // numero di millisecondi
 	const now = new Date(nowTimestamp).toISOString();
 	res.json({ now });
 });
