@@ -4,9 +4,11 @@ const mongoose = require("mongoose");
 const path = require("path");
 const webpush = require("web-push");
 const cors = require("cors");
+const { getCurrentTimestamp, loadFake } = require("./db/timeMachineClass");
+const timeMachine = require("./db/timeMachineClass");
 
 const test = true;
-require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
+require('dotenv').config({ path: __dirname + "/.env" + (test ? '_test' : '') });
 
 //file interni
 const users = require('./db/usersClass.js');
@@ -40,9 +42,13 @@ app.use((req, res, next) => {
 
 //Prendo l'orario
 app.get('/api/server-time', (req, res) => {
-	const now = new Date().toISOString();
+	const nowTimestamp = getCurrentTimestamp();       // numero di millisecondi
+	const now = new Date(nowTimestamp).toISOString();
 	res.json({ now });
 });
+
+app.post("/api/server-time/set", timeMachine.POST_set);
+app.post("/api/server-time/reset", timeMachine.POST_reset);
 
 app.get('/auth/google', googleCalendar.auth);
 app.get('/auth/google/callback', googleCalendar.auth_callback);
@@ -87,6 +93,16 @@ app.get("*", (req, res) => {
 app.listen(process.env.PORT, async () => {
 	console.log(`Server started on ${process.env.WEB_URL}:${process.env.PORT}`);
 
-	await connectDatabase().catch(err => console.log(err));
+	try {
+		await connectDatabase();
+		await loadFake();
+		console.log("TimeMachine cache inizializzata.");
+	} catch (err) {
+		console.error("Errore connessione DB:", err);
+		process.exit(1);
+	}
+
 	timeManager.setCronFunc();
+
+	console.log("in ascolto per mandare notifiche");
 });
