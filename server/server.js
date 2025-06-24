@@ -4,8 +4,11 @@ const mongoose = require("mongoose");
 const path = require("path");
 const webpush = require("web-push");
 const cors = require("cors");
+const { getCurrentTimestamp, loadFake } = require("./db/timeMachineClass");
+const timeMachine = require("./db/timeMachineClass");
+const cookieParser = require("cookie-parser");
 
-const test = true;
+const test = false;
 require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
 
 //file interni
@@ -41,15 +44,19 @@ app.use((req, res, next) => {
 //Prendo l'orario
 
 app.get('/api/server-time', (req, res) => {
-	const now = new Date().toISOString();
+	const nowTimestamp = getCurrentTimestamp();       // numero di millisecondi
+	const now = new Date(nowTimestamp).toISOString();
 	res.json({ now });
 });
+
+app.post("/api/server-time/set", timeMachine.POST_set);
+app.post("/api/server-time/reset", timeMachine.POST_reset);
 
 app.get('/auth/google', googleCalendar.auth);
 app.get('/auth/google/callback', googleCalendar.auth_callback);
 app.post('/google/events', googleCalendar.events);
-app.post('/google/logout', googleCalendar.logout);
-app.post('/google/getcalendars', googleCalendar.getCalendars);
+//app.post('/google/logout', googleCalendar.logout);
+//app.post('/google/getcalendars', googleCalendar.getCalendars);
 
 // service worker subscriptions - CRUD
 app.post('/listsubs', swsubs.POST_list);
@@ -59,10 +66,15 @@ app.post('/unsubscribe', swsubs.POST_unsubscribe);
 app.post('/updateswsubname', swsubs.POST_updateswsubname);
 
 // users - CRUD
+app.use(cookieParser());
 app.post('/newuser', users.POST_new);
-app.post('/userlogin', users.POST_login);
+app.post('/userlogin', users.POST_authLogin);
+app.get('/userauth', users.GET_authMe);
+app.post('/userlogout', users.POST_authLogout);
 app.post('/updatesettings', users.POST_settings);
 app.post('/updateUser', users.POST_updateUser);
+
+console.log('user');
 
 // note - CRUD
 app.post('/notes', notes.POST_list);
@@ -71,6 +83,8 @@ app.post('/lastnotes', notes.POST_last);
 app.post('/deletenote', notes.POST_delete);
 app.post('/updatenote', notes.PUT_update);
 
+console.log('note');
+
 //calendar - CRUD
 app.post('/events', calendar.POST_list);
 app.post('/newevent', calendar.POST_new);
@@ -78,6 +92,7 @@ app.post('/updateevent', calendar.POST_update);
 app.post('/deleteevent', calendar.POST_delete);
 app.post('/upcoming', calendar.POST_upcoming);
 
+console.log('tutto ok!');
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
@@ -88,6 +103,16 @@ app.get("*", (req, res) => {
 app.listen(process.env.PORT, async () => {
 	console.log(`Server started on ${process.env.WEB_URL}:${process.env.PORT}`);
 
-	await connectDatabase().catch(err => console.log(err));
+	try {
+		await connectDatabase();
+		await loadFake();
+		console.log("TimeMachine cache inizializzata.");
+	} catch (err) {
+		console.error("Errore connessione DB:", err);
+		process.exit(1);
+	}
+
 	timeManager.setCronFunc();
+
+	console.log("in ascolto per mandare notifiche");
 });

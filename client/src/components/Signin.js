@@ -10,35 +10,48 @@ function Signin({ change, setUser }) {
     event.preventDefault();
     const email = event.target.email.value;
     const password = event.target.password.value;
+
     try {
-      const response = await fetch("/userlogin", {
+      // 1 Login
+      const loginRes = await fetch("/userlogin", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setUser(data.user);
-        navigate("/home");
-      } else {
+      if (!loginRes.ok) {
         setError("Email o Password errati!");
-        alert(error);
+        alert("Email o Password errati!");
+        return;
       }
+
+      // 2 Recupera utente con cookie
+      const meRes = await fetch("/userauth", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!meRes.ok) {
+        alert("Login effettuato, ma impossibile recuperare i dati utente.");
+        return;
+      }
+
+      const userData = await meRes.json();
+      setUser(userData);
+      navigate("/home");
     } catch (error) {
       console.error("Errore di rete:", error);
       alert("Errore di connessione al server.");
     }
-    
   };
+
+  
   return (
     <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
-    <div className="card p-4 shadow-lg login-card">
-      <h2 className="text-center mb-4">Login</h2>
-      <form onSubmit={handleLogin}>
+      <div className="card p-4 shadow-lg login-card">
+        <h2 className="text-center mb-4">Login</h2>
+        <form onSubmit={handleLogin}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
               Email
@@ -67,7 +80,10 @@ function Signin({ change, setUser }) {
             Accedi
           </button>
         </form>
-        <button className="register-btn btn btn-primary w-100 mt-2" onClick={change}>
+        <button
+          className="register-btn btn btn-primary w-100 mt-2"
+          onClick={change}
+        >
           Registrati
         </button>
       </div>
