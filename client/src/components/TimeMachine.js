@@ -43,6 +43,7 @@ const TimeMachine = () => {
       const selected = new Date(dateTime).toISOString();
 
       await axios.post("/api/server-time/set", { datetime: selected });
+      await axios.post("/api/server-time/flag/set");
       alert("Time Machine: data e ora impostati correttamente.");
       setIsOpen(false);
     } catch (err) {
@@ -54,6 +55,7 @@ const TimeMachine = () => {
   const handleReset = async () => {
     try {
       await axios.post("/api/server-time/reset");
+      await axios.post("/api/server-time/flag/set");
       alert("Time Machine resettata: ora torna reale.");
       // Resetto l’input all’ora reale
       const res = await axios.get("/api/server-time");

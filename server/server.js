@@ -48,6 +48,20 @@ app.get('/api/server-time', (req, res) => {
 	res.json({ now });
 });
 
+
+// Gestione del flag per la Time Machine
+let timeFlag = 0;
+app.get("/api/server-time/flag", (req, res) => {
+  res.json({ flag: timeFlag });
+});
+
+app.post("/api/server-time/flag/set", (req, res) => {
+  timeFlag++;
+  res.sendStatus(200);
+});
+
+
+
 app.post("/api/server-time/set", timeMachine.POST_set);
 app.post("/api/server-time/reset", timeMachine.POST_reset);
 
