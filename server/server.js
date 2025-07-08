@@ -8,11 +8,11 @@ const { getCurrentTimestamp, loadFake } = require("./db/timeMachineClass");
 const timeMachine = require("./db/timeMachineClass");
 const cookieParser = require("cookie-parser");
 
-const test = false;
+const test = true;
 require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
 
 //file interni
-const users = require('./db/usersClass.js');
+const users = require('./endpoints/users.js');
 const notes = require('./db/notesClass.js');
 const calendar = require('./db/calendarClass.js');
 const swsubs = require('./db/swsubsClass.js');
@@ -55,8 +55,8 @@ app.post("/api/server-time/reset", timeMachine.POST_reset);
 app.get('/auth/google', googleCalendar.auth);
 app.get('/auth/google/callback', googleCalendar.auth_callback);
 app.post('/google/events', googleCalendar.events);
-//app.post('/google/logout', googleCalendar.logout);
-//app.post('/google/getcalendars', googleCalendar.getCalendars);
+app.post('/google/logout', googleCalendar.logout);
+app.post('/google/getcalendars', googleCalendar.getCalendars);
 
 // service worker subscriptions - CRUD
 app.post('/listsubs', swsubs.POST_list);
@@ -67,14 +67,7 @@ app.post('/updateswsubname', swsubs.POST_updateswsubname);
 
 // users - CRUD
 app.use(cookieParser());
-app.post('/newuser', users.POST_new);
-app.post('/userlogin', users.POST_authLogin);
-app.get('/userauth', users.GET_authMe);
-app.post('/userlogout', users.POST_authLogout);
-app.post('/updatesettings', users.POST_settings);
-app.post('/updateUser', users.POST_updateUser);
-
-console.log('user');
+users.setEndpoints(app);
 
 // note - CRUD
 app.post('/notes', notes.POST_list);
@@ -83,16 +76,12 @@ app.post('/lastnotes', notes.POST_last);
 app.post('/deletenote', notes.POST_delete);
 app.post('/updatenote', notes.PUT_update);
 
-console.log('note');
-
 //calendar - CRUD
 app.post('/events', calendar.POST_list);
 app.post('/newevent', calendar.POST_new);
 app.post('/updateevent', calendar.POST_update);
 app.post('/deleteevent', calendar.POST_delete);
 app.post('/upcoming', calendar.POST_upcoming);
-
-console.log('tutto ok!');
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
