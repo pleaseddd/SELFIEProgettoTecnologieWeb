@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./style/pomodoro.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
+import { FaPlay,FaPause,FaArrowsRotate,FaAnglesRight,FaAnglesLeft      } from "react-icons/fa6";
 //componente principale Pomodoro
 export default function Pomodoro({ userId }) {
   const location = useLocation();
@@ -57,11 +58,10 @@ export default function Pomodoro({ userId }) {
   const tickCount = 120;
 
   useEffect(() => {
-  if (location.state !== null) {
-    generateCycles();
-  }
-}, []); // Solo al primo render
-
+    if (location.state !== null) {
+      generateCycles();
+    }
+  }, []); // Solo al primo render
 
   // --- SINCRONIZZA SU localStorage A CAMBIO DI generatedCycles ---
   useEffect(() => {
@@ -307,7 +307,7 @@ export default function Pomodoro({ userId }) {
                 }
               }}
             >
-              {running ? "⏸️" : "▶️"}
+              {running ? <FaPause /> : <FaPlay />}
             </button>
             <button
               onClick={() =>
@@ -317,7 +317,7 @@ export default function Pomodoro({ userId }) {
                 )
               }
             >
-              🔄
+              <FaArrowsRotate />
             </button>
             <button
               onClick={() => {
@@ -333,7 +333,7 @@ export default function Pomodoro({ userId }) {
               }}
             >
               {" "}
-              {finished ? (running ? "⏭️" : "⏮️") : "⏭️"}
+              {finished ? (running ? <FaAnglesRight />: <FaAnglesLeft />) : <FaAnglesRight />}
             </button>
           </div>
         </div>
@@ -341,37 +341,33 @@ export default function Pomodoro({ userId }) {
 
       {/* CONFIGURAZIONE */}
       <div className={`config-wrapper ${showConfig ? "" : "collapsed"}`}>
-        <div className="config-header">
-          <h2>Configurazione Manuale</h2>
-        </div>
-        <div className="config-body">
-          {/* input tempo totale */}
-          <form className="row gx-2 align-items-center">
+        <div className="config-body container-fluid">
+          {/* Titolo */}
+          <div className="text-center mb-4">
+            <h2 className="m-0">Configurazione</h2>
+          </div>
+
+          {/* Tempo Totale */}
+          <div className="row align-items-center mb-4">
             <div className="col-auto">
-              <label className="form-label mb-0">Tempo Totale</label>
+              <label className="form-label fw-semibold">Tempo totale</label>
+            </div>
+            <div className="col">
               <input
                 type="number"
-                className="form-control form-control-sm"
+                className="form-control"
                 value={totalMinutes}
                 onChange={(e) =>
                   setTotalMinutes(e.target.value.replace(/\D/g, ""))
                 }
               />
             </div>
-            <div className="col-auto">
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={generateCycles}
-              >
-                Genera
-              </button>
-            </div>
-          </form>
+          </div>
 
-          {/* opzioni lavoro */}
-          <div className="mt-2">
-            <div className="btn-group" role="group">
+          {/* Opzioni lavoro */}
+          <div className="mb-3">
+            <div className="fw-semibold mb-1">Durata sessioni di lavoro</div>
+            <div className="d-flex flex-wrap gap-2">
               {presetWorkOptions.map((w) => {
                 const id = `work-${w}`;
                 return (
@@ -391,10 +387,10 @@ export default function Pomodoro({ userId }) {
                       }
                     />
                     <label
-                      className="btn btn-sm btn-outline-primary"
+                      className="btn btn-outline-primary btn-sm"
                       htmlFor={id}
                     >
-                      {w}′
+                      {w} min
                     </label>
                   </React.Fragment>
                 );
@@ -402,9 +398,10 @@ export default function Pomodoro({ userId }) {
             </div>
           </div>
 
-          {/* opzioni pausa */}
-          <div className="mt-2">
-            <div className="btn-group" role="group">
+          {/* Opzioni pausa */}
+          <div className="mb-4">
+            <div className="fw-semibold mb-1">Durata pause</div>
+            <div className="d-flex flex-wrap gap-2">
               {presetBreakOptions.map((b) => {
                 const id = `break-${b}`;
                 return (
@@ -424,10 +421,10 @@ export default function Pomodoro({ userId }) {
                       }
                     />
                     <label
-                      className="btn btn-sm btn-outline-secondary"
+                      className="btn btn-outline-secondary btn-sm"
                       htmlFor={id}
                     >
-                      {b}′
+                      {b} min
                     </label>
                   </React.Fragment>
                 );
@@ -435,21 +432,41 @@ export default function Pomodoro({ userId }) {
             </div>
           </div>
 
-          {/* suggerimenti generati */}
+          {/* Bottone Genera */}
+          <div className="d-grid mb-4">
+            <button className="btn btn-primary btn-lg" onClick={generateCycles}>
+              Genera
+            </button>
+          </div>
+
+          {/* Titolo Proposte */}
+          <div className="text-center mb-2">
+            <h5 className="fw-bold">Proposte cicli</h5>
+          </div>
+
+          {/* Cicli suggeriti */}
           {generatedCycles.length > 0 && (
-            <div className="mt-3 suggestions-wrapper">
+            <div className="row gy-2">
               {generatedCycles.map((c, i) => (
-                <div key={i} className="cycle-suggestion">
-                  <p>
-                    {c.cycles} cicli da: {c.work} minuti + {c.break} minuti ={" "}
-                    {c.total} minuti
-                  </p>
-                  <button
-                    className="btn btn-sm btn-outline-success"
-                    onClick={() => startCycle({ work: c.work, break: c.break })}
-                  >
-                    ▶️
-                  </button>
+                <div key={i} className="col-12">
+                  <div className="cycle-suggestion">
+                    <p className="mb-0">
+                      {c.cycles} cicli da{" "}
+                      <strong>
+                        {c.work}+{c.break}
+                      </strong>{" "}
+                      min →{" "}
+                      <span className="text-muted">{c.total} minuti</span>
+                    </p>
+                    <button
+                      className="btn btn-sm btn-outline-success"
+                      onClick={() =>
+                        startCycle({ work: c.work, break: c.break })
+                      }
+                    >
+                      <FaPlay />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
