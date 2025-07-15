@@ -72,7 +72,7 @@ app.listen(process.env.PORT, async () => {
 		.catch(err => console.error(err));
 	await loadFake()
 		.then(console.log("TimeMachine cache inizializzata"))
-		.catch(err => console.err(err));
+		.catch(err => console.error(err));
 
 	setCronFunc();
 });

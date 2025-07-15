@@ -27,7 +27,7 @@ module.exports = {
 	},
 
 	loadFake: async () => {
-		const lastEntry = await TimeMachine.findOne().sort({ updatedAt: -1 });
+		const lastEntry = await TimeMachine.findOne({}).sort({ updatedAt: -1 });
 		if (lastEntry && lastEntry.fakeNow) {
 			// fakeNow = data/ora scelta dall’utente
 			// updatedAt = momento (real) in cui è stato salvato
