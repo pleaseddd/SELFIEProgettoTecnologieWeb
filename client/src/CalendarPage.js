@@ -52,7 +52,7 @@ function CalendarPage({ user }) {
   }, []);
   const loadEvents = useCallback(async () => {
     try {
-      const response = await fetch("/events", {
+      const response = await fetch("/api/events/list", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,6 +60,7 @@ function CalendarPage({ user }) {
         body: JSON.stringify({ userid: user._id }),
       });
       const data = await response.json();
+
       if (response.ok) {
         const allEvents = [];
         if (!serverTime) return;
@@ -180,7 +181,7 @@ function CalendarPage({ user }) {
         userid: user._id,
       };
 
-      const url = isEditing ? "/updateevent" : "/newevent";
+      const url = "/api/events" + (isEditing ? "/update" : "/new");
 
       const response = await fetch(url, {
         method: "POST",
@@ -203,7 +204,7 @@ function CalendarPage({ user }) {
 
   const handleModalDelete = async () => {
     try {
-      const response = await fetch("/deleteevent", {
+      const response = await fetch("/api/events/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ _id: modalData._id, author: user._id }),

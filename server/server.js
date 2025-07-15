@@ -1,33 +1,36 @@
-//pacchetti node esterni
-const express = require("express");
-const mongoose = require("mongoose");
-const path = require("path");
-const webpush = require("web-push");
-const cors = require("cors");
-const { getCurrentTimestamp, loadFake } = require("./db/timeMachineClass");
-const timeMachine = require("./db/timeMachineClass");
-const cookieParser = require("cookie-parser");
+//pacchetti node
+const express = require("express"); //gestisce la nostra api
+const mongoose = require("mongoose"); //per accedere al database
+const path = require("path"); //per manipolare i percorsi dei file
+const cors = require("cors"); //gestisce gli aspetti esterni
+const cookieParser = require("cookie-parser"); //gestisce i cookie degli utenti
 
+/*
+ * funzioni da file esterni
+ * - setCronFunc serve per il controllo
+ * delle notifiche da mandare, usa node-cron per
+ * eseguire una funzione ogni tot minuti
+ * - loadFake carica nel sito il tempo falso
+ * della time time machine
+ */
+const { setCronFunc } = require('./utils/timeManager.js');
+const { loadFake } = require("./db/timeMachineClass.js");
+
+/*
+ * variabili d'ambiente
+ * in fase di test (=true) le variabili d'ambiente
+ * sono prese da .env_test,
+ * in produzione (test=false) sono prese da .env
+ */
 const test = true;
 require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
 
-//file interni
-const users = require('./endpoints/users.js');
-const notes = require('./db/notesClass.js');
-const calendar = require('./db/calendarClass.js');
-const swsubs = require('./db/swsubsClass.js');
-const notifs = require('./db/notifClass.js');
-const timeManager = require('./utils/timeManager.js');
-const googleCalendar = require('./utils/googleCalendar.js');
-
-async function connectDatabase() {
-	await mongoose.connect(process.env.MONGO_URL);
-	console.log("database connesso");
-}
 
 const app = express();
 
+// definisco tutti i middleware che mi servono
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
 	origin: '*',
 	credentials: true,
@@ -40,48 +43,20 @@ app.use((req, res, next) => {
 	next();
 });
 
-
-//Prendo l'orario
-
-app.get('/api/server-time', (req, res) => {
-	const nowTimestamp = getCurrentTimestamp();       // numero di millisecondi
-	const now = new Date(nowTimestamp).toISOString();
-	res.json({ now });
-});
-
-app.post("/api/server-time/set", timeMachine.POST_set);
-app.post("/api/server-time/reset", timeMachine.POST_reset);
-
-app.get('/auth/google', googleCalendar.auth);
-app.get('/auth/google/callback', googleCalendar.auth_callback);
-app.post('/google/events', googleCalendar.events);
-app.post('/google/logout', googleCalendar.logout);
-app.post('/google/getcalendars', googleCalendar.getCalendars);
-
-// service worker subscriptions - CRUD
-app.post('/listsubs', swsubs.POST_list);
-app.post('/getswsub', swsubs.POST_getswsub);
-app.post('/subscribe', swsubs.POST_subscribe);
-app.post('/unsubscribe', swsubs.POST_unsubscribe);
-app.post('/updateswsubname', swsubs.POST_updateswsubname);
-
-// users - CRUD
-app.use(cookieParser());
-users.setEndpoints(app);
-
-// note - CRUD
-app.post('/notes', notes.POST_list);
-app.post('/newnote', notes.POST_new);
-app.post('/lastnotes', notes.POST_last);
-app.post('/deletenote', notes.POST_delete);
-app.post('/updatenote', notes.PUT_update);
-
-//calendar - CRUD
-app.post('/events', calendar.POST_list);
-app.post('/newevent', calendar.POST_new);
-app.post('/updateevent', calendar.POST_update);
-app.post('/deleteevent', calendar.POST_delete);
-app.post('/upcoming', calendar.POST_upcoming);
+/*
+ * definisco gli endpoint dell'api,
+ * sono molti e quindi sono divisi
+ * nei file esterni per le collezioni mongodb
+ */
+const dir = './endpoints/';
+[
+	'users',
+	'notes',
+	'calendar',
+	'swsubs',
+	'googleCalendar',
+	'timeMachine'
+].forEach(db => require(`${dir}${db}`).setEndpoints(app));
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
@@ -92,16 +67,12 @@ app.get("*", (req, res) => {
 app.listen(process.env.PORT, async () => {
 	console.log(`Server started on ${process.env.WEB_URL}:${process.env.PORT}`);
 
-	try {
-		await connectDatabase();
-		await loadFake();
-		console.log("TimeMachine cache inizializzata.");
-	} catch (err) {
-		console.error("Errore connessione DB:", err);
-		process.exit(1);
-	}
+	await mongoose.connect(process.env.MONGO_URL)
+		.then(console.log('database connesso'))
+		.catch(err => console.error(err));
+	await loadFake()
+		.then(console.log("TimeMachine cache inizializzata"))
+		.catch(err => console.err(err));
 
-	timeManager.setCronFunc();
-
-	console.log("in ascolto per mandare notifiche");
+	setCronFunc();
 });

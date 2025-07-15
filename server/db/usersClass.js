@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -35,6 +34,8 @@ const UserSchema = new mongoose.Schema({
       access_token: String,
       refresh_token: String,
     },
+
+	calendarId: { type: String }
   },
 
   settings: {
@@ -100,8 +101,20 @@ const User = mongoose.model("User", UserSchema);
 
 // richieste
 module.exports = {
-  findById: async (id) => {
-    return await User.findById(id);
+  newUser: async (user) => {
+    const newuser = new User(user);
+	return await newuser.save();
+  },
+
+  findBy: async (filter) => {
+    if(filter.hasOwnProperty("id"))
+	    return await User.findById(filter.id);
+    if(filter.hasOwnProperty('email'))
+		return await User.findOne(filter);
+  },
+
+  update: async (filter, update) => {
+	return await User.findOneAndUpdate(filter, update);
   },
 
   updateGoogleTokens: async (email, tokens) => {
@@ -116,6 +129,12 @@ module.exports = {
     const update = { $set: { google: { isLogged: false, tokens: {} } } };
 
     return await User.findOneAndUpdate(filter, update);
+  },
+
+  setGoogleCal: async (userid, calid) => {
+	const filter = { _id: userid };
+	const update = { $set: { 'google.calendarId': calid } };
+	return await User.findOneAndUpdate(filter, update);
   },
 };
 

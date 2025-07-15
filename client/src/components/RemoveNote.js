@@ -13,7 +13,7 @@ function RemoveNote({ noteId, userId, onSuccess }) {
   const handleConfirm = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/deletenote", {
+      const response = await fetch("/api/notes/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ noteid: noteId, userid: userId }),

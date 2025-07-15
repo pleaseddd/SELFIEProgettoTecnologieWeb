@@ -13,7 +13,7 @@ function CalendarCarousel({ user }) {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch("/upcoming", {
+        const response = await fetch("/api/events/upcoming", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

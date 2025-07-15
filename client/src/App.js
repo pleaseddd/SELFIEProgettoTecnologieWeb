@@ -23,7 +23,7 @@ const App = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("/userauth", {
+        const response = await fetch("/api/user/auth", {
           credentials: "include",
         });
         const data = await response.json();
@@ -41,7 +41,7 @@ const App = () => {
   }, []);
 
   const handleLogout = async () => {
-    await fetch("/userlogout", {
+    await fetch("/api/user/logout", {
       method: "POST",
       credentials: "include",
     });

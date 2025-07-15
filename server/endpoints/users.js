@@ -1,3 +1,6 @@
+const jwt = require('jsonwebtoken');
+const userdb = require('../db/usersClass.js');
+
 module.exports = {
 	setEndpoints: (router) => {
 		router.post('/api/user/new', POST_new);
@@ -12,19 +15,17 @@ module.exports = {
 async function POST_new(req, res) {
 	try {
 		const { name, email, password } = req.body;
-		const user = await User.findOne({ email });
+		const user = await userdb.findBy({ email });
 
 		if (user)
 			res.status(401).json({ message: "Usa un'altra email!" });
 		else {
-			const newUser = new User({
+			const newUser = await userdb.newUser({
 				name,
 				email,
 				password,
 				propic: "https://dummyimage.com/80x80/023430/fff.jpg&text=propic",
 			});
-
-			await newUser.save();
 			res.status(201).json(newUser);
 	    }
 	}
@@ -37,7 +38,7 @@ async function POST_new(req, res) {
 async function POST_authLogin(req, res) {
 	try {
 		const { email, password } = req.body;
-		const user = await User.findOne({ email });
+		const user = await userdb.findBy({ email });
 
 		if (!user || !(await user.checkpw(password)))
 			return res.status(401).json({ message: "Credenziali non valide" });
@@ -71,12 +72,10 @@ async function GET_authMe(req, res) {
 			});
 
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
-		const user = await User.findById(decoded.id);
+		const user = await userdb.findBy({ id: decoded.id });
 
 		if (!user)
-			return res.status(404).json({
-				message: "Utente non trovato"
-			});
+			return res.status(404).json({ message: "Utente non trovato" });
 
 		res.status(200).json(user);
 	}
@@ -102,10 +101,10 @@ async function POST_settings(req, res) {
 				settings: req.body.user.settings,
 			},
 	    };
-	    const user = await User.findOneAndUpdate(filter, update);
+	    const user = await userdb.update(filter, update);
 
 	    res.status(201).json({
-			message: "Impostazioni cambiate con successo"
+			message: "impostazioni cambiate"
 		});
 	}
 	catch (error) {

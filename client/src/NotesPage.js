@@ -20,7 +20,7 @@ function NotesPages({ user }) {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await fetch("/notes", {
+        const response = await fetch("/api/notes/list", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userid: user._id }),
@@ -72,7 +72,7 @@ function NotesPages({ user }) {
 
   const handleDeleteModal = async () => {
     try {
-      const response = await fetch(`/deletenote`, {
+      const response = await fetch('/api/notes/delete', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ noteid: selectedNote._id, userid: user._id }),

@@ -30,6 +30,8 @@ const EventSchema = new mongoose.Schema({
 		trim: true,
 	},
 
+	googleCal: String,
+
 	isRecurring: Boolean,
 	rruleStr: String,
 	urgency: String,
@@ -50,114 +52,32 @@ const EventSchema = new mongoose.Schema({
 const Event = mongoose.model("Event", EventSchema);
 
 module.exports = {
-  // Elenco eventi per autore
-	POST_list: async (req, res) => {
-		try {
-			const { userid } = req.body;
-			const events = await Event.find({ author: userid });
-			res.status(200).json(events);
-		}
-		catch (err) {
-			res.status(500).json({ message: err.message });
-		}
+	newEvent: async (event) => {
+		const newevent = new Event(event);
+		return await newevent.save();
 	},
 
-	// Nuovo evento
-	POST_new: async (req, res) => {
-		try {
-			const author = req.body.userid;
-			const refDate = new Date(req.body.begin);
-			const { title, urgency } = req.body;
+	findBy: async (filter, opts) => {
+		let res;
+		if(filter.hasOwnProperty('id'))
+			res = await Event.findById(filter.id);
+		if(filter.hasOwnProperty('author'))
+			res = await Event.find(filter);
 
-			const newEvent = new Event({ ...req.body, author });
-			await newEvent.save();
-
-			const urgencyNotifs = {
-				'urgente': [
-					new Time({ days: 1 }),
-					new Time({ hours: 12 }),
-					new Time({ hours: 1 }),
-					new Time({ minutes: 15 }),
-				],
-
-				'non troppo urgente': [
-					new Time({ days: 1 }),
-					new Time({ hours: 12 }),
-					new Time({ hours: 1 })
-				],
-
-				'non urgente': [
-					new Time({ days: 1 }),
-					new Time({ hours: 1 })
-				]
-			};
-
-			urgencyNotifs[urgency].forEach(async time => {
-				const sendDate = dateSubTime(refDate, time);
-				await notifs.new_notif({
-					user: author,
-					title,
-					body: time.toString(),
-					time: sendDate,
-				});
-			});
-
-			res.status(201).json(newEvent);
+		if(opts) {
+			const { type, limit } = opts.split(' ');
+			if(type == 'upcoming')
+				res = res.sort({ begin: 1}).limit(limit);
 		}
-		catch (err) {
-			console.log("Errore salvataggio evento:", err);
-			res.status(400).json({ error: err.message });
-		}
+
+		return res;
 	},
 
-	// Aggiorna evento
-	POST_update: async (req, res) => {
-	try {
-	  const { _id, userid } = req.body;
-	  const filter = { _id, author: userid };
+	deleteBy: async (filter) => {
+		return await Event.findOneAndDelete(filter);
+	},
 
-	  const updated = await Event.findOneAndUpdate(filter, req.body, {
-	    new: true,
-	  });
-
-	  if (!updated) return res.status(403).json({ error: "Accesso negato" });
-
-	  res.json(updated);
-	} catch (err) {
-	  res.status(400).json({ error: err.message });
+	update: async (filter, update) => {
+		return await Event.findOneAndUpdate(filter, update, { new: true });
 	}
-	},
-
-	// Elimina evento
-	POST_delete: async (req, res) => {
-	try {
-	  const { _id, author } = req.body;
-	  const deleted = await Event.findOneAndDelete({ _id, author });
-
-	  if (!deleted) return res.status(403).json({ error: "Accesso negato" });
-
-	  res.json({ message: "Evento eliminato" });
-	} catch (err) {
-	  res.status(400).json({ error: err.message });
-	}
-	},
-
-	// Elenco eventi futuri
-	POST_upcoming: async (req, res) => {
-	try {
-	  const { userid } = req.body;
-	  const now = new Date();
-
-	  const events = await Event.find({
-	    author: userid,
-	    begin: { $gte: now },
-	  })
-	    .sort({ begin: 1 })
-	    .limit(3);
-
-	  res.status(200).json(events);
-	} catch (err) {
-	  res.status(500).json({ error: err.message });
-	}
-	},
 };

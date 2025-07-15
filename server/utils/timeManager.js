@@ -16,7 +16,7 @@ module.exports = {
 			const pendings = await notifs.findCurrentPendings();
 
 			pendings.forEach(async (notif) => {
-				const subs = await swsubs.findByUser(notif.user);
+				const subs = await swsubs.findBy({ user: notif.user});
 				subs.forEach(async (sub) => {
 					await webpush.sendNotification(
 						sub, JSON.stringify( {title: notif.title, body: notif.body })

@@ -7,12 +7,13 @@ const GoogleAuth = ({ user, updateUser }) => {
 		const urlParams = new URLSearchParams(window.location.search);
 
 		if(urlParams.get('auth-success') == 'true') {
-			const data = await fetch('/updateUser', {
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ user_id: user._id })
-			}).then(resp => resp.json())
-			updateUser(data);
+			console.log(user.google);
+			// const data = await fetch('/api/user/update', {
+			// 	method: 'POST',
+			// 	headers: { 'content-type': 'application/json' },
+			// 	body: JSON.stringify({ user_id: user._id })
+			// }).then(resp => resp.json());
+			// updateUser(data);
 		}
 	}, []);
 
@@ -25,13 +26,13 @@ const GoogleAuth = ({ user, updateUser }) => {
 	);
 };
 
-const GoogleCalendarUsed = ({ user }) => {
+const GoogleCalendarUsed = ({ user, updateUser }) => {
 	const [calslist, setCalslist] = useState([]);
 	const [selCal, setSelCal] = useState("");
 
 	useEffect(() => {
 		const load = async () => {
-			const data = await fetch('/google/getcalendars', {
+			const data = await fetch('/api/google/getcalendars', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify({ googleTokens: user.google.tokens })
@@ -42,15 +43,15 @@ const GoogleCalendarUsed = ({ user }) => {
 	}, []);
 
 	const handleChangeCal = async () =>  {
-		const update = await fetch("/", {
+		const update = await fetch("/api/google/setcal", {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({
-				user_id: user._id,
-				googleCal: selCal
+				userid: user._id,
+				calid: selCal
 			})
 		}).then(resp => resp.json());
-		console.log(update.message);
+		updateUser(update);
 	};
 
 	return (
@@ -60,7 +61,7 @@ const GoogleCalendarUsed = ({ user }) => {
 			</Form.Label>
 			<Form.Select
 				aria-label="default select"
-				onChange={e=>{setSelCal(e.target.value);console.log(selCal);}}
+				onChange={e => setSelCal(e.target.value)}
 				style={{
 					maxHeight: "120px",
 					overflowY: "auto",
@@ -81,7 +82,7 @@ const GoogleCalendarUsed = ({ user }) => {
 			</Form.Select>
 			<Button
 				variant="success"
-				className="ms-2"
+				className="py-2 ms-2"
 				onClick={handleChangeCal}
 			>
 				Imposta
@@ -92,7 +93,7 @@ const GoogleCalendarUsed = ({ user }) => {
 
 const ExternalCalsSection = ({ user, updateUser }) => {
 	const handleLogout = async () => {
-		const resp = await fetch('/google/logout', {
+		const resp = await fetch('/api/google/logout', {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({ user_id: user._id })
@@ -113,7 +114,7 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 						<button className="btn btn-danger" onClick={handleLogout}>
 							Google - Logout
 						</button>
-						<GoogleCalendarUsed user={user} />
+						<GoogleCalendarUsed user={user} updateUser={updateUser} />
 					</div>)
 					:
 					(<GoogleAuth user={user} updateUser={updateUser} />)
