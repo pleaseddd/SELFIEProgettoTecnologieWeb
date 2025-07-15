@@ -30,6 +30,7 @@ function toLocalInput(date) {
 
 function CalendarPage({ user }) {
   const navigate = useNavigate();
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [serverTime, setServerTime] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -38,6 +39,7 @@ function CalendarPage({ user }) {
   const [showPomodoroConfirm, setShowPomodoroConfirm] = useState(false);
   const [pomodoroData, setPomodoroData] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [timeMachineFlag, setTimeMachineFlag] = useState(0);
 
   useEffect(() => {
     fetch("/api/server-time")
@@ -45,11 +47,32 @@ function CalendarPage({ user }) {
       .then((data) => {
         const serverNow = Temporal.Instant.from(data.now);
         setServerTime(serverNow);
+        setCurrentDate(new Date(serverNow.epochMilliseconds));
       })
       .catch((err) => {
         console.error("Errore nel recupero orario dal server:", err);
       });
+  }, [timeMachineFlag]);
+
+  //TIME MACHINE
+  useEffect(() => {
+    const checkForServerTimeUpdate = async () => {
+      try {
+        const res = await fetch("/api/server-time/flag");
+        const data = await res.json();
+        if (data.flag !== timeMachineFlag) {
+          setTimeMachineFlag(data.flag);
+        }
+      } catch (err) {
+        console.error("Errore nel controllo aggiornamento orario:", err);
+      }
+    };
+    const interval = setInterval(checkForServerTimeUpdate, 1000);
+    checkForServerTimeUpdate();
+    return () => clearInterval(interval);
   }, []);
+  //FINE TIME MACHINE
+
   const loadEvents = useCallback(async () => {
     try {
       const response = await fetch("/api/events/list", {
@@ -226,29 +249,38 @@ function CalendarPage({ user }) {
   return (
     <div className="container mt-3">
       <h2 className="text-center">Calendario</h2>
-      <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        selectable
-        style={{ height: "80vh" }}
-        onSelectSlot={handleSelectSlot}
-        onSelectEvent={handleSelectEvent}
-        views={["month", "week", "day"]}
-        popup
-        timeslots={2}
-        step={30}
-        culture="it-IT"
-        formats={{ timeGutterFormat: "HH:mm" }}
-        eventPropGetter={(event) => ({
-          style: {
-            backgroundColor: event.color || "#3788d8",
-            color: "white",
-            borderRadius: "5px",
-          },
-        })}
-      />
+      {serverTime ? (
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          selectable
+          //TIME MACHINE
+          date={currentDate}
+          onNavigate={(newDate) => setCurrentDate(newDate)}
+          getNow={() => new Date(serverTime.epochMilliseconds)}
+          //FINE TIME MACHINE
+          style={{ height: "80vh" }}
+          onSelectSlot={handleSelectSlot}
+          onSelectEvent={handleSelectEvent}
+          views={["month", "week", "day"]}
+          popup
+          timeslots={2}
+          step={30}
+          culture="it-IT"
+          formats={{ timeGutterFormat: "HH:mm" }}
+          eventPropGetter={(event) => ({
+            style: {
+              backgroundColor: event.color || "#3788d8",
+              color: "white",
+              borderRadius: "5px",
+            },
+          })}
+        />
+      ) : (
+        <div>Caricamento orario dal server...</div>
+      )}
       <EventModal
         show={modalOpen}
         user={user}

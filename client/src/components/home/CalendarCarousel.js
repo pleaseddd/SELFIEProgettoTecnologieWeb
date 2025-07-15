@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useNavigate } from "react-router-dom";
 import { Carousel } from "bootstrap";
 import { FaRegCalendarDays } from "react-icons/fa6";
 import { FaRegHourglassHalf } from "react-icons/fa6";
+import { Temporal } from "@js-temporal/polyfill";
 
 function CalendarCarousel({ user }) {
   const [events, setEvents] = useState([]);
   const [countdowns, setCountdowns] = useState([]);
+  const [serverTime, setServerTime] = useState(null);
+  const [timeFlag, setTimeFlag] = useState(0);
+  const timeFlagRef = useRef(0);
+
   const navigate = useNavigate();
   useEffect(() => {
     const fetchEvents = async () => {
@@ -34,9 +39,58 @@ function CalendarCarousel({ user }) {
     };
     fetchEvents();
   }, [user._id]);
+
+  //TIME MACHINE
+  useEffect(() => {
+    timeFlagRef.current = timeFlag;
+  }, [timeFlag]);
+
+  useEffect(() => {
+    fetch("/api/server-time")
+      .then((res) => res.json())
+      .then((data) => {
+        const serverNow = Temporal.Instant.from(data.now);
+        setServerTime(serverNow);
+      })
+      .catch((err) => {
+        console.error("Errore nel recupero orario dal server:", err);
+      });
+  }, [timeFlag]);
+
+  useEffect(() => {
+    const checkForServerTimeUpdate = async () => {
+      try {
+        const res = await fetch("/api/server-time/flag");
+        const data = await res.json();
+        if (data.flag !== timeFlagRef.current) {
+          setTimeFlag(data.flag);
+        }
+      } catch (err) {
+        console.error("Errore nel controllo aggiornamento orario:", err);
+      }
+    };
+    const interval = setInterval(checkForServerTimeUpdate, 1000);
+    checkForServerTimeUpdate();
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    let interval;
+    if (serverTime) {
+      interval = setInterval(() => {
+        setServerTime((prev) => prev.add({ seconds: 1 }));
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [serverTime]);
+
+  //FINE TIME MACHINE
+
+  //Countdown per ogni evento
   useEffect(() => {
     const interval = setInterval(() => {
-      const now = new Date();
+      const now = new Date(serverTime.epochMilliseconds);
       const updatedCountdowns = events.map((event) => {
         const begin = new Date(event.begin);
         const diff = begin - now;
@@ -50,7 +104,9 @@ function CalendarCarousel({ user }) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [events]);
+  }, [events, serverTime]);
+
+  // Inizializza il carousel solo se ci sono eventi
   useEffect(() => {
     if (events.length > 0) {
       const carouselEl = document.getElementById("eventCarousel");
@@ -63,6 +119,7 @@ function CalendarCarousel({ user }) {
       carousel.cycle(); // forza l'inizio immediato
     }
   }, [events]);
+
   return events.length === 0 ? (
     <div
       className="d-flex justify-content-center align-items-center flex-column p-4"
