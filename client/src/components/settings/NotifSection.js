@@ -14,12 +14,10 @@ const NotifSection = ({ user }) => {
 	}, [device?.name]);
 
 	const handleChangeName = async () => {
-		if(!newName.trim())
+		if(!newName?.trim())
 			return;
 
-		console.log();
-
-		const update = await fetch("/updateswsubname", {
+		const update = await fetch("/api/swsub/updatename", {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({

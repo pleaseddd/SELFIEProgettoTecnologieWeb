@@ -13,7 +13,7 @@ function Signin({ change, setUser }) {
 
     try {
       // 1 Login
-      const loginRes = await fetch("/userlogin", {
+      const loginRes = await fetch("/api/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -27,7 +27,7 @@ function Signin({ change, setUser }) {
       }
 
       // 2 Recupera utente con cookie
-      const meRes = await fetch("/userauth", {
+      const meRes = await fetch("/api/user/auth", {
         method: "GET",
         credentials: "include",
       });

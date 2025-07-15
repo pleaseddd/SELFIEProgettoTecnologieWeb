@@ -88,7 +88,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
       ...(selectedNote && { noteid: selectedNote._id }),
     };
 
-    const endpoint = selectedNote ? "/updatenote" : "/newnote";
+    const endpoint = "/api/notes/" + (selectedNote ? "update" : "new");
 
     try {
       const response = await fetch(endpoint, {

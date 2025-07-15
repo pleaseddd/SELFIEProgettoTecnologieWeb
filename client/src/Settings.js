@@ -83,7 +83,7 @@ function Settings({ user, updateUser }) {
     };
 
     try {
-      const res = await fetch("/updatesettings", {
+      const res = await fetch("/api/users/updatesettings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -337,9 +337,6 @@ function Settings({ user, updateUser }) {
 	        </Card.Body>
         </Card>
 
-        <NotifSection user={user} />
-
-        <ExternalCalsSection user={user} updateUser={updateUser} />
 
         {/* Pulsante Salva */}
         <div className="d-grid mb-4">
@@ -359,6 +356,9 @@ function Settings({ user, updateUser }) {
           />
         </div>
 
+        <NotifSection user={user} />
+
+        <ExternalCalsSection user={user} updateUser={updateUser} />
 
       </Card>
 
