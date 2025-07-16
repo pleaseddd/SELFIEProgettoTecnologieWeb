@@ -83,7 +83,7 @@ function Settings({ user, updateUser }) {
     };
 
     try {
-      const res = await fetch("/updatesettings", {
+      const res = await fetch("/api/users/updatesettings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 require('dotenv').config({ path: __dirname + '/../.env' });
 
-const users = require('../db/usersClass.js');
+const usersdb = require('../db/usersClass.js');
 
 const oauth2Client = new google.auth.OAuth2(
 	process.env.GOOGLE_CLIENT_ID,
@@ -9,91 +9,37 @@ const oauth2Client = new google.auth.OAuth2(
 	process.env.GOOGLE_REDIRECT_URI
 );
 
-// oauth2Client.on('tokens', tokens => {
-// 	if(tokens.refresh_tokens) {
-//
-// 	}
-// });
-
-const scopes = ['https://www.googleapis.com/auth/calendar'];
+const scopes = [
+	'https://www.googleapis.com/auth/calendar',
+	'https://mail.google.com/'
+];
 
 module.exports = {
-	auth: async (req, res) => {
-		const { email } = req.query;
+	newEvent: async (event) => {
+		const author = await usersdb.findBy({ id: event.userid });
 
-		const url = oauth2Client.generateAuthUrl({
-			access_type: 'offline',
-			prompt: 'consent',
-			scope: scopes,
-			state: email
-		});
-
-		res.redirect(url);
-	},
-
-	auth_callback: async (req, res) => {
-		const { code, state } = req.query;
-		const { tokens } = await oauth2Client.getToken(code);
-
-		const user = await users.updateGoogleTokens(state, tokens);
-
-		res.redirect('/settings?auth-success=true');
-	},
-
-	logout: async (req, res) => {
-		const user = await users.googleLogout(req.body.user_id);
-		res.status(201).json(user);
-	},
-
-	events: async (req, res) => {
-		oauth2Client.setCredentials(req.body.googleTokens);
+		oauth2Client.setCredentials(author.google.tokens);
 
 		const calendar = google.calendar({
 			version: 'v3',
 			auth: oauth2Client
 		});
 
-		const calslist = await calendar.calendarList.list()
-			.then(resp => resp.data.items);
-
-		const resp = await calendar.events.list({
-			calendarId: calslist[calslist.length-1].id,
-			timeMin: new Date().toISOString(),
-			maxResults: 5,
-			orderBy: 'startTime',
-			singleEvents: true
+		const res = await calendar.events.insert({
+			calendarId: event.googleCal,
+			sendNotifications: true,
+			requestBody: {
+				summary: event.title,
+				start: {
+					dateTime: event.begin,
+					timeZone: "Europe/Rome"
+				},
+				end: {
+					dateTime: event.end,
+					timeZone: "Europe/Rome"
+				},
+				recurrence: event.rruleStr.split('\n').slice(1)
+			}
 		});
-
-		res.json(resp.data.items);
-	},
-
-	getCalendars: async (req, res) => {
-		try {
-			oauth2Client.setCredentials(req.body.googleTokens);
-
-			const calendar = google.calendar({
-				version: 'v3',
-				auth: oauth2Client
-			});
-
-			const calslist = await calendar.calendarList.list()
-				.then(resp => resp.data.items);
-
-			res.status(200).json(calslist);
-		}
-		catch(err) {
-			console.error('Errore:', err);
-		}
-	},
-
-	newEvent: async (tokens) => {
-		oauth2Client.setCredentials(tokens);
-
-		const calendar = google.calendar({
-			version: 'v3',
-			auth: oauth2Client
-		});
-
-
 	}
 };
