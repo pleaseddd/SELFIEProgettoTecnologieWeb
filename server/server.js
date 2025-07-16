@@ -6,6 +6,15 @@ const cors = require("cors"); //gestisce gli aspetti esterni
 const cookieParser = require("cookie-parser"); //gestisce i cookie degli utenti
 
 /*
+ * variabili d'ambiente
+ * in fase di test (=true) le variabili d'ambiente
+ * sono prese da .env_test,
+ * in produzione (test=false) sono prese da .env
+ */
+const test = true;
+require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
+
+/*
  * funzioni da file esterni
  * - setCronFunc serve per il controllo
  * delle notifiche da mandare, usa node-cron per
@@ -15,15 +24,6 @@ const cookieParser = require("cookie-parser"); //gestisce i cookie degli utenti
  */
 const { setCronFunc } = require('./utils/timeManager.js');
 const { loadFake } = require("./db/timeMachineClass.js");
-
-/*
- * variabili d'ambiente
- * in fase di test (=true) le variabili d'ambiente
- * sono prese da .env_test,
- * in produzione (test=false) sono prese da .env
- */
-const test = true;
-require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
 
 
 const app = express();
