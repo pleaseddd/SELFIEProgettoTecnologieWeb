@@ -2,7 +2,6 @@ const cron = require("node-cron");
 const webpush = require('web-push');
 const notifs = require('../db/notifClass.js');
 const swsubs = require('../db/swsubsClass.js');
-require('dotenv').config({ path: __dirname + '/../.env' });
 
 module.exports = {
 	setCronFunc: () => {

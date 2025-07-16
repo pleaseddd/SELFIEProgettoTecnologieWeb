@@ -1,5 +1,4 @@
 const { google } = require('googleapis');
-require('dotenv').config({ path: __dirname + '/../.env' });
 
 const usersdb = require('../db/usersClass.js');
 
