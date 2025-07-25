@@ -35,7 +35,8 @@ const UserSchema = new mongoose.Schema({
       refresh_token: String,
     },
 
-	calendarId: { type: String }
+	calendarId: String,
+	email: Boolean,
   },
 
   settings: {
@@ -127,8 +128,7 @@ module.exports = {
   googleLogout: async (id) => {
     const filter = { _id: id };
     const update = { $set: { google: { isLogged: false, tokens: {} } } };
-
-    return await User.findOneAndUpdate(filter, update);
+	return await User.findOneAndUpdate(filter, update);
   },
 
   setGoogleCal: async (userid, calid) => {

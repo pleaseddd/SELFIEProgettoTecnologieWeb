@@ -356,7 +356,7 @@ function Settings({ user, updateUser }) {
           />
         </div>
 
-        <NotifSection user={user} />
+        <NotifSection user={user} updateUser={updateUser} />
 
         <ExternalCalsSection user={user} updateUser={updateUser} />
 
