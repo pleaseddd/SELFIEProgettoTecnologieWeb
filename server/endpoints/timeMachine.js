@@ -4,9 +4,9 @@ module.exports = {
 	setEndpoints: (router) => {
 		//Prendo l'orario
 		router.get('/api/server-time', GET_servertime);
-
 		router.post("/api/server-time/set", POST_set);
 		router.post("/api/server-time/reset", POST_reset);
+		router.get('/api/server-time/flag', GET_current);
 	}
 };
 
@@ -58,7 +58,7 @@ async function POST_reset(req, res) {
 
 async function GET_current(req, res) {
   try {
-    const nowMs = Date.now() + cachedOffset;
+    const nowMs = Date.now() + timeMachineDB.getCache();
     const nowIso = new Date(nowMs).toISOString();
     res.json({ now: nowIso });
   } catch (err) {

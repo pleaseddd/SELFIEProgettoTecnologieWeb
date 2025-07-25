@@ -43,6 +43,8 @@ module.exports = {
 		return Date.now() + cachedOffset;
 	},
 
+	getCache: () => cachedOffset,
+
 	resetCache: () => {
 		cachedOffset = 0;
 	}
