@@ -20,6 +20,7 @@ module.exports = {
 		router.post('/api/google/logout', POST_logout);
 		router.post('/api/google/getcalendars', POST_getCalendars);
 		router.post('/api/google/setcal', POST_setcal);
+		router.post('/api/google/setemailconsent', POST_emailconsent);
 	}
 };
 
@@ -42,11 +43,12 @@ async function auth_callback(req, res) {
 
 	const user = await usersdb.updateGoogleTokens(state, tokens);
 
-	res.redirect('/settings?auth-success=true');
+	res.redirect('/settings');
 }
 
 async function POST_logout(req, res) {
-	const user = await usersdb.googleLogout(req.body.user_id);
+	await usersdb.googleLogout(req.body.user_id);
+	const user = await usersdb.findBy({ id: req.body.user_id });
 	res.status(201).json(user);
 }
 
@@ -101,4 +103,12 @@ async function POST_setcal(req, res) {
 		console.log('errore nel settare il calendario');
 		res.status(400).json({ message: error });
 	}
+}
+
+async function POST_emailconsent(req, res) {
+	const filter = { _id: req.body.user_id };
+	const update = { $set: { 'google.email': req.body.consent } };
+	await usersdb.update(filter, update);
+	const user = await usersdb.findBy({ id: req.body.user_id });
+	res.status(201).json(user);
 }

@@ -339,7 +339,9 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
               />
             </div>
 
-						<div className="mb-3">
+						{
+						user.google.isLogged ?
+						(<div className="mb-3">
 							<div className="d-flex align-items-center">
 								<Switch
 									className="me-2"
@@ -358,7 +360,8 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
 									Salva su Google Calendar
 								</label>
 							</div>
-						</div>
+						</div>) : null
+						}
 
             <div className="mb-3">
               <div className="d-flex align-items-center">

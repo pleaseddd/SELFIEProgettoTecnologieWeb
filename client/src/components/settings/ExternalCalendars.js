@@ -2,21 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import GoogleButton from 'react-google-button';
 
-const GoogleAuth = ({ user, updateUser }) => {
-	useEffect(async () => {
-		const urlParams = new URLSearchParams(window.location.search);
-
-		if(urlParams.get('auth-success') == 'true') {
-			console.log(user.google);
-			// const data = await fetch('/api/user/update', {
-			// 	method: 'POST',
-			// 	headers: { 'content-type': 'application/json' },
-			// 	body: JSON.stringify({ user_id: user._id })
-			// }).then(resp => resp.json());
-			// updateUser(data);
-		}
-	}, []);
-
+const GoogleAuth = ({ user }) => {
 	return (
 		<div>
 			<GoogleButton
@@ -73,16 +59,23 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 			{
 				calslist.map(cal => (
 					<div key={cal.id}>
-						<option value={cal.id}>
+						{
+						cal.id == user.google.calendarId ?
+						(<option value={cal.id} selected="selected">
 							{cal.summary}
-						</option>
+						</option>)
+						:
+						(<option value={cal.id}>
+							{cal.summary}
+						</option>)
+						}
 					</div>
 				))
 			}
 			</Form.Select>
 			<Button
 				variant="success"
-				className="py-2 ms-2"
+				className="my-2"
 				onClick={handleChangeCal}
 			>
 				Imposta
@@ -92,6 +85,12 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 };
 
 const ExternalCalsSection = ({ user, updateUser }) => {
+	const [googleLogin, setGoogleLogin] = useState(user.google.isLogged);
+
+	useEffect(() => {
+		setGoogleLogin(user.google.isLogged);
+	}, [user.google.isLogged]);
+
 	const handleLogout = async () => {
 		const resp = await fetch('/api/google/logout', {
 			method: 'POST',
@@ -104,12 +103,12 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 	return (
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
-				<div className="d-flex align-items-center mb-4">
+				<div className="d-flex align-items-center">
 					<h5>Calendari esterni</h5>
 				</div>
 
 				{
-					user?.google?.isLogged ?
+					googleLogin ?
 					(<div>
 						<button className="btn btn-danger" onClick={handleLogout}>
 							Google - Logout
@@ -117,7 +116,7 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 						<GoogleCalendarUsed user={user} updateUser={updateUser} />
 					</div>)
 					:
-					(<GoogleAuth user={user} updateUser={updateUser} />)
+					(<GoogleAuth user={user} />)
 				}
 			</Card.Body>
 		</Card>
