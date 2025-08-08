@@ -23,7 +23,16 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify({ googleTokens: user.google.tokens })
 			}).then(resp => resp.json());
-			setCalslist(data);
+			if(data.hasOwnProperty('message')) {
+				const logout = await fetch('/api/google/logout', {
+					method: 'POST',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({ user_id: user._id })
+				}).then(resp => resp.json());
+				updateUser(logout);
+			}
+			else
+				setCalslist(data);
 		}
 		load();
 	}, []);

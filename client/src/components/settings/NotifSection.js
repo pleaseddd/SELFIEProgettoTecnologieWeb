@@ -66,7 +66,7 @@ const EmailNotif = ({ user, updateUser }) => {
 		<div>
 			<Form.Group>
 				<EmailNotifSwitch
-					label="Desidero ricevere notifiche tramite la mia email google"
+					label="notifiche tramite gmail"
 					user={user}
 					updateUser={updateUser}
 				/>

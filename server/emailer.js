@@ -22,7 +22,7 @@ require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
 
 	(async () => {
 	  const info = await transporter.sendMail({
-	    from: '"Maddison Foo Koch" <maddison53@ethereal.email>',
+	    from: 'Il tuo calendario personale',
 	    to: "amaduccisamuele@gmail.com",
 	    subject: "Hello ✔",
 	    text: "Hello world?", // plain‑text body

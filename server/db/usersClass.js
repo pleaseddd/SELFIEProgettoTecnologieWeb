@@ -36,7 +36,14 @@ const UserSchema = new mongoose.Schema({
     },
 
 	calendarId: String,
-	email: Boolean,
+
+	gmail: {
+		address: String,
+		notifs: {
+			type: Boolean,
+			default: false
+		}
+	}
   },
 
   settings: {

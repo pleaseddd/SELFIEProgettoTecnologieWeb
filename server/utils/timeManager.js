@@ -1,7 +1,10 @@
 const cron = require("node-cron");
 const webpush = require('web-push');
+const nodemailer = require('nodemailer');
+
 const notifs = require('../db/notifClass.js');
 const swsubs = require('../db/swsubsClass.js');
+const usersdb = require('../db/usersClass.js');
 
 module.exports = {
 	setCronFunc: () => {
@@ -23,8 +26,30 @@ module.exports = {
 				});
 
 				await notifs.notif_sent(notif._id);
-
 				console.log("notifica mandata con successo");
+
+				//sezione delle mail
+				const user = await usersdb.findBy({ id: notif.user });
+				const transporter = nodemailer.createTransport({
+					host: "smtp.gmail.com",
+					port: 465,
+					secure: true,
+					auth: {
+						type: "OAuth2",
+						user: user.google.gmail.address,
+						accessToken: user.google.tokens.access_token
+					}
+				});
+
+				await transporter.sendMail({
+					from: 'me',
+					to: user.google.gmail.address,
+					subject: 'Reminder from your personal calendar',
+					html: `<h1>${notif.title}</h1><br/><p>${notif.body}</p>`
+				});
+
+				console.log('email mandata con successo');
+
 			});
 		});
 

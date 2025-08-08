@@ -90,7 +90,8 @@ async function POST_getCalendars(req, res) {
 	}
 	catch(error) {
 		console.log('errore nel prendere i calendari');
-		res.status(400).json({ message: 'errore nella connessione google' });
+		console.log(error);
+		res.status(400).json({ message: error });
 	}
 }
 
@@ -106,9 +107,23 @@ async function POST_setcal(req, res) {
 }
 
 async function POST_emailconsent(req, res) {
-	const filter = { _id: req.body.user_id };
-	const update = { $set: { 'google.email': req.body.consent } };
-	await usersdb.update(filter, update);
 	const user = await usersdb.findBy({ id: req.body.user_id });
-	res.status(201).json(user);
+	oauth2Client.setCredentials(user.google.tokens);
+
+	const gmail = google.gmail({
+		version: 'v1',
+		auth: oauth2Client
+	});
+
+	const profile = await gmail.users.getProfile({ userId: 'me' });
+
+	const filter = { _id: req.body.user_id };
+	const update = { $set: {
+		'google.gmail.address': profile.data.emailAddress,
+		'google.gmail.notifs': req.body.consent
+	} };
+
+	await usersdb.update(filter, update);
+	const newuser = await usersdb.findBy({ id: req.body.user_id });
+	res.status(201).json(newuser);
 }
