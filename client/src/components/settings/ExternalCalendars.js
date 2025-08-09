@@ -51,44 +51,41 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 
 	return (
 		<div>
-			<Form.Label className="my-2">
+			<Form.Label className="mb-1">
 				Gli eventi saranno salvati in
 			</Form.Label>
-			<Form.Select
-				aria-label="default select"
-				onChange={e => setSelCal(e.target.value)}
-				style={{
-					maxHeight: "120px",
-					overflowY: "auto",
-					border: "1px solid #ccc",
-					borderRadius: "5px",
-					padding: "0.5rem",
-				}}
-			>
-			{
-				calslist.map(cal => (
-					<div key={cal.id}>
-						{
-						cal.id == user.google.calendarId ?
-						(<option value={cal.id} selected="selected">
-							{cal.summary}
-						</option>)
-						:
-						(<option value={cal.id}>
-							{cal.summary}
-						</option>)
-						}
-					</div>
-				))
-			}
-			</Form.Select>
-			<Button
-				variant="success"
-				className="my-2"
-				onClick={handleChangeCal}
-			>
-				Imposta
-			</Button>
+
+			<div className="d-flex align-items-center mb-2">
+				<Form.Select
+					aria-label="default select"
+
+					onChange={e => setSelCal(e.target.value)}
+				>
+				{
+					calslist.map(cal => (
+						<div key={cal.id}>
+							{
+							cal.id == user.google.calendarId ?
+							(<option value={cal.id} selected="selected">
+								{cal.summary}
+							</option>)
+							:
+							(<option value={cal.id}>
+								{cal.summary}
+							</option>)
+							}
+						</div>
+					))
+				}
+				</Form.Select>
+				<Button
+					variant="success"
+					className="ms-2"
+					onClick={handleChangeCal}
+				>
+					Imposta
+				</Button>
+			</div>
 		</div>
 	);
 };
@@ -112,17 +109,18 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 	return (
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
-				<div className="d-flex align-items-center">
+				<div className="d-flex align-items-center mb-4 border-bottom border-gray-500">
 					<h5>Calendari esterni</h5>
 				</div>
 
 				{
 					googleLogin ?
 					(<div>
-						<button className="btn btn-danger" onClick={handleLogout}>
-							Google - Logout
-						</button>
 						<GoogleCalendarUsed user={user} updateUser={updateUser} />
+
+						<Button variant="danger" onClick={handleLogout}>
+							Google - Logout
+						</Button>
 					</div>)
 					:
 					(<GoogleAuth user={user} />)

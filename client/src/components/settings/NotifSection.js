@@ -34,13 +34,20 @@ const BrowserNotif = ({ user }) => {
 	};
 
 	return (
-		<div>
-			<SwSubSwitch label="Consenso per le notifiche push" user={user} deviceName={device?.name} />
+		<fieldset className="p-2 mb-1 border border-2 border-gray-400 rounded">
+			<legend className="float-none w-auto px-1 text-body-secondary fs-6">
+				Notifiche browser
+			</legend>
 
-			<Form.Group className="mb-3 py-2">
-				<Form.Label className="mb-2">
+			<div className="pb-1 mb-2 border-bottom border-gray-400">
+				<SwSubSwitch label="Consenso per le notifiche push" user={user} deviceName={device?.name} />
+			</div>
+
+			<div>
+				<Form.Label className="mb-1">
 					Nome del dispositivo
 				</Form.Label>
+
 				<div className="d-flex mb-2">
 					<Form.Control
 						type="text"
@@ -56,22 +63,8 @@ const BrowserNotif = ({ user }) => {
 						Cambia
 					</Button>
 				</div>
-			</Form.Group>
-		</div>
-	);
-};
-
-const EmailNotif = ({ user, updateUser }) => {
-	return (
-		<div>
-			<Form.Group>
-				<EmailNotifSwitch
-					label="notifiche tramite gmail"
-					user={user}
-					updateUser={updateUser}
-				/>
-			</Form.Group>
-		</div>
+			</div>
+		</fieldset>
 	);
 };
 
@@ -80,12 +73,22 @@ const NotifSection = ({ user, updateUser }) => {
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
 				{/* Titolo della card */}
-				<div className="d-flex align-items-center mb-4">
+				<div className="d-flex align-items-center mb-4 border-bottom border-gray-500">
 					<h5>Gestione notifiche</h5>
 				</div>
 
 				<BrowserNotif user={user} />
-				<EmailNotif user={user} updateUser={updateUser} />
+
+				<fieldset className="p-2 border border-2 border-gray-400 rounded">
+					<legend className="float-none w-auto px-1 text-body-secondary fs-6">
+						Notifiche via email
+					</legend>
+					<EmailNotifSwitch
+						label="Notifiche tramite gmail"
+						user={user}
+						updateUser={updateUser}
+					/>
+				</fieldset>
 			</Card.Body>
 		</Card>
 	);
