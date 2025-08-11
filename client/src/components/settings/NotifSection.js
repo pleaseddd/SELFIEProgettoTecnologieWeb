@@ -6,6 +6,8 @@ import EmailNotifSwitch from "./switch-email.js";
 
 import { useDevice } from "../../hooks/swsubsHooks.js";
 
+import './style/CustomInput.css';
+
 const BrowserNotif = ({ user }) => {
 
 	const { device, setDevice } = useDevice();
@@ -34,35 +36,34 @@ const BrowserNotif = ({ user }) => {
 	};
 
 	return (
-		<fieldset className="p-2 mb-1 border border-2 border-gray-400 rounded">
-			<legend className="float-none w-auto px-1 text-body-secondary fs-6">
+		<fieldset className="p-2 mb-1 border-top border-2 border-gray-400">
+			<legend className="legend-custom">
 				Notifiche browser
 			</legend>
 
-			<div className="pb-1 mb-2 border-bottom border-gray-400">
+			<div className="mb-2">
 				<SwSubSwitch label="Consenso per le notifiche push" user={user} deviceName={device?.name} />
 			</div>
 
-			<div>
-				<Form.Label className="mb-1">
-					Nome del dispositivo
+			<div className="d-flex mb-2">
+				<Form.Label className="me-2 my-2 text-nowrap">
+					Nome del dispositivo:
 				</Form.Label>
 
-				<div className="d-flex mb-2">
-					<Form.Control
-						type="text"
-						value={newName}
-						placeholder="Inserisci il nome"
-						onChange={e => setNewName(e.target.value)}
-					/>
-					<Button
-						variant="success"
-						className="ms-2"
-						onClick={handleChangeName}
-					>
-						Cambia
-					</Button>
-				</div>
+				<Form.Control
+					type="text"
+					className="underline-input"
+					value={newName}
+					placeholder="Inserisci il nome"
+					onChange={e => setNewName(e.target.value)}
+				/>
+				<Button
+					variant="success"
+					className="ms-2"
+					onClick={handleChangeName}
+				>
+					Cambia
+				</Button>
 			</div>
 		</fieldset>
 	);
@@ -79,8 +80,8 @@ const NotifSection = ({ user, updateUser }) => {
 
 				<BrowserNotif user={user} />
 
-				<fieldset className="p-2 border border-2 border-gray-400 rounded">
-					<legend className="float-none w-auto px-1 text-body-secondary fs-6">
+				<fieldset className="p-2 border-top border-2 border-gray-400">
+					<legend className="legend-custom">
 						Notifiche via email
 					</legend>
 					<EmailNotifSwitch

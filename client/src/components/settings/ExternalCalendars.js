@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import GoogleButton from 'react-google-button';
 
+import './style/CustomInput.css';
+
 const GoogleAuth = ({ user }) => {
 	return (
 		<div>
@@ -50,42 +52,39 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 	};
 
 	return (
-		<div>
-			<Form.Label className="mb-1">
+		<div className="d-flex align-items-center mb-2">
+			<Form.Label className="me-2 my-2 text-nowrap">
 				Gli eventi saranno salvati in
 			</Form.Label>
-
-			<div className="d-flex align-items-center mb-2">
-				<Form.Select
-					aria-label="default select"
-
-					onChange={e => setSelCal(e.target.value)}
-				>
-				{
-					calslist.map(cal => (
-						<div key={cal.id}>
-							{
-							cal.id == user.google.calendarId ?
-							(<option value={cal.id} selected="selected">
-								{cal.summary}
-							</option>)
-							:
-							(<option value={cal.id}>
-								{cal.summary}
-							</option>)
-							}
-						</div>
-					))
-				}
-				</Form.Select>
-				<Button
-					variant="success"
-					className="ms-2"
-					onClick={handleChangeCal}
-				>
-					Imposta
-				</Button>
-			</div>
+			<Form.Select
+				aria-label="default select"
+				className="underline-input"
+				onChange={e => setSelCal(e.target.value)}
+			>
+			{
+				calslist.map(cal => (
+					<div key={cal.id}>
+						{
+						cal.id == user.google.calendarId ?
+						(<option value={cal.id} selected="selected">
+							{cal.summary}
+						</option>)
+						:
+						(<option value={cal.id}>
+							{cal.summary}
+						</option>)
+						}
+					</div>
+				))
+			}
+			</Form.Select>
+			<Button
+				variant="success"
+				className="ms-2"
+				onClick={handleChangeCal}
+			>
+				Imposta
+			</Button>
 		</div>
 	);
 };
