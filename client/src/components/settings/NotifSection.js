@@ -6,7 +6,7 @@ import EmailNotifSwitch from "./switch-email.js";
 
 import { useDevice } from "../../hooks/swsubsHooks.js";
 
-import './style/CustomInput.css';
+import '../../style/Settings.css';
 
 const BrowserNotif = ({ user }) => {
 
@@ -36,34 +36,36 @@ const BrowserNotif = ({ user }) => {
 	};
 
 	return (
-		<fieldset className="p-2 mb-1 border-top border-2 border-gray-400">
+		<fieldset className="p-2 mb-2 border-top border-2 border-gray-400">
 			<legend className="legend-custom">
 				Notifiche browser
 			</legend>
 
 			<div className="mb-2">
-				<SwSubSwitch label="Consenso per le notifiche push" user={user} deviceName={device?.name} />
+				<SwSubSwitch label="Notifiche push" user={user} deviceName={device?.name} />
 			</div>
 
-			<div className="d-flex mb-2">
-				<Form.Label className="me-2 my-2 text-nowrap">
-					Nome del dispositivo:
+			<div className="d-flex flex-column flex-md-row mb-2">
+				<Form.Label className="me-md-2 mt-2 mb-0 text-nowrap">
+					Nome dispositivo:
 				</Form.Label>
 
-				<Form.Control
-					type="text"
-					className="underline-input"
-					value={newName}
-					placeholder="Inserisci il nome"
-					onChange={e => setNewName(e.target.value)}
-				/>
-				<Button
-					variant="success"
-					className="ms-2"
-					onClick={handleChangeName}
-				>
-					Cambia
-				</Button>
+				<div className="d-flex flex-grow-1">
+					<Form.Control
+						type="text"
+						className="underline-input"
+						value={newName}
+						placeholder="Inserisci il nome"
+						onChange={e => setNewName(e.target.value)}
+					/>
+					<Button
+						variant="success"
+						className="ms-2 mt-2 mt-md-0"
+						onClick={handleChangeName}
+					>
+						Cambia
+					</Button>
+				</div>
 			</div>
 		</fieldset>
 	);
@@ -73,8 +75,7 @@ const NotifSection = ({ user, updateUser }) => {
 	return (
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
-				{/* Titolo della card */}
-				<div className="d-flex align-items-center mb-4 border-bottom border-gray-500">
+				<div className="section-title">
 					<h5>Gestione notifiche</h5>
 				</div>
 

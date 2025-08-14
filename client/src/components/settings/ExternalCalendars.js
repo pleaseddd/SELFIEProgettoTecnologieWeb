@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import GoogleButton from 'react-google-button';
 
-import './style/CustomInput.css';
+import '../../style/Settings.css';
 
 const GoogleAuth = ({ user }) => {
 	return (
@@ -52,39 +52,42 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 	};
 
 	return (
-		<div className="d-flex align-items-center mb-2">
-			<Form.Label className="me-2 my-2 text-nowrap">
-				Gli eventi saranno salvati in
+		<div className="d-flex flex-column flex-md-row mb-2">
+			<Form.Label className="me-md-2 mt-md-2 mb-0 text-nowrap">
+				Salvo gli eventi in
 			</Form.Label>
-			<Form.Select
-				aria-label="default select"
-				className="underline-input"
-				onChange={e => setSelCal(e.target.value)}
-			>
-			{
-				calslist.map(cal => (
-					<div key={cal.id}>
-						{
-						cal.id == user.google.calendarId ?
-						(<option value={cal.id} selected="selected">
-							{cal.summary}
-						</option>)
-						:
-						(<option value={cal.id}>
-							{cal.summary}
-						</option>)
-						}
-					</div>
-				))
-			}
-			</Form.Select>
-			<Button
-				variant="success"
-				className="ms-2"
-				onClick={handleChangeCal}
-			>
-				Imposta
-			</Button>
+
+			<div className="d-flex flex-grow-1">
+				<Form.Select
+					aria-label="default select"
+					className="underline-input"
+					onChange={e => setSelCal(e.target.value)}
+				>
+				{
+					calslist.map(cal => (
+						<div key={cal.id}>
+							{
+							cal.id == user.google.calendarId ?
+							(<option value={cal.id} selected="selected">
+								{cal.summary}
+							</option>)
+							:
+							(<option value={cal.id}>
+								{cal.summary}
+							</option>)
+							}
+						</div>
+					))
+				}
+				</Form.Select>
+				<Button
+					variant="success"
+					className="ms-2 mt-2 mt-md-0"
+					onClick={handleChangeCal}
+				>
+					Imposta
+				</Button>
+			</div>
 		</div>
 	);
 };
@@ -108,22 +111,31 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 	return (
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
-				<div className="d-flex align-items-center mb-4 border-bottom border-gray-500">
+				<div className="section-title">
 					<h5>Calendari esterni</h5>
 				</div>
 
+				<fieldset className="p-2 border-top border-2 border-gray-400">
+					<legend className="legend-custom">
+						Google calendar
+					</legend>
 				{
 					googleLogin ?
 					(<div>
 						<GoogleCalendarUsed user={user} updateUser={updateUser} />
 
-						<Button variant="danger" onClick={handleLogout}>
+						<Button
+							variant="outline-danger"
+							className="mt-3"
+							onClick={handleLogout}
+						>
 							Google - Logout
 						</Button>
 					</div>)
 					:
 					(<GoogleAuth user={user} />)
 				}
+				</fieldset>
 			</Card.Body>
 		</Card>
 	);

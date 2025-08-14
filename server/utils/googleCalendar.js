@@ -37,7 +37,7 @@ module.exports = {
 					dateTime: event.end,
 					timeZone: "Europe/Rome"
 				},
-				recurrence: event.rruleStr.split('\n').slice(1)
+				recurrence: event.rruleStr?.split('\n').slice(1)
 			}
 		});
 	}

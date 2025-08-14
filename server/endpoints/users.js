@@ -108,6 +108,6 @@ async function POST_settings(req, res) {
 		});
 	}
 	catch (error) {
-	    res.status(500).json({ error: "errore nel cambiare le impostazioni" });
+	    res.status(500).json({ error: "errore nel cambiare le impostazioni:" + error });
 	}
 }
