@@ -16,10 +16,11 @@ import Pomodoro from "./Pomodoro.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const App = () => {
-  //GESTIONE DELLA SESSIONE
+  //Gestione dello stato dell'utente
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  //Vedo se l'utente è autenticato nel token 
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -31,8 +32,8 @@ const App = () => {
         setUser(data);
       } catch (error) {
         setUser(null);
-        console.error("Errore nel recupero dell'utente:", error);
       } finally {
+        // Imposto lo stato di caricamento a false dopo aver verificato l'utente
         setLoading(false);
       }
     };
@@ -40,6 +41,7 @@ const App = () => {
     fetchUser();
   }, []);
 
+  //Se disconnetto l'utente, lo rimuovo dal token
   const handleLogout = async () => {
     await fetch("/userlogout", {
       method: "POST",
@@ -48,6 +50,8 @@ const App = () => {
     setUser(null);
   };
 
+
+  //Aggiorno lo stato user 
   const handleSetUser = (userData) => {
     setUser(userData);
   };
