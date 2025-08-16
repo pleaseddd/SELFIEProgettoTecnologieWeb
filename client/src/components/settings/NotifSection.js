@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Card, Form, Button } from "react-bootstrap";
+
 import SwSubSwitch from "./switch-swsub.js";
+import EmailNotifSwitch from "./switch-email.js";
+
 import { useDevice } from "../../hooks/swsubsHooks.js";
 
-const NotifSection = ({ user }) => {
+import '../../style/Settings.css';
+
+const BrowserNotif = ({ user }) => {
 
 	const { device, setDevice } = useDevice();
 
@@ -14,12 +19,10 @@ const NotifSection = ({ user }) => {
 	}, [device?.name]);
 
 	const handleChangeName = async () => {
-		if(!newName.trim())
+		if(!newName?.trim())
 			return;
 
-		console.log();
-
-		const update = await fetch("/updateswsubname", {
+		const update = await fetch("/api/swsub/updatename", {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({
@@ -33,36 +36,61 @@ const NotifSection = ({ user }) => {
 	};
 
 	return (
+		<fieldset className="p-2 mb-2 border-top border-2 border-gray-400">
+			<legend className="legend-custom">
+				Notifiche browser
+			</legend>
+
+			<div className="mb-2">
+				<SwSubSwitch label="Notifiche push" user={user} deviceName={device?.name} />
+			</div>
+
+			<div className="d-flex flex-column flex-md-row mb-2">
+				<Form.Label className="me-md-2 mt-2 mb-0 text-nowrap">
+					Nome dispositivo:
+				</Form.Label>
+
+				<div className="d-flex flex-grow-1">
+					<Form.Control
+						type="text"
+						className="underline-input"
+						value={newName}
+						placeholder="Inserisci il nome"
+						onChange={e => setNewName(e.target.value)}
+					/>
+					<Button
+						variant="success"
+						className="ms-2 mt-2 mt-md-0"
+						onClick={handleChangeName}
+					>
+						Cambia
+					</Button>
+				</div>
+			</div>
+		</fieldset>
+	);
+};
+
+const NotifSection = ({ user, updateUser }) => {
+	return (
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
-
-				{/* Titolo della card */}
-				<div className="d-flex align-items-center mb-4">
+				<div className="section-title">
 					<h5>Gestione notifiche</h5>
 				</div>
 
-				<SwSubSwitch label="Consenso per le notifiche" user={user} deviceName={device?.name} />
+				<BrowserNotif user={user} />
 
-				<Form.Group className="mb-3 py-2">
-					<Form.Label className="mb-2">
-						Nome del dispositivo
-					</Form.Label>
-					<div className="d-flex mb-2">
-						<Form.Control
-							type="text"
-							value={newName}
-							placeholder="Inserisci il nome"
-							onChange={e => setNewName(e.target.value)}
-						/>
-						<Button
-							variant="success"
-							className="ms-2"
-							onClick={handleChangeName}
-						>
-							Cambia
-						</Button>
-					</div>
-				</Form.Group>
+				<fieldset className="p-2 border-top border-2 border-gray-400">
+					<legend className="legend-custom">
+						Notifiche via email
+					</legend>
+					<EmailNotifSwitch
+						label="Notifiche tramite gmail"
+						user={user}
+						updateUser={updateUser}
+					/>
+				</fieldset>
 			</Card.Body>
 		</Card>
 	);

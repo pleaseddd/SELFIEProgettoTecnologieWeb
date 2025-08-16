@@ -53,7 +53,7 @@ class SwSubSwitch extends Component {
 					userVisibleOnly: true,
 					applicationServerKey: process.env.REACT_APP_VPKEY_PUBLIC
 				}).then(sub => {
-					fetch('/subscribe', {
+					fetch('/api/swsub/subscribe', {
 						method: 'POST',
 						body: JSON.stringify({
 							user_id: this.props.user._id,
@@ -77,7 +77,7 @@ class SwSubSwitch extends Component {
 					return;
 				}
 
-				fetch('/unsubscribe', {
+				fetch('/api/swsub/unsubscribe', {
 					method: 'POST',
 					body: JSON.stringify({ endpoint: sub.endpoint }),
 					headers: { 'content-type': 'application/json' }

@@ -30,7 +30,7 @@ function NoteView({ show, onClose, note, onEdit, onDelete }) {
           <strong>Categoria:</strong> {note.category}
         </p>
         <p style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-          <div dangerouslySetInnerHTML={{ __html: nota.body }} />
+          <div dangerouslySetInnerHTML={{ __html: note.body }} />
         </p>
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between">

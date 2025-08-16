@@ -18,7 +18,7 @@ export const useDevice = () => {
 						return;
 					}
 
-					fetch('/getswsub', {
+					fetch('/api/swsub/get', {
 						method: 'POST',
 						headers: { 'content-type': 'application/json' },
 						body: JSON.stringify({ endpoint: sub.endpoint })

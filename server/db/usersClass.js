@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -35,6 +34,16 @@ const UserSchema = new mongoose.Schema({
       access_token: String,
       refresh_token: String,
     },
+
+	calendarId: String,
+
+	gmail: {
+		address: String,
+		notifs: {
+			type: Boolean,
+			default: false
+		}
+	}
   },
 
   settings: {
@@ -100,98 +109,20 @@ const User = mongoose.model("User", UserSchema);
 
 // richieste
 module.exports = {
-  // crea un nuovo utente
-  POST_new: async function (req, res) {
-    try {
-      const { name, email, password } = req.body;
-      const user = await User.findOne({ email });
-
-      if (user) res.status(401).json({ message: "Usa un'altra email!" });
-      else {
-        const newUser = new User({
-          name,
-          email,
-          password,
-          propic: "https://dummyimage.com/80x80/023430/fff.jpg&text=propic",
-        });
-
-        await newUser.save();
-        res.status(201).json(newUser);
-      }
-    } catch (err) {
-      res.status(400).json({ message: err.message });
-    }
+  newUser: async (user) => {
+    const newuser = new User(user);
+	return await newuser.save();
   },
 
-  // GESTIONE SESSIONE DEL LOGIN
-  POST_authLogin: async function (req, res) {
-    try {
-      
-      const { email, password } = req.body;
-      const user = await User.findOne({ email });
-
-      if (!user || !(await user.checkpw(password)))
-        return res.status(401).json({ message: "Credenziali non valide" });
-      
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: true, 
-        sameSite: "Strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      res.status(200).json({ message: "Login riuscito" });
-    } catch (err) {
-      res.status(500).json({ message: "Errore del server" });
-    }
-  },
-  GET_authMe: async function (req, res) {
-    try {
-      const token = req.cookies.token;
-      if (!token) return res.status(401).json({ message: "Non autenticato" });
-
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id);
-
-      if (!user) return res.status(404).json({ message: "Utente non trovato" });
-
-      res.status(200).json(user);
-    } catch (err) {
-      res.status(401).json({ message: "Token non valido" });
-    }
+  findBy: async (filter) => {
+    if(filter.hasOwnProperty("id"))
+	    return await User.findById(filter.id);
+    if(filter.hasOwnProperty('email'))
+		return await User.findOne(filter);
   },
 
-  POST_authLogout: function (req, res) {
-    res.clearCookie("token");
-    res.status(200).json({ message: "Logout effettuato" });
-  },
-
-  // FINE GESTIONE SESSIONE DEL LOGIN
-
-  // per modificare le impostazioni
-  POST_settings: async function (req, res) {
-    try {
-      const filter = { _id: req.body.user.id };
-      const update = {
-        $set: {
-          name: req.body.user.name,
-          email: req.body.user.email,
-          settings: req.body.user.settings,
-        },
-      };
-      const user = await User.findOneAndUpdate(filter, update);
-
-      res.status(201).json({ message: "Impostazioni cambiate con successo" });
-    } catch (error) {
-      res.status(500).json({ error: "errore nel cambiaere le impostazioni" });
-    }
-  },
-
-  findById: async (id) => {
-    return await User.findById(id);
+  update: async (filter, update) => {
+	return await User.findOneAndUpdate(filter, update);
   },
 
   updateGoogleTokens: async (email, tokens) => {
@@ -204,13 +135,13 @@ module.exports = {
   googleLogout: async (id) => {
     const filter = { _id: id };
     const update = { $set: { google: { isLogged: false, tokens: {} } } };
-
-    return await User.findOneAndUpdate(filter, update);
+	return await User.findOneAndUpdate(filter, update);
   },
 
-  POST_updateUser: async (req, res) => {
-    const user = await User.findById(req.body.user_id);
-    res.status(201).json(user);
+  setGoogleCal: async (userid, calid) => {
+	const filter = { _id: userid };
+	const update = { $set: { 'google.calendarId': calid } };
+	return await User.findOneAndUpdate(filter, update);
   },
 };
 

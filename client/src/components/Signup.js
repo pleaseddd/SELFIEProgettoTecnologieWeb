@@ -22,7 +22,7 @@ function Register({change}) {
         }
 
         try {
-            const response = await fetch("/newuser", {
+            const response = await fetch("/api/user/new", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
