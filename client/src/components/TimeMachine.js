@@ -93,14 +93,18 @@ const TimeMachine = () => {
   return (
     <>
       {isMobile && (
-        <button className="tm-toggle-btn" onClick={togglePanel}>
+        <button
+          className="tm-toggle-btn"
+          onClick={togglePanel}
+          aria-label="Apri Time Machine"
+        >
           ⏳
         </button>
       )}
 
       {/* Mobile: pannello visibile solo se isOpen */}
       {isMobile && isOpen && (
-        <div className="tm-panel" ref={nodeRef}>
+        <div className="tm-panel" ref={nodeRef} role="dialog" aria-modal="true">
           <h5 className="tm-title">Time Machine</h5>
           <form onSubmit={handleSubmit} className="tm-form">
             <label htmlFor="tm-datetime" className="tm-label">
@@ -115,12 +119,12 @@ const TimeMachine = () => {
               required
             />
             <div className="tm-buttons">
-              <button type="submit" className="btn btn-primary btn-sm tm-btn">
+              <button type="submit" className="tm-btn tm-btn--primary tm-btn--large">
                 Imposta
               </button>
               <button
                 type="button"
-                className="btn btn-secondary btn-sm tm-btn"
+                className="tm-btn tm-btn--muted"
                 onClick={handleReset}
               >
                 Reset
@@ -133,8 +137,10 @@ const TimeMachine = () => {
       {/* Desktop: pannello sempre visibile e trascinabile */}
       {!isMobile && (
         <Draggable handle=".tm-title" nodeRef={nodeRef}>
-          <div className="tm-panel draggable-panel" ref={nodeRef}>
-            <h5 className="tm-title" style={{ cursor: "move" }}>Time Machine</h5>
+          <div className="tm-panel draggable-panel" ref={nodeRef} role="dialog">
+            <h5 className="tm-title" style={{ cursor: "move" }}>
+              Time Machine
+            </h5>
             <form onSubmit={handleSubmit} className="tm-form">
               <label htmlFor="tm-datetime" className="tm-label">
                 Seleziona data e ora:
@@ -148,12 +154,12 @@ const TimeMachine = () => {
                 required
               />
               <div className="tm-buttons">
-                <button type="submit" className="btn btn-primary btn-sm tm-btn">
+                <button type="submit" className="tm-btn tm-btn--primary tm-btn--large">
                   Imposta
                 </button>
                 <button
                   type="button"
-                  className="btn btn-secondary btn-sm tm-btn"
+                  className="tm-btn tm-btn--muted"
                   onClick={handleReset}
                 >
                   Reset

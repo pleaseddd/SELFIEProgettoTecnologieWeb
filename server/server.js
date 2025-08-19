@@ -7,9 +7,26 @@ const cors = require("cors");
 const { getCurrentTimestamp, loadFake } = require("./db/timeMachineClass");
 const timeMachine = require("./db/timeMachineClass");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
-const test = false;
-require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
+//middleware: estrae il token dal cookie, verifica, e imposta req.userId
+const ensureAuth = (req, res, next) => {
+	try {
+		const token = req.cookies.token;
+		if (!token) {
+			return res.status(401).json({ message: "Non autenticato" });
+		}
+
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		req.userId = decoded.id;   // ora req.userId è disponibile
+		next();
+	} catch (err) {
+		return res.status(401).json({ message: "Token non valido" });
+	}
+};
+
+const test = true;
+require('dotenv').config({ path: __dirname + "/.env" + (test ? '_test' : '') });
 
 //file interni
 const users = require('./db/usersClass.js');
@@ -48,20 +65,6 @@ app.get('/api/server-time', (req, res) => {
 	res.json({ now });
 });
 
-
-// Gestione del flag per la Time Machine
-let timeFlag = 0;
-app.get("/api/server-time/flag", (req, res) => {
-  res.json({ flag: timeFlag });
-});
-
-app.post("/api/server-time/flag/set", (req, res) => {
-  timeFlag++;
-  res.sendStatus(200);
-});
-
-
-
 app.post("/api/server-time/set", timeMachine.POST_set);
 app.post("/api/server-time/reset", timeMachine.POST_reset);
 
@@ -88,6 +91,15 @@ app.post('/updatesettings', users.POST_settings);
 app.post('/updateUser', users.POST_updateUser);
 
 console.log('user');
+
+app.post("/api/user/setPaletteKey", ensureAuth, async (req, res) => {
+	try {
+		const updatedUser = await users.setPaletteKey(req.userId, req.body.paletteKey);
+		res.status(200).json(updatedUser);
+	} catch (err) {
+		res.status(500).json({ error: "Errore nell'aggiornamento della palette" });
+	}
+});
 
 // note - CRUD
 app.post('/notes', notes.POST_list);

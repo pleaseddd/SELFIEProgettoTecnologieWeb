@@ -1,5 +1,5 @@
 export const themes = {
-  avatar1: {
+  avatar6: {
     primary: "#274759",
     secondary: "#7E9BBA",
     terziary: "#CD7F8C",
@@ -7,7 +7,7 @@ export const themes = {
     shadows: "#ACBAAC",
     accents: "#4A4241",
   },
-  avatar2: {
+  avatar1: {
     primary: "#8F5E50",
     secondary: "#9ACE5B",
     terziary: "#568990",
@@ -15,7 +15,7 @@ export const themes = {
     shadows: "#080F27",
     accents: "#364853",
   },
-  avatar3: {
+  avatar7: {
     primary: "#F3BF2D",
     secondary: "#337E76",
     terziary: "#7CE5E3",
@@ -23,15 +23,15 @@ export const themes = {
     shadows: "#191935",
     accents: "#C4A277",
   },
-  avatar4: {
+  avatar5: {
     primary: "#695B74",
-    secondary: "#934C4A",
+    secondary: "#2152AC",
     terziary: "#F1AA68",
     details: "#0D2155",
     shadows: "#FDFCFB",
-    accents: "#2152AC",
+    accents: "#934C4A",
   },
-  avatar5: {
+  avatar3: {
     primary: "#B6BFCC",
     secondary: "#0C0E21",
     terziary: "#495367",
@@ -39,7 +39,7 @@ export const themes = {
     shadows: "#ECAC41",
     accents: "#B16B1D",
   },
-  avatar6: {
+  avatar4: {
     primary: "#6FA7BE",
     secondary: "#020212",
     terziary: "#569505",
@@ -47,9 +47,9 @@ export const themes = {
     shadows: "#C9DEE7",
     accents: "#263D4E",
   },
-  avatar7: {
+  avatar2: {
     primary: "#4F2111",
-    secondary: "#803C17",
+    secondary: "#619ab4ff",
     terziary: "#EFB57C",
     details: "#F7CA9B",
     shadows: "#A0501D",

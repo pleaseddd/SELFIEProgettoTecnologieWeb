@@ -72,6 +72,16 @@ const UserSchema = new mongoose.Schema({
       type: Number,
       default: 3,
     },
+
+    theme: {
+      type: Boolean,
+      default: false,
+    },
+
+    paletteKey: {
+      type: String,
+      default: "avatar1",
+    },
   },
 });
 
@@ -126,19 +136,20 @@ module.exports = {
   // GESTIONE SESSIONE DEL LOGIN
   POST_authLogin: async function (req, res) {
     try {
-      
+
       const { email, password } = req.body;
       const user = await User.findOne({ email });
 
       if (!user || !(await user.checkpw(password)))
         return res.status(401).json({ message: "Credenziali non valide" });
-      
+
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "7d",
       });
+      console.log("Arrivato qui");
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true, 
+        secure: true,
         sameSite: "Strict",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
@@ -210,8 +221,17 @@ module.exports = {
 
   POST_updateUser: async (req, res) => {
     const user = await User.findById(req.body.user_id);
-    res.status(201).json(user);
+    res.status(201).j3son(user);
   },
+
+  setPaletteKey: async (userId, paletteKey) => {
+    const url = `/pfp/${paletteKey}.png`;
+    return await User.findByIdAndUpdate(
+      userId, {
+        $set: { "settings.paletteKey": paletteKey, propic: url }
+    }, { new: true }
+    );
+  }
 };
 
 

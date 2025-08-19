@@ -1,4 +1,22 @@
-/* root layout */
+:root{
+  /* fallback (mantengono l'aspetto originale) */
+  --color-primary: #023430;      /* testo principale / elementi scuri */
+  --color-secondary: #ffffff;    /* superfici bianche (cards, pannelli) */
+  --color-terziary: red;         /* il "pomodoro" (cerchio) di default */
+  --color-details: #ffffff;      /* dettagli chiari / sfondi chiari */
+  --color-shadows-rgb: 0,0,0;    /* rgb per ombre (stringa r,g,b) */
+  --color-accents: #000000;      /* accenti come colore (hex) */
+
+  /* rgb explicit per comodità (alcuni valori duplicati per fallback) */
+  --color-primary-rgb: 2, 52, 48;    /* #023430 -> 2,52,48 */
+  --color-secondary-rgb: 255,255,255;
+  --color-terziary-rgb: 255,0,0;    /* red */
+  --color-details-rgb: 255,255,255;
+  --color-shadows-rgb: 0,0,0;
+  --color-accents-rgb: 0,0,0;
+}
+
+/* ---------- layout root ---------- */
 .pomodoro-root {
   position: relative;
   min-height: 100vh;
@@ -7,7 +25,7 @@
   gap: 2rem;
   padding: 2rem;
   font-family: "Times New Roman", serif;
-  color: #023430;
+  color: var(--color-primary);
   max-width: 1200px;
   margin: 0 auto;
   overflow-x: hidden;
@@ -25,15 +43,15 @@
 
 /* sidebar config panel */
 .config-wrapper {
-  display: flex;           
+  display: flex;
   flex-direction: column;
   position: fixed;
   left: -400px;
   top: 0;
   width: 400px;
   height: 100vh;
-  background: white;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  background: var(--color-secondary);
+  box-shadow: 2px 0 10px rgba(var(--color-shadows-rgb), 0.1);
   transition: transform 0.3s ease-in-out;
   z-index: 999;
   padding: 70px 20px 20px 20px;
@@ -59,25 +77,26 @@
 .config-header {
   display: flex;
   align-items: center;
-  flex: 0 0 auto;           
+  flex: 0 0 auto;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-  background: #f5f5f5;
+  border-bottom: 1px solid rgba(var(--color-shadows-rgb), 0.1);
+  background: linear-gradient(90deg, rgba(var(--color-secondary-rgb),0.03), rgba(var(--color-details-rgb),0.01));
 }
 .config-header h2 {
   font-size: 1.25rem;
   margin: 0;
+  color: var(--color-primary);
 }
 .config-header .btn-link {
   font-size: 1.5rem;
-  color: #023430;
+  color: var(--color-primary);
 }
 
 /* config body transitions */
 .config-body {
-  flex: 1 1 auto;   
-  display: flex; 
-  flex-direction: column;     
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   padding: 1rem;
   transition: width 0.3s ease, padding 0.3s ease;
@@ -110,9 +129,10 @@
   width: 40px;
   height: 40px;
   border: none;
-  background: white;
+  background: var(--color-secondary);
+  color: var(--color-primary);
   border-radius: 50%;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(var(--color-shadows-rgb), 0.1);
   cursor: pointer;
   transition: transform 0.3s ease;
   z-index: 1001;
@@ -166,22 +186,23 @@
   width: 100%;
 }
 
-/* circle styling */
+/* circle styling — usa variabile terziary */
 .timer-circle {
   box-sizing: border-box;
   position: relative;
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background-color: red;
-  border: 2px solid rgba(0,0,0,0.2);
+  background-color: var(--color-terziary);
+  border: 2px solid rgba(var(--color-shadows-rgb), 0.2);
   backface-visibility: hidden;
   will-change: background-color;
 }
 
+/* ticks */
 .ticks-container {
-  top: 45%;  
-  left: 49.5%; 
+  top: 45%;
+  left: 49.5%;
   position: absolute;
   width: 120%;
   height: 120%;
@@ -192,7 +213,8 @@
 
 .tick {
   position: absolute;
-  background-color: rgb(0, 0, 0);
+  /* preferiamo usare accents-rgb per i tick (fallback incluso) */
+  background-color: rgb(var(--color-accents-rgb, 0,0,0));
   mix-blend-mode: difference;
   left: 50%;
   width: 2px;
@@ -224,8 +246,8 @@
   transform: translate(-50%, -50%);
   font-size: 2.5rem;
   font-weight: bold;
-  color: #023430;
-  background: rgba(255,255,255,0.9);
+  color: var(--color-primary);
+  background: rgba(var(--color-details-rgb), 0.95);
   padding: 0.5rem 1rem;
   border-radius: 5px;
   z-index: 2;
@@ -236,6 +258,7 @@
   font-size: 1.2rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
+  color: var(--color-primary);
 }
 
 /* control buttons */
@@ -253,24 +276,25 @@
   height: 3rem;
   font-size: 1.5rem;
   border: none;
-  background: #fff;
+  background: var(--color-secondary);
+  color: var(--color-primary);
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(var(--color-shadows-rgb), 0.2);
   transition: transform 0.1s;
 }
 .controls button:hover {
   transform: translateY(-2px);
 }
 
-/* animation */
+/* animation keyframes usano le variabili (compatibilità moderna) */
 @keyframes workGradient {
-  from { background-color: red; }
-  to   { background-color: brown; }
+  from { background-color: var(--color-terziary); }
+  to   { background-color: rgba(var(--color-accents-rgb, 100,50,0), 1); }
 }
 @keyframes breakGradient {
-  0%   { background-color: brown; }
-  50%  { background-color: green; }
-  100% { background-color: red; }
+  0%   { background-color: rgba(var(--color-accents-rgb, 100,50,0), 1); }
+  50%  { background-color: var(--color-secondary); }
+  100% { background-color: var(--color-terziary); }
 }
 
 .timer-circle.working {
@@ -281,13 +305,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { 
-    transform: scale(1); 
-    box-shadow: 0 0 0 rgba(0,0,0,0.2); 
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(var(--color-shadows-rgb), 0.2);
   }
-  50% { 
-    transform: scale(1.05); 
-    box-shadow: 0 0 15px rgba(0,0,0,0.3); 
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(var(--color-shadows-rgb), 0.3);
   }
 }
 
@@ -310,8 +334,8 @@
 
 /* suggestion items */
 .cycle-suggestions-wrapper {
-  max-height: 100vh;     
-  overflow-y: auto;      
+  max-height: 100vh;
+  overflow-y: auto;
   box-sizing: border-box;
 }
 .cycle-suggestion {
@@ -320,7 +344,7 @@
   justify-content: space-between;
   padding: 0.5rem;
   border-radius: 8px;
-  background: #f8f9fa;
+  background: var(--color-secondary);
   margin-bottom: 0.5rem;
   height: 3rem;
 }
@@ -330,8 +354,10 @@
 .cycle-suggestion p {
   margin: 0;
   font-size: 0.9rem;
+  color: var(--color-primary);
 }
 
+/* Responsive */
 @media (max-width: 1024px) {
   .pomodoro-root {
     padding: 1.5rem;
@@ -367,7 +393,7 @@
     margin: 0 auto;
   }
 
-.timer-section {
+  .timer-section {
     margin-left: 0 !important;
   }
 
@@ -399,10 +425,10 @@
     width: 100%;
     height: 100%;
     transform: translateX(-100%);
-    background: white;
+    background: var(--color-secondary);
     z-index: 999;
     padding: 60px 16px 16px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 10px rgba(var(--color-shadows-rgb), 0.1);
     overflow-y: auto;
   }
 

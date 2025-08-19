@@ -1,30 +1,111 @@
+/* Card body layout */
 .card-body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  gap: 0.5rem;
 }
 
+/* Card wrapper (sfondo / bordo coerenti con la palette) */
+.card {
+  background-color: rgba(var(--color-secondary-rgb), 0.04);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.06);
+  border-radius: 8px;
+  padding: 1rem;
+  color: var(--color-details);
+  box-shadow: 0 6px 18px rgba(var(--color-shadows-rgb), 0.06);
+}
+
+/* Titolo e meta della card */
+.card-title {
+  color: var(--color-terziary);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.card-subtitle {
+  color: rgba(var(--color-details-rgb), 0.9);
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Testo della card con altezza e scroll */
 .card-text {
   max-height: 150px;
-  overflow-y: auto; 
+  overflow-y: auto;
   margin-bottom: 1rem;
+  color: var(--color-primary); /* testo principale dentro la card */
+  background: transparent;
+  line-height: 1.4;
+  padding-right: 0.25rem; /* spazio per la scrollbar */
+  font-size: 0.95rem;
 }
 
+/* Scrollbar: usa i colori della palette (webkit) */
 .card-text::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
+}
+
+.card-text::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .card-text::-webkit-scrollbar-thumb {
-  background-color: #ccc;
+  /* preferiamo usare accents per un tocco distintivo, con ombra derivata da shadows */
+  background-color: rgba(var(--color-accents-rgb), 0.22);
   border-radius: 3px;
+  border: 1px solid rgba(var(--color-details-rgb), 0.06);
+  box-shadow: inset 0 0 0 1px rgba(var(--color-shadows-rgb), 0.02);
 }
 
 .card-text::-webkit-scrollbar-thumb:hover {
-  background-color: #999;
+  background-color: rgba(var(--color-accents-rgb), 0.36);
 }
 
+/* Firefox scrollbar */
 .card-text {
   scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
+  scrollbar-color: rgba(var(--color-accents-rgb), 0.22) transparent;
 }
 
+/* Varianti di leggibilità per note chiare/scure */
+.note-card--light {
+  background-color: rgba(var(--color-details-rgb), 0.04);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.04);
+  color: var(--color-primary);
+}
+.note-card--light .card-text {
+  color: var(--color-primary);
+}
+.note-card--light .card-title {
+  color: var(--color-terziary);
+}
+
+.note-card--dark {
+  background-color: linear-gradient(180deg, rgba(var(--color-primary-rgb), 0.06), rgba(var(--color-secondary-rgb), 0.03));
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.08);
+  color: var(--color-details);
+}
+.note-card--dark .card-text {
+  color: var(--color-details);
+}
+.note-card--dark .card-title {
+  color: var(--color-terziary);
+}
+
+/* Small utility: bordo sottile coerente */
+.card .subtle-border {
+  border-top: 1px solid rgba(var(--color-shadows-rgb), 0.04);
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .card {
+    padding: 0.75rem;
+  }
+  .card-text {
+    max-height: 120px;
+  }
+}
