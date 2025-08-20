@@ -3,9 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "trix/dist/trix.css";
 import "trix";
-
 function AddNote({ user, selectedNote, clearSelectedNote }) {
+  // Recupero dal USER le categorie possibili per le note e le metto sottoforma di Array per ciclarle 
   const categories = user.settings.categoryNotes.split("/");
+  // Variabili per la Nota 
   const [form, setForm] = useState({
     title: "",
     category: categories[0],
@@ -14,6 +15,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
   const editorRef = useRef(null);
   const [message, setMessage] = useState("");
 
+//Verifico che se sto modificando o meno una nota e nel caso aggiorno le variabili
   useEffect(() => {
     if (selectedNote) {
       setForm({
@@ -21,6 +23,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
         category: selectedNote.category,
         text: selectedNote.body,
       });
+      //Metto un timeout per essere sicuro che il Trix Editor sia caricato prima di settare il contenuto
       setTimeout(() => {
         const editor = document.querySelector("trix-editor");
         if (editor && selectedNote.body) {
@@ -32,6 +35,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
     }
   }, [selectedNote]);
 
+//Monto il componente Trix Editor e gestisco gli eventi di cambio
   useEffect(() => {
     const editor = editorRef.current;
     const handleChange = () => {
@@ -46,6 +50,9 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
     };
   }, []);
 
+
+  //Personalizzo lo stile del Trix Editor
+  //Aggiungo un useEffect per montare gli stili CSS direttamente nel documento
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = `
@@ -75,6 +82,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
     document.head.appendChild(style);
   }, []);
 
+  // Funzione per gestire l'invio del form
   const handleSubmit = async (event) => {
     event.preventDefault();
     const { title, category, text } = form;
@@ -151,6 +159,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
         </div>
         <div className="mb-3">
           <label className="form-label">Corpo</label>
+          {/* Personalizzo la barra per il Mark-down */}
           <trix-toolbar id="custom-toolbar">
             <div className="trix-button-row">
               {/* Testo */}
