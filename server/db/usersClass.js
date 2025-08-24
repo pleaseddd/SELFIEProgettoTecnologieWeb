@@ -81,6 +81,16 @@ const UserSchema = new mongoose.Schema({
       type: Number,
       default: 3,
     },
+
+	theme: {
+		type: Boolean,
+		default: false,
+	},
+
+	paletteKey: {
+		type: String,
+		default: "avatar1",
+	},
   },
 });
 
@@ -141,6 +151,17 @@ module.exports = {
   setGoogleCal: async (userid, calid) => {
 	const filter = { _id: userid };
 	const update = { $set: { 'google.calendarId': calid } };
+	return await User.findOneAndUpdate(filter, update);
+  },
+
+  setPaletteKey: async (userid, paletteKey) => {
+	const url = `/pfp/${paletteKey}.png`;
+	const filter = { _id: userid };
+	const update = { $set: {
+		'settings.paletteKey': paletteKey,
+		propic: url
+	}};
+
 	return await User.findOneAndUpdate(filter, update);
   },
 };

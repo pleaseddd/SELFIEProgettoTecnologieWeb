@@ -8,6 +8,23 @@ module.exports = {
 		router.get('/api/user/auth', GET_authMe);
 		router.post('/api/user/logout', POST_authLogout);
 		router.post('/api/user/updatesettings', POST_settings);
+		router.post('/api/user/setPaletteKey', ensureAuth, POST_setPaletteKey);
+	}
+};
+
+//middleware: estrae il token dal cookie, verifica, e imposta req.userId
+const ensureAuth = (req, res, next) => {
+	try {
+		const token = req.cookies.token;
+		if (!token) {
+			return res.status(401).json({ message: "Non autenticato" });
+		}
+
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		req.userId = decoded.id;   // ora req.userId è disponibile
+		next();
+	} catch (err) {
+		return res.status(401).json({ message: "Token non valido" });
 	}
 };
 
@@ -109,5 +126,14 @@ async function POST_settings(req, res) {
 	}
 	catch (error) {
 	    res.status(500).json({ error: "errore nel cambiare le impostazioni:" + error });
+	}
+}
+
+async function POST_setPaletteKey(req, res) {
+	try {
+		const updatedUser = await userdb.setPaletteKey(req.userId, req.body.paletteKey);
+		res.status(200).json(updatedUser);
+	} catch (err) {
+		res.status(500).json({ error: "Errore nell'aggiornamento della palette" });
 	}
 }

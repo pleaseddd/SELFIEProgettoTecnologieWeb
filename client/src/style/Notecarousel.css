@@ -1,28 +1,65 @@
+/* Wrapper note */
 .note-card-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 250px; /* altezza fissa uniforme */
+  padding: 1rem;
 }
 
+/* Card singola */
 .note-card {
   width: 100%;
   max-width: 600px;
   height: 250px; /* altezza fissa uniforme */
-  background-color: #ffffff;
+  /* usa details per il contenuto chiaro oppure secondary per superfici */
+  background-color: var(--color-details);
+  color: var(--color-primary);
   border-radius: 1rem;
   cursor: pointer;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 8px 20px rgba(var(--color-shadows-rgb), 0.06);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.08);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
+/* hover/active per dare un leggero risalto con l'accent della palette */
+.note-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 36px rgba(var(--color-shadows-rgb), 0.12);
+  border-color: rgba(var(--color-accents-rgb), 0.14);
+}
+
+/* bordo accentato opzionale (es. evidenzia una nota) */
+.note-card--accent {
+  border-left: 6px solid var(--color-accents);
+}
+
+/* Corpo della nota */
 .note-body {
   flex: 1;
   overflow: hidden;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-/* Troncamento multilinea */
+/* Titolo / meta */
+.note-title {
+  color: var(--color-terziary);
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0;
+}
+.note-meta {
+  color: rgba(var(--color-details-rgb), 0.78);
+  font-size: 0.85rem;
+}
+
+/* Troncamento multilinea (resta invariato) */
 .text-truncate-multiline {
   display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -31,20 +68,73 @@
   overflow: hidden;
   text-overflow: ellipsis;
   position: relative;
+  color: var(--color-primary);
+  font-size: 0.95rem;
 }
 
-
+/* Background globale della pagina (usa primary come sfondo) */
 body, html {
   margin: 0;
   padding: 0;
-  background-color: #586ba4;
+  background-color: var(--color-primary);
+  color: var(--color-details);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Varianti light/dark per note (usa le variabili della palette) */
+.note-card--light {
+  background-color: var(--color-details);
+  color: var(--color-primary);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.06);
+}
+.note-card--dark {
+  /* gradient leggero usato come superficie scura derivata da secondary */
+  background: linear-gradient(180deg,
+              rgba(var(--color-secondary-rgb), 0.06),
+              rgba(var(--color-secondary-rgb), 0.02));
+  color: var(--color-details);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.12);
+}
+
+/* Se vuoi usare la secondary come superficie invece del details */
+.note-card--surface-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-details);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.08);
+}
+
+/* Piccoli elementi interni (tag, badge) */
+.note-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background-color: rgba(var(--color-terziary-rgb), 0.12);
+  color: var(--color-terziary);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.04);
+}
+
+/* Utility: testo e bordi sottili coerenti */
+.note-card .subtle-border-top {
+  border-top: 1px solid rgba(var(--color-shadows-rgb), 0.04);
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+}
 
 /* Responsive per smartphone */
 @media (max-width: 576px) {
   .note-card {
     max-width: 90vw;
     height: 200px; /* altezza relativa su schermo piccolo */
+  }
+
+  .note-body {
+    padding: 0.75rem;
+  }
+
+  .text-truncate-multiline {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
   }
 }
