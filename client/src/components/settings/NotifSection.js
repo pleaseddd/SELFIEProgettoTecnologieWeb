@@ -6,7 +6,7 @@ import EmailNotifSwitch from "./switch-email.js";
 
 import { useDevice } from "../../hooks/swsubsHooks.js";
 
-import '../../style/Settings.css';
+import '../../style/settings/Settings.css';
 
 const BrowserNotif = ({ user }) => {
 
@@ -36,7 +36,7 @@ const BrowserNotif = ({ user }) => {
 	};
 
 	return (
-		<fieldset className="p-2 mb-2 border-top border-2 border-gray-400">
+		<fieldset className="fieldset-custom mb-2">
 			<legend className="legend-custom">
 				Notifiche browser
 			</legend>
@@ -81,7 +81,7 @@ const NotifSection = ({ user, updateUser }) => {
 
 				<BrowserNotif user={user} />
 
-				<fieldset className="p-2 border-top border-2 border-gray-400">
+				<fieldset className="fieldset-custom">
 					<legend className="legend-custom">
 						Notifiche via email
 					</legend>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import GoogleButton from 'react-google-button';
 
-import '../../style/Settings.css';
+import '../../style/settings/Settings.css';
 
 const GoogleAuth = ({ user }) => {
 	return (
@@ -115,7 +115,7 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 					<h5>Calendari esterni</h5>
 				</div>
 
-				<fieldset className="p-2 border-top border-2 border-gray-400">
+				<fieldset className="fieldset-custom">
 					<legend className="legend-custom">
 						Google calendar
 					</legend>

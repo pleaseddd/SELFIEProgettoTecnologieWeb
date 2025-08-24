@@ -82,15 +82,15 @@ const UserSchema = new mongoose.Schema({
       default: 3,
     },
 
-    theme: {
-      type: Boolean,
-      default: false,
-    },
+	theme: {
+		type: Boolean,
+		default: false,
+	},
 
-    paletteKey: {
-      type: String,
-      default: "avatar1",
-    },
+	paletteKey: {
+		type: String,
+		default: "avatar1",
+	},
   },
 });
 
@@ -211,14 +211,16 @@ module.exports = {
     res.status(201).j3son(user);
   },
 
-  setPaletteKey: async (userId, paletteKey) => {
-    const url = `/pfp/${paletteKey}.png`;
-    return await User.findByIdAndUpdate(
-      userId, {
-        $set: { "settings.paletteKey": paletteKey, propic: url }
-    }, { new: true }
-    );
-  }
+  setPaletteKey: async (userid, paletteKey) => {
+	const url = `/pfp/${paletteKey}.png`;
+	const filter = { _id: userid };
+	const update = { $set: {
+		'settings.paletteKey': paletteKey,
+		propic: url
+	}};
+
+	return await User.findOneAndUpdate(filter, update);
+  },
 };
 
 
