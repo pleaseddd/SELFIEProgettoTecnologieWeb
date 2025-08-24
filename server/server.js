@@ -28,23 +28,23 @@ const ensureAuth = (req, res, next) => {
 const test = true;
 require('dotenv').config({ path: __dirname + "/.env" + (test ? '_test' : '') });
 
-//file interni
-const users = require('./db/usersClass.js');
-const notes = require('./db/notesClass.js');
-const calendar = require('./db/calendarClass.js');
-const swsubs = require('./db/swsubsClass.js');
-const notifs = require('./db/notifClass.js');
-const timeManager = require('./utils/timeManager.js');
-const googleCalendar = require('./utils/googleCalendar.js');
+/*
+ * funzioni da file esterni
+ * - setCronFunc serve per il controllo
+ * delle notifiche da mandare, usa node-cron per
+ * eseguire una funzione ogni tot minuti
+ * - loadFake carica nel sito il tempo falso
+ * della time time machine
+ */
+const { setCronFunc } = require('./utils/timeManager.js');
+const { loadFake } = require("./db/timeMachineClass.js");
 
-async function connectDatabase() {
-	await mongoose.connect(process.env.MONGO_URL);
-	console.log("database connesso");
-}
 
 const app = express();
 
+// definisco tutti i middleware che mi servono
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
 	origin: '*',
 	credentials: true,
@@ -128,16 +128,12 @@ app.get("*", (req, res) => {
 app.listen(process.env.PORT, async () => {
 	console.log(`Server started on ${process.env.WEB_URL}:${process.env.PORT}`);
 
-	try {
-		await connectDatabase();
-		await loadFake();
-		console.log("TimeMachine cache inizializzata.");
-	} catch (err) {
-		console.error("Errore connessione DB:", err);
-		process.exit(1);
-	}
+	await mongoose.connect(process.env.MONGO_URL)
+		.then(console.log('database connesso'))
+		.catch(err => console.error(err));
+	await loadFake()
+		.then(console.log("TimeMachine cache inizializzata"))
+		.catch(err => console.error(err));
 
-	timeManager.setCronFunc();
-
-	console.log("in ascolto per mandare notifiche");
+	setCronFunc();
 });

@@ -10,6 +10,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [urgency, setUrgency] = useState("non urgente");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+	const [googleCal, setGoogleCal] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
   const [Pomodoro, setPomodoro] = useState({
     on: false,
@@ -48,6 +49,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       setUrgency(initialData.urgency || "non urgente");
       setStart(initialData.begin || "");
       setEnd(initialData.end || "");
+			setGoogleCal(initialData.googleCal || false);
       setIsRecurring(initialData.isRecurring || false);
       setColor(initialData.color || "#3788d8");
       setPomodoro({
@@ -144,6 +146,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   };
 
   const handleSubmit = () => {
+		console.log(user.google);
     const event = {
       title,
       category,
@@ -151,6 +154,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       urgency,
       begin: start,
       end: end,
+	    googleCal: googleCal ? user.google.calendarId : null,
       isRecurring,
       rruleStr: isRecurring ? buildRRuleString() : null,
       color,
@@ -334,6 +338,30 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
                 title="Scegli il colore dell'evento"
               />
             </div>
+
+						{
+						user.google.isLogged ?
+						(<div className="mb-3">
+							<div className="d-flex align-items-center">
+								<Switch
+									className="me-2"
+									id="googlecal"
+									onChange={() => setGoogleCal(!googleCal)}
+									checked={googleCal}
+									onColor="#3788d8"
+                  offColor="#ccc"
+                  uncheckedIcon={false}
+                  checkedIcon={false}
+								/>
+								<label
+									className="form-check-label mb-0"
+									htmlFor="googlecal"
+								>
+									Salva su Google Calendar
+								</label>
+							</div>
+						</div>) : null
+						}
 
             <div className="mb-3">
               <div className="d-flex align-items-center">

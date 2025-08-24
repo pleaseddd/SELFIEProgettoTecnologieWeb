@@ -45,6 +45,14 @@ const App = () => {
 		fetchUser();
 	}, []);
 
+  //Se disconnetto l'utente, lo rimuovo dal token
+  const handleLogout = async () => {
+    await fetch("/api/user/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    setUser(null);
+  };
 	const handleLogout = async () => {
 		await fetch("/userlogout", {
 			method: "POST",
@@ -53,6 +61,11 @@ const App = () => {
 		setUser(null);
 	};
 
+
+  //Aggiorno lo stato user 
+  const handleSetUser = (userData) => {
+    setUser(userData);
+  };
 	const handleSetUser = (userData) => {
 		setUser(userData);
 	};

@@ -12,7 +12,7 @@ function NotesCarousel({ user }) {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await fetch("/lastnotes", {
+        const response = await fetch("/api/notes/last", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -35,6 +34,16 @@ const UserSchema = new mongoose.Schema({
       access_token: String,
       refresh_token: String,
     },
+
+	calendarId: String,
+
+	gmail: {
+		address: String,
+		notifs: {
+			type: Boolean,
+			default: false
+		}
+	}
   },
 
   settings: {
@@ -180,29 +189,8 @@ module.exports = {
     res.status(200).json({ message: "Logout effettuato" });
   },
 
-  // FINE GESTIONE SESSIONE DEL LOGIN
-
-  // per modificare le impostazioni
-  POST_settings: async function (req, res) {
-    try {
-      const filter = { _id: req.body.user.id };
-      const update = {
-        $set: {
-          name: req.body.user.name,
-          email: req.body.user.email,
-          settings: req.body.user.settings,
-        },
-      };
-      const user = await User.findOneAndUpdate(filter, update);
-
-      res.status(201).json({ message: "Impostazioni cambiate con successo" });
-    } catch (error) {
-      res.status(500).json({ error: "errore nel cambiaere le impostazioni" });
-    }
-  },
-
-  findById: async (id) => {
-    return await User.findById(id);
+  update: async (filter, update) => {
+	return await User.findOneAndUpdate(filter, update);
   },
 
   updateGoogleTokens: async (email, tokens) => {
@@ -215,8 +203,7 @@ module.exports = {
   googleLogout: async (id) => {
     const filter = { _id: id };
     const update = { $set: { google: { isLogged: false, tokens: {} } } };
-
-    return await User.findOneAndUpdate(filter, update);
+	return await User.findOneAndUpdate(filter, update);
   },
 
   POST_updateUser: async (req, res) => {
