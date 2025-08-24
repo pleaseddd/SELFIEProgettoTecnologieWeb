@@ -5,8 +5,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* usa la componente ombra della palette per l'overlay */
-  background-color: rgba(var(--color-shadows-rgb, 0,0,0), 0.3);
+  background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(2px);
   z-index: 999;
 }
@@ -18,30 +17,23 @@
   left: -250px;
   height: 100vh;
   width: 250px;
-  /* background e colori basati sulla palette */
-  background-color: var(--color-secondary);
+  background-color: #f8f9fa;
   transition: left 0.3s ease;
   padding: 1rem;
   z-index: 1000;
-  box-shadow: 2px 0 5px rgba(var(--color-shadows-rgb, 0,0,0), 0.12);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  color: var(--color-primary);
 }
 
-/* Apertura sidebar */
 .sidebar.open {
   left: 0;
 }
 
-/* Close button */
 .close-btn {
   position: absolute;
   top: 15px;
   right: 15px;
   z-index: 1001;
-  color: var(--color-primary);
-  background: transparent;
-  border: none;
 }
 
 /* Contenuto sidebar normale */
@@ -51,38 +43,28 @@
   gap: 1rem;
 }
 
-/* Lista interna */
 .sidebar ul {
   list-style: none;
   padding: 0;
   margin: 4rem 0 0 0;
 }
 
-/* Link stile bottone */
 .sidebar a.nav-link {
   display: block;
   padding: 10px 15px;
   margin-bottom: 8px;
-  /* superficie chiara su sfondo sidebar (usa details) */
-  background-color: rgba(var(--color-details-rgb, 255,255,255), 0.98);
-  border: 1px solid rgba(var(--color-shadows-rgb, 0,0,0), 0.12);
+  background-color: #fff;
+  border: 1px solid #ccc;
   border-radius: 10px;
   text-align: center;
   text-decoration: none;
-  /* colore azione dalla palette: usa il valore hex di accents se presente */
-  color: var(--color-accents);
+  color: #0d6efd;
   font-weight: 500;
-  transition: background-color 0.2s ease, transform 0.08s ease, box-shadow 0.12s ease;
-  box-shadow: 0 2px 6px rgba(var(--color-shadows-rgb), 0.04);
+  transition: background-color 0.2s ease;
 }
 
-/* Hover / focus */
-.sidebar a.nav-link:hover,
-.sidebar a.nav-link:focus {
-  background-color: rgba(var(--color-secondary-rgb, 255,255,255), 0.08);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(var(--color-shadows-rgb), 0.08);
-  color: var(--color-accents);
+.sidebar a.nav-link:hover {
+  background-color: #e2e6ea;
 }
 
 /* Bottone logout */
@@ -91,27 +73,6 @@
   padding: 10px;
   width: 100%;
   font-weight: bold;
-  background: transparent;
-  color: var(--color-primary);
-  border: 1px solid rgba(var(--color-shadows-rgb, 0,0,0), 0.12);
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* Icone / badge nella sidebar (se presenti) */
-.sidebar .icon {
-  color: var(--color-terziary);
-}
-
-/* Variante: link con sfondo accentato (es. azione principale) */
-.sidebar a.nav-link--primary {
-  background-color: var(--color-terziary);
-  color: var(--color-details);
-  border: 1px solid rgba(var(--color-shadows-rgb), 0.12);
-}
-.sidebar a.nav-link--primary:hover {
-  filter: brightness(0.95);
-  transform: translateY(-1px);
 }
 
 /* Mobile styles */

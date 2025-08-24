@@ -5,10 +5,9 @@ import {
   Button,
   Card,
   Image,
-	Modal,
 } from "react-bootstrap";
 
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 import ConfirmModal from "./components/ConfirmModal";
 import ExternalCalsSection from "./components/settings/ExternalCalendars.js";
@@ -18,17 +17,11 @@ import AvatarSelectorModal from "./components/AvatarSelectorModal";
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
-import { useTheme } from "./components/ThemeContext";
-import AvatarSelectorModal from "./components/AvatarSelectorModal";
-import axios from 'axios';
-
 import './style/settings/Settings.css';
 import './style/settings/personalInfo.css';
 import './style/settings/generals.css';
 
-axios.defaults.withCredentials = true;
-
-const PersonalInfoSection = ({ user, form, handleSingleChange, setShowAvatarSelector }) => {
+const PersonalInfoSection = ({ user, form, handleSingleChange }) => {
 	return (
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
@@ -46,11 +39,10 @@ const PersonalInfoSection = ({ user, form, handleSingleChange, setShowAvatarSele
 							alt="Propic"
 						/>
 						<Button
-							id="avatar-btn"
 							variant="dark"
 							size="sm"
 							className="change-propic-button"
-							onClick={() => setShowAvatarSelector(true)}
+							id="avatar-btn"
 						>
 							Cambia
 						</Button>
@@ -323,8 +315,6 @@ function Settings({ user, updateUser }) {
 	const [newEventCat, setNewEventCat] = useState("");
 	const [newNoteCat, setNewNoteCat] = useState("");
 
-	const { themeKey, setThemeKey } = useTheme();
-
   const [form, setForm] = useState({
     name: user.name,
     email: user.email,
@@ -342,10 +332,6 @@ function Settings({ user, updateUser }) {
   const openConfirm = () => setShowConfirm(true);
   const closeConfirm = () => setShowConfirm(false);
 
-	const [showAvatarSelector, setShowAvatarSelector] = useState(false);
-	const [pendingThemeKey, setPendingThemeKey] = useState(null);
-	const [showAvatarConfirm, setShowAvatarConfirm] = useState(false);
-
 	const handleSingleChange = (name, value) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -357,7 +343,6 @@ function Settings({ user, updateUser }) {
         id: user._id,
         name: form.name,
         email: form.email,
-		propic: user.propic,
         settings: {
           categoryEvents: form.eventCategories.join("/"),
           categoryNotes: form.noteCategories.join("/"),
@@ -365,7 +350,6 @@ function Settings({ user, updateUser }) {
           startDay: form.weekStart === "sunday",
           position: form.location,
           homeNotes: form.notesInHome,
-		  paletteKey: themeKey,
         },
       },
     };
@@ -399,24 +383,6 @@ function Settings({ user, updateUser }) {
     }
   };
 
-	const handleAvatarSelect = async (key) => {
-		//client: aggiorna tema + propic in locale
-		const url = `/pfp/${key}.png`;
-		setThemeKey(key);
-		updateUser({ ...user, propic: url, settings: { ...user.settings, paletteKey: key }, });
-
-		//server: chiama endpoint e cattura risposta
-		try {
-			const res = await axios.post("/api/user/setPaletteKey", { paletteKey: key });
-			//res.data è l’utente aggiornato
-			updateUser(res.data);
-		} catch (err) {
-			console.error(err);
-		}
-
-		setShowAvatarConfirm(false);
-	};
-
   return (
     <Container className="mt-4">
       <Card className="p-4 shadow-sm">
@@ -427,7 +393,6 @@ function Settings({ user, updateUser }) {
 					user={user}
 					form={form}
 					handleSingleChange={handleSingleChange}
-					setShowAvatarSelector={setShowAvatarSelector}
 				/>
 
 				<GeneralsSection
@@ -531,38 +496,6 @@ function Settings({ user, updateUser }) {
 	        updateUser={updateUser}
         />
       </Card>
-
-      <AvatarSelectorModal
-				show={showAvatarSelector}
-				onHide={() => setShowAvatarSelector(false)}
-				onSelect={(key) => {
-					setPendingThemeKey(key);
-					setShowAvatarConfirm(true);
-				}}
-			/>
-
-			<Modal show={showAvatarConfirm} onHide={() => setShowAvatarConfirm(false)} centered>
-				<Modal.Header closeButton>
-					<Modal.Title>Conferma cambio avatar</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					Cambiando immagine profilo cambieranno anche i temi di SELFIE. Continuare?
-				</Modal.Body>
-				<Modal.Footer>
-					<Button
-						variant="secondary"
-						onClick={() => {
-							setPendingThemeKey(null);
-							setShowAvatarConfirm(false);
-						}}
-					>
-						Annulla
-					</Button>
-					<Button variant="primary" onClick={() => handleAvatarSelect(pendingThemeKey)}>
-						Conferma
-					</Button>
-				</Modal.Footer>
-			</Modal>
     </Container>
   );
 }

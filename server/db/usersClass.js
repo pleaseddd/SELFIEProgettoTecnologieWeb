@@ -81,16 +81,6 @@ const UserSchema = new mongoose.Schema({
       type: Number,
       default: 3,
     },
-
-	theme: {
-		type: Boolean,
-		default: false,
-	},
-
-	paletteKey: {
-		type: String,
-		default: "avatar1",
-	},
   },
 });
 
@@ -209,17 +199,6 @@ module.exports = {
   POST_updateUser: async (req, res) => {
     const user = await User.findById(req.body.user_id);
     res.status(201).j3son(user);
-  },
-
-  setPaletteKey: async (userid, paletteKey) => {
-	const url = `/pfp/${paletteKey}.png`;
-	const filter = { _id: userid };
-	const update = { $set: {
-		'settings.paletteKey': paletteKey,
-		propic: url
-	}};
-
-	return await User.findOneAndUpdate(filter, update);
   },
 };
 
