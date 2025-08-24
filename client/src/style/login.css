@@ -1,3 +1,137 @@
+:root {
+  /* fallback generici */
+  --color-primary: #020625;
+  --color-secondary: rgba(255,255,255,0.03);
+  --color-terziary: #7E9BBA;
+  --color-details: #ffffff;
+  --color-shadows: #000000;
+  --color-accents: #0d6efd;
+
+  --color-primary-rgb: 2, 6, 37;
+  --color-secondary-rgb: 255, 255, 255;
+  --color-terziary-rgb: 126, 155, 186;
+  --color-details-rgb: 255, 255, 255;
+  --color-shadows-rgb: 0, 0, 0;
+  --color-accents-rgb: 13, 110, 253;
+}
+
+/* ---------- palette per avatar
+   Applica la classe corrispondente al body: <body class="theme-avatar3"> */
+.theme-avatar1 {
+  --color-primary: #274759;
+  --color-secondary: #7E9BBA;
+  --color-terziary: #CD7F8C;
+  --color-details: #FCFCFC;
+  --color-shadows: #ACBAAC;
+  --color-accents: #4A4241;
+
+  --color-primary-rgb: 39, 71, 89;
+  --color-secondary-rgb: 126, 155, 186;
+  --color-terziary-rgb: 205, 127, 140;
+  --color-details-rgb: 252, 252, 252;
+  --color-shadows-rgb: 172, 186, 172;
+  --color-accents-rgb: 74, 66, 65;
+}
+
+.theme-avatar2 {
+  --color-primary: #8F5E50;
+  --color-secondary: #9ACE5B;
+  --color-terziary: #568990;
+  --color-details: #EE892D;
+  --color-shadows: #080F27;
+  --color-accents: #364853;
+
+  --color-primary-rgb: 143, 94, 80;
+  --color-secondary-rgb: 154, 206, 91;
+  --color-terziary-rgb: 86, 137, 144;
+  --color-details-rgb: 238, 137, 45;
+  --color-shadows-rgb: 8, 15, 39;
+  --color-accents-rgb: 54, 72, 83;
+}
+
+.theme-avatar3 {
+  --color-primary: #F3BF2D;
+  --color-secondary: #337E76;
+  --color-terziary: #7CE5E3;
+  --color-details: #0A3D93;
+  --color-shadows: #191935;
+  --color-accents: #C4A277;
+
+  --color-primary-rgb: 243, 191, 45;
+  --color-secondary-rgb: 51, 126, 118;
+  --color-terziary-rgb: 124, 229, 227;
+  --color-details-rgb: 10, 61, 147;
+  --color-shadows-rgb: 25, 25, 53;
+  --color-accents-rgb: 196, 162, 119;
+}
+
+.theme-avatar4 {
+  --color-primary: #695B74;
+  --color-secondary: #934C4A;
+  --color-terziary: #F1AA68;
+  --color-details: #0D2155;
+  --color-shadows: #FDFCFB;
+  --color-accents: #2152AC;
+
+  --color-primary-rgb: 105, 91, 116;
+  --color-secondary-rgb: 147, 76, 74;
+  --color-terziary-rgb: 241, 170, 104;
+  --color-details-rgb: 13, 33, 85;
+  --color-shadows-rgb: 253, 252, 251;
+  --color-accents-rgb: 33, 82, 172;
+}
+
+.theme-avatar5 {
+  --color-primary: #B6BFCC;
+  --color-secondary: #0C0E21;
+  --color-terziary: #495367;
+  --color-details: #AC1901;
+  --color-shadows: #ECAC41;
+  --color-accents: #B16B1D;
+
+  --color-primary-rgb: 182, 191, 204;
+  --color-secondary-rgb: 12, 14, 33;
+  --color-terziary-rgb: 73, 83, 103;
+  --color-details-rgb: 172, 25, 1;
+  --color-shadows-rgb: 236, 172, 65;
+  --color-accents-rgb: 177, 107, 29;
+}
+
+.theme-avatar6 {
+  --color-primary: #6FA7BE;
+  --color-secondary: #020212;
+  --color-terziary: #569505;
+  --color-details: #F9FDFE;
+  --color-shadows: #C9DEE7;
+  --color-accents: #263D4E;
+
+  --color-primary-rgb: 111, 167, 190;
+  --color-secondary-rgb: 2, 2, 18;
+  --color-terziary-rgb: 86, 149, 5;
+  --color-details-rgb: 249, 253, 254;
+  --color-shadows-rgb: 201, 222, 231;
+  --color-accents-rgb: 38, 61, 78;
+}
+
+.theme-avatar7 {
+  --color-primary: #4F2111;
+  --color-secondary: #803C17;
+  --color-terziary: #EFB57C;
+  --color-details: #F7CA9B;
+  --color-shadows: #A0501D;
+  --color-accents: #598B3F;
+
+  --color-primary-rgb: 79, 33, 17;
+  --color-secondary-rgb: 128, 60, 23;
+  --color-terziary-rgb: 239, 181, 124;
+  --color-details-rgb: 247, 202, 155;
+  --color-shadows-rgb: 160, 80, 29;
+  --color-accents-rgb: 89, 139, 63;
+}
+
+/* ---------- Stili generali (usano le variabili) ---------- */
+
+/*Carousel*/
 .carousel-inner {
   position: relative;
   width: 100%;
@@ -7,17 +141,19 @@
 .carousel-item {
   justify-content: center;
   align-items: center;
-  padding: 15px; 
+  padding: 15px;
 }
 
 .carousel-img {
   width: 100%;
-  height: 400px; 
+  height: 400px;
   object-fit: cover;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* ombra basata sulla palette */
+  box-shadow: 0 4px 6px rgba(var(--color-shadows-rgb), 0.12);
 }
 
+/* Sfondo blur dietro il carosello/login */
 .background-container {
   position: absolute;
   top: 0;
@@ -26,16 +162,18 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: #020625;
+  /* usa primary della palette come colore di base */
+  background-color: var(--color-primary);
   background-size: cover;
   background-position: center;
-  filter: blur(2px);  
+  filter: blur(2px);
   z-index: -1;
 }
 
+/* Contenitori principali */
 .container {
   position: relative;
-  z-index: 1; 
+  z-index: 1;
 }
 
 .vh-100 {
@@ -43,36 +181,95 @@
   z-index: 1;
 }
 
+/* Card login */
 .login-card {
-  width: 320px;       
-  min-width: 280px;   
-  padding: 1.5rem;      
-  background-color: rgba(255, 255, 255, 0);
+  width: 320px;
+  min-width: 280px;
+  padding: 1.5rem;
+  /* sfondo semi-trasparente derivato da secondary (meglio visibile su primary) */
+  background-color: rgba(var(--color-secondary-rgb), 0.06);
   border-radius: 10px;
-  color: #ffffff;
+  color: var(--color-details);
   font-family: "Times New Roman", serif;
-
+  box-shadow: 0 6px 20px rgba(var(--color-shadows-rgb), 0.08);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.06);
 }
 
+/* Input / textarea / select */
 .login-card input,
 .login-card textarea,
 .login-card select {
-  background-color: rgba(255, 255, 255, 0.1);   
-  color: #ffffff;                                
-  border: 1px solid rgba(255, 255, 255, 0.3);   
-  border-radius: 5px;                           
-  padding: 0.5rem;                            
-  font-family: "Times New Roman", serif;        
-  font-size: 1rem;                             
+  /* leggero overlay chiaro/scuro a seconda della palette */
+  background-color: rgba(var(--color-details-rgb), 0.08);
+  color: var(--color-details);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.18);
+  border-radius: 5px;
+  padding: 0.5rem;
+  font-family: "Times New Roman", serif;
+  font-size: 1rem;
+  outline: none;
+  transition: box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
+.login-card input:focus,
+.login-card textarea:focus,
+.login-card select:focus {
+  box-shadow: 0 4px 12px rgba(var(--color-shadows-rgb), 0.12);
+  /* usa l'accent come bordo di focus */
+  border-color: rgba(var(--color-accents-rgb), 0.9);
+}
+
+/* Placeholder */
 .login-card input::placeholder,
 .login-card textarea::placeholder,
 .login-card select::placeholder {
-  color: rgba(255, 255, 255, 0.65);   
-  opacity: 1;                      
+  color: rgba(var(--color-details-rgb), 0.65);
+  opacity: 1;
 }
 
+/* Hint text */
 #passwordHelpBlock {
-  color: #ffffff; 
+  color: rgba(var(--color-details-rgb), 0.9);
+  font-size: 0.875rem;
+}
+
+/* CTA / Button (piccola aggiunta utile) */
+.btn-cta {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background-color: var(--color-terziary);
+  color: var(--color-details);
+  border: 1px solid rgba(var(--color-shadows-rgb), 0.12);
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.08s ease, box-shadow 0.12s ease;
+}
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(var(--color-shadows-rgb), 0.12);
+}
+
+/* Logo / header piccolo (usa accents) */
+.login-logo {
+  color: var(--color-accents);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+/* Piccoli dettagli e bordi sottili */
+.subtle-border {
+  border-color: rgba(var(--color-shadows-rgb), 0.06);
+}
+
+/* Small responsive tweaks */
+@media (max-width: 576px) {
+  .login-card {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .carousel-img {
+    height: 220px;
+  }
 }
