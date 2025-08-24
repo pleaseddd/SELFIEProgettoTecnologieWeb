@@ -1,10 +1,9 @@
 import {
-	BrowserRouter as Router,
-	Routes,
-	Route,
-	Navigate,
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
 } from "react-router-dom";
-
 import { useState, useEffect } from "react";
 import { ToastContainer } from 'react-toastify';
 
@@ -15,8 +14,6 @@ import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
 import Settings from "./Settings.js";
 import Pomodoro from "./Pomodoro.js";
-import { ThemeProvider } from "./components/ThemeContext";
-import axios from 'axios';
 
 import { ThemeProvider } from "./components/ThemeContext";
 import axios from 'axios';
@@ -26,29 +23,30 @@ import "bootstrap/dist/css/bootstrap.min.css";
 axios.defaults.withCredentials = true;
 
 const App = () => {
-	//GESTIONE DELLA SESSIONE
-	const [user, setUser] = useState(null);
-	const [loading, setLoading] = useState(true);
+  //Gestione dello stato dell'utente
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		const fetchUser = async () => {
-			try {
-				const response = await fetch("/userauth", {
-					credentials: "include",
-				});
-				const data = await response.json();
-				if (!response.ok) throw new Error(data);
-				setUser(data);
-			} catch (error) {
-				setUser(null);
-				console.error("Errore nel recupero dell'utente:", error);
-			} finally {
-				setLoading(false);
-			}
-		};
+  //Vedo se l'utente è autenticato nel token 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch("/api/user/auth", {
+          credentials: "include",
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data);
+        setUser(data);
+      } catch (error) {
+        setUser(null);
+      } finally {
+        // Imposto lo stato di caricamento a false dopo aver verificato l'utente
+        setLoading(false);
+      }
+    };
 
-		fetchUser();
-	}, []);
+    fetchUser();
+  }, []);
 
   //Se disconnetto l'utente, lo rimuovo dal token
   const handleLogout = async () => {
@@ -58,13 +56,6 @@ const App = () => {
     });
     setUser(null);
   };
-	const handleLogout = async () => {
-		await fetch("/userlogout", {
-			method: "POST",
-			credentials: "include",
-		});
-		setUser(null);
-	};
 
 
   //Aggiorno lo stato user 

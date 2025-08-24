@@ -13,10 +13,6 @@ import { toast } from 'react-toastify';
 import ConfirmModal from "./components/ConfirmModal";
 import ExternalCalsSection from "./components/settings/ExternalCalendars.js";
 import NotifSection from "./components/settings/NotifSection.js";
-import { useTheme } from "./components/ThemeContext";
-import AvatarSelectorModal from "./components/AvatarSelectorModal";
-import axios from 'axios';
-axios.defaults.withCredentials = true;
 
 import { useTheme } from "./components/ThemeContext";
 import AvatarSelectorModal from "./components/AvatarSelectorModal";
@@ -33,7 +29,7 @@ const PersonalInfoSection = ({ user, form, handleSingleChange, setShowAvatarSele
 		<Card className="mb-4 shadow-sm">
 			<Card.Body>
 				<div className="section-title">
-					<h5>Informazioni personali</h5>
+	        <h5>Informazioni personali</h5>
 				</div>
 
 				<div className="pers-form-container">
@@ -78,8 +74,8 @@ const PersonalInfoSection = ({ user, form, handleSingleChange, setShowAvatarSele
 						</div>
 					</div>
 				</div>
-			</Card.Body>
-		</Card>
+      </Card.Body>
+    </Card>
 	);
 };
 
@@ -226,18 +222,18 @@ const EventsSection = ({ form, setForm }) => {
 const NotesSection = ({ form, setForm, handleSingleChange }) => {
 	const [newNoteCat, setNewNoteCat] = useState("");
 
-	const addNoteCategory = () => {
-		if (!newNoteCat.trim()) return;
-		const updated = [...form.noteCategories, newNoteCat.trim()];
-		setForm((prev) => ({ ...prev, noteCategories: updated }));
-		setNewNoteCat("");
-	};
+  const addNoteCategory = () => {
+    if (!newNoteCat.trim()) return;
+    const updated = [...form.noteCategories, newNoteCat.trim()];
+    setForm((prev) => ({ ...prev, noteCategories: updated }));
+    setNewNoteCat("");
+  };
 
-	const removeNoteCategory = (index) => {
-		const updated = [...form.noteCategories];
-		updated.splice(index, 1);
-		setForm((prev) => ({ ...prev, noteCategories: updated }));
-	};
+  const removeNoteCategory = (index) => {
+    const updated = [...form.noteCategories];
+    updated.splice(index, 1);
+    setForm((prev) => ({ ...prev, noteCategories: updated }));
+  };
 
 	return (
 		<Card className="mb-4 shadow-sm">
@@ -307,21 +303,6 @@ const NotesSection = ({ form, setForm, handleSingleChange }) => {
 };
 
 function Settings({ user, updateUser }) {
-	const { themeKey, setThemeKey } = useTheme();
-
-	const [form, setForm] = useState({
-		name: user.name,
-		email: user.email,
-		eventCategories: user.settings.categoryEvents.split("/") || [],
-		noteCategories: user.settings.categoryNotes.split("/") || [],
-		language: user.settings.language,
-		weekStart: user.settings.startDay ? "sunday" : "monday",
-		location: user.settings.position,
-		notesInHome: user.settings.homeNotes,
-	});
-
-	const [newEventCat, setNewEventCat] = useState("");
-	const [newNoteCat, setNewNoteCat] = useState("");
 
 	const { themeKey, setThemeKey } = useTheme();
 
@@ -446,64 +427,12 @@ function Settings({ user, updateUser }) {
 					handleSingleChange={handleSingleChange}
 				/>
 
-						<Form.Group className="mb-4">
-							<Form.Label>Note visibili nella home</Form.Label>
-							<Form.Control
-								type="number"
-								name="notesInHome"
-								min={1}
-								value={form.notesInHome}
-								onChange={(e) => handleSingleChange("notesInHome", e.target.value)}
-							/>
-						</Form.Group>
-					</Card.Body>
-				</Card>
-
-				<NotifSection user={user} />
-
-				<ExternalCalsSection user={user} updateUser={updateUser} />
-
-			{/* Pulsante Salva */ }
-			<div className="d-grid mb-4">
-				<Button variant="primary" size="lg" onClick={openConfirm}>
-					Salva tutte le impostazioni
-				</Button>
-				<ConfirmModal
-					show={showConfirm}
-					title="Conferma"
-					body="Sei sicuro di voler salvare le impostazioni?"
-					confirmText="Salva"
-					cancelText="Annulla"
-					loading={loading}
-					onConfirm={handleSaveSettings}
-					onCancel={closeConfirm}
-					onClose={closeConfirm}
-				/>
-			</div>
-			</Card >
-			<AvatarSelectorModal
-				show={showAvatarSelector}
-				onHide={() => setShowAvatarSelector(false)}
-				onSelect={(key) => {
-					setPendingThemeKey(key);
-					setShowAvatarConfirm(true);
-				}}
-			/>
-
-			<Modal show={showAvatarConfirm} onHide={() => setShowAvatarConfirm(false)} centered>
-				<Modal.Header closeButton>
-					<Modal.Title>Conferma cambio avatar</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					Cambiando immagine profilo cambieranno anche i temi di SELFIE. Continuare?
-				</Modal.Body>
-				<Modal.Footer>
-					<Button
-						variant="secondary"
-						onClick={() => {
-							setPendingThemeKey(null);
-							setShowAvatarConfirm(false);
-						}}
+        {/* Pulsante Salva */}
+        <div className="d-grid mb-4">
+          <Button
+	          variant="primary"
+						size="lg"
+						onClick={openConfirm}
 					>
             Salva tutte le impostazioni
           </Button>
