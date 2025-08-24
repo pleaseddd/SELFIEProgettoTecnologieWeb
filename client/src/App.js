@@ -5,6 +5,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { ToastContainer } from 'react-toastify';
+
 import MainLayout from "./components/Layout";
 import Login from "./Login";
 import Home from "./Home";
@@ -143,6 +145,8 @@ const App = () => {
           }
         />
       </Routes>
+
+      <ToastContainer />
     </Router>
   );
 };

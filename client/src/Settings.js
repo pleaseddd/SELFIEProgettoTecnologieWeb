@@ -6,11 +6,16 @@ import {
   Card,
   Image,
 } from "react-bootstrap";
+
+import { ToastContainer, toast } from 'react-toastify';
+
 import ConfirmModal from "./components/ConfirmModal";
 import ExternalCalsSection from "./components/settings/ExternalCalendars.js";
 import NotifSection from "./components/settings/NotifSection.js";
 
-import './style/Settings.css';
+import './style/settings/Settings.css';
+import './style/settings/personalInfo.css';
+import './style/settings/generals.css';
 
 const PersonalInfoSection = ({ user, form, handleSingleChange }) => {
 	return (
@@ -20,8 +25,8 @@ const PersonalInfoSection = ({ user, form, handleSingleChange }) => {
 	        <h5>Informazioni personali</h5>
 				</div>
 
-				<div className="form-container">
-					<div className="image-container">
+				<div className="pers-form-container">
+					<div className="propic-container">
 						<Image
 							src={user.propic}
 							roundedCircle
@@ -32,29 +37,29 @@ const PersonalInfoSection = ({ user, form, handleSingleChange }) => {
 						<Button
 							variant="dark"
 							size="sm"
-							className="hover-button"
+							className="change-propic-button"
 							id="avatar-btn"
 						>
 							Cambia
 						</Button>
 					</div>
 
-					<div className="form-fields">
-						<div className="form-group">
-							<Form.Label className="form-label me-2 mt-2">Nome</Form.Label>
+					<div className="pers-form-fields">
+						<div className="pers-form-group">
+							<Form.Label className="pers-form-label">Nome</Form.Label>
 							<Form.Control
 								type="text"
-								className="form-control"
+								className="pers-form-control"
 								value={form.name}
 								onChange={(e) => handleSingleChange("name", e.target.value)}
 							/>
 						</div>
 
-						<div className="form-group">
-							<Form.Label className="form-label me-2 mt-2">Email</Form.Label>
+						<div className="pers-form-group">
+							<Form.Label className="pers-form-label">Email</Form.Label>
 							<Form.Control
 								type="email"
-								className="form-control"
+								className="pers-form-control"
 								value={form.email}
 								onChange={(e) => handleSingleChange("email", e.target.value)}
 							/>
@@ -66,15 +71,85 @@ const PersonalInfoSection = ({ user, form, handleSingleChange }) => {
 	);
 };
 
+const GeneralsSection = ({ form, handleSingleChange }) => {
+	return (
+		<Card className="mb-4 shadow-sm">
+			<Card.Body>
+				<div className="section-title">
+					<h5>Generali</h5>
+				</div>
+
+				<div className="gen-form-container">
+	        <Form.Group className="gen-form-group">
+	          <Form.Label className="gen-form-label">Lingua</Form.Label>
+	          <Form.Select
+	            name="language"
+							className="gen-form-control"
+	            value={form.language}
+	            onChange={(e) => handleSingleChange("language", e.target.value)}
+	          >
+	            <option value="it">Italiano</option>
+	            <option value="en">Inglese</option>
+	          </Form.Select>
+	        </Form.Group>
+
+	        <Form.Group className="gen-form-group">
+	          <Form.Label className="gen-form-label">Inizio della settimana</Form.Label>
+	          <Form.Select
+	            name="weekStart"
+							className="gen-form-control"
+	            value={form.weekStart}
+	            onChange={(e) => handleSingleChange("weekStart", e.target.value)}
+	          >
+	            <option value="sunday">Domenica</option>
+	            <option value="monday">Lunedì</option>
+	          </Form.Select>
+	        </Form.Group>
+
+	        <Form.Group className="gen-form-group">
+	          <Form.Label className="gen-form-label">Posizione</Form.Label>
+	          <Form.Control
+	            type="text"
+	            name="location"
+							className="gen-form-control"
+	            value={form.location}
+	            onChange={(e) => handleSingleChange("location", e.target.value)}
+	            placeholder="es. Milano, Roma"
+	          />
+	        </Form.Group>
+        </div>
+      </Card.Body>
+    </Card>
+	);
+};
+
 const EventsSection = ({ form, setForm }) => {
 
 	const [newEventCat, setNewEventCat] = useState("");
 
 	const addEventCategory = () => {
-    if (!newEventCat.trim()) return;
-    const updated = [...form.eventCategories, newEventCat.trim()];
-    setForm((prev) => ({ ...prev, eventCategories: updated }));
-    setNewEventCat("");
+		try {
+	    if (!newEventCat.trim()) return;
+	    const updated = [...form.eventCategories, newEventCat.trim()];
+	    setForm((prev) => ({ ...prev, eventCategories: updated }));
+
+			toast(`Categoria "${newEventCat.trim()}" aggiunta!`, {
+				position: 'bottom-right',
+				type: 'success',
+				autoClose: 3000,
+				pauseOnHover: false
+			});
+
+	    setNewEventCat("");
+		}
+		catch(error) {
+			toast('Errore nel salvare la categoria...', {
+				position: 'bottom-right',
+				type: 'error',
+				autoClose: 5000,
+				pauseOnHover: false
+			});
+		}
   };
 
   const removeEventCategory = (index) => {
@@ -91,8 +166,8 @@ const EventsSection = ({ form, setForm }) => {
         </div>
 
         {/* Categorie eventi */}
-        <Form.Group className="mb-3">
-          <Form.Label>Categorie eventi</Form.Label>
+        <fieldset className="fieldset-custom">
+          <legend className="legend-custom">Categorie eventi</legend>
           <div className="d-flex mb-2">
             <Form.Control
               type="text"
@@ -130,13 +205,13 @@ const EventsSection = ({ form, setForm }) => {
               </div>
             ))}
           </div>
-        </Form.Group>
+        </fieldset>
       </Card.Body>
     </Card>
 	);
 };
 
-const NotesSection = ({ form, setForm }) => {
+const NotesSection = ({ form, setForm, handleSingleChange }) => {
 	const [newNoteCat, setNewNoteCat] = useState("");
 
   const addNoteCategory = () => {
@@ -159,8 +234,8 @@ const NotesSection = ({ form, setForm }) => {
 	        <h5>Note</h5>
         </div>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Categorie note</Form.Label>
+        <fieldset className="fieldset-custom mb-2">
+          <legend className="legend-custom">Categorie note</legend>
           <div className="d-flex mb-2">
             <Form.Control
               type="text"
@@ -198,65 +273,22 @@ const NotesSection = ({ form, setForm }) => {
               </div>
             ))}
           </div>
-        </Form.Group>
-      </Card.Body>
-    </Card>
-	);
-};
+        </fieldset>
 
-const MiscellaneousSection = ({ form, handleSingleChange }) => {
-	return (
-		<Card className="mb-4 shadow-sm">
-			<Card.Body>
-				<div className="section-title">
-					<h5>Varie ed eventuali</h5>
-				</div>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Lingua</Form.Label>
-          <Form.Select
-            name="language"
-            value={form.language}
-            onChange={(e) => handleSingleChange("language", e.target.value)}
-          >
-            <option value="it">Italiano</option>
-            <option value="en">Inglese</option>
-          </Form.Select>
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Inizio della settimana</Form.Label>
-          <Form.Select
-            name="weekStart"
-            value={form.weekStart}
-            onChange={(e) => handleSingleChange("weekStart", e.target.value)}
-          >
-            <option value="sunday">Domenica</option>
-            <option value="monday">Lunedì</option>
-          </Form.Select>
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Posizione</Form.Label>
-          <Form.Control
-            type="text"
-            name="location"
-            value={form.location}
-            onChange={(e) => handleSingleChange("location", e.target.value)}
-            placeholder="es. Milano, Roma"
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-4">
-          <Form.Label>Note visibili nella home</Form.Label>
-          <Form.Control
-            type="number"
-            name="notesInHome"
-            min={1}
-            value={form.notesInHome}
-            onChange={(e) => handleSingleChange("notesInHome", e.target.value)}
-          />
-        </Form.Group>
+        <fieldset className="fieldset-custom d-flex">
+	          <legend className="legend-custom">Varie</legend>
+	          <Form.Label className="mt-2 me-2 mb-0 text-nowrap">
+		          Note visibili nella home:
+	          </Form.Label>
+	          <Form.Control
+	            type="number"
+	            name="notesInHome"
+							className="underline-input"
+	            min={1}
+	            value={form.notesInHome}
+	            onChange={(e) => handleSingleChange("notesInHome", e.target.value)}
+	          />
+	        </fieldset>
       </Card.Body>
     </Card>
 	);
@@ -344,6 +376,11 @@ function Settings({ user, updateUser }) {
 					handleSingleChange={handleSingleChange}
 				/>
 
+				<GeneralsSection
+					form={form}
+					handleSingleChange={handleSingleChange}
+				/>
+
 				<EventsSection
 					form={form}
 					setForm={setForm}
@@ -352,10 +389,6 @@ function Settings({ user, updateUser }) {
 				<NotesSection
 					form={form}
 					setForm={setForm}
-				/>
-
-				<MiscellaneousSection
-					form={form}
 					handleSingleChange={handleSingleChange}
 				/>
 

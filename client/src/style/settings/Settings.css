@@ -1,0 +1,39 @@
+.section-title {
+	margin-bottom: 1.5rem;
+	border-bottom: 1px solid;
+	border-color: #ced4da;
+}
+
+/* titolo da mettere nel tag legend dentro il fieldset */
+.fieldset-custom {
+	padding: .5rem;
+	border-top: 2px solid;
+	border-color: #ced4da;
+}
+
+.legend-custom {
+  float: none;
+  width: auto;
+  padding-left: 0.25rem;   /* Bootstrap px-1 = 0.25rem */
+  padding-right: 0.25rem;
+  margin-bottom: 0;
+  color: var(--bs-secondary-color); /* text-body-secondary */
+  font-size: 1rem;         /* fs-6 = 1rem in Bootstrap 5 */
+  font-style: italic;      /* fst-italic */
+}
+
+/* campi form con solo il bordo sotto visibile */
+.underline-input {
+	flex-grow: 1;
+	border: none;
+	border-radius: 0;
+	border-bottom: 1px solid #ced4da;
+	padding-left: 0;
+	background-color: transparent;
+	box-shadow: none !important;
+}
+
+.underline-input:focus {
+	border-bottom-color: #86b7fe;
+	box-shadow: 0 2px 0 0 #86b7fe !important;
+}

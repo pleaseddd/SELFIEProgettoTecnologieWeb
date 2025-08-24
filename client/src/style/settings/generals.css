@@ -1,0 +1,31 @@
+.gen-form-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.gen-form-group {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: .5rem;
+}
+
+.gen-form-label {
+	flex: 5;
+	margin-bottom: .25rem;
+}
+
+.gen-form-control {
+	flex: 5;
+	margin-bottom: .5rem;
+}
+
+@media (min-width: 768px) {
+	.gen-form-group {
+		flex-direction: row;
+	}
+
+	.gen-form-label {
+		margin-top: .5rem;
+		margin-bottom: 0;
+	}
+}

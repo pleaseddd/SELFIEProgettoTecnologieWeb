@@ -1,0 +1,76 @@
+/* immagine profilo con dentro il pulsante "cambia" */
+
+.propic-container {
+	position: relative;
+	display: inline-block;
+	align-self: center;
+	margin-bottom: .5rem;
+}
+
+.change-propic-button {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.propic-container:hover .change-propic-button {
+	opacity: 1;
+}
+
+.pers-form-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.pers-form-fields {
+	display: flex;
+	flex-direction: column;
+}
+
+.pers-form-group {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: .5rem;
+}
+
+.pers-form-label {
+	margin-bottom: .25rem;
+}
+
+.pers-form-control {
+	margin-bottom: .5rem;
+}
+
+@media (min-width: 768px) {
+	.propic-container {
+		margin: 0 1.5rem .5rem 0;
+	}
+
+	.pers-form-container {
+		flex-direction: row;
+		align-items: flex-start;
+	}
+
+	.pers-form-fields {
+		flex: 5;
+	}
+
+	.pers-form-group {
+		flex-direction: row;
+		justify-content: start;
+	}
+
+	.pers-form-label {
+		flex: 3;
+		margin-top: .5rem;
+		margin-right: .5rem;
+		margin-bottom: 0;
+	}
+
+	.pers-form-control {
+		flex: 3;
+	}
+}
