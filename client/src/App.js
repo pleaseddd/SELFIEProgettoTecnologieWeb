@@ -152,7 +152,11 @@ const App = () => {
 	        />
 	      </Routes>
 
-	      <ToastContainer />
+	      <ToastContainer
+		      position="bottom-right"
+					pauseOnHover={false}
+					newestOnTop={true}
+	      />
 	    </Router>
     </ThemeProvider>
   );

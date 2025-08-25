@@ -24,281 +24,395 @@ import './style/settings/generals.css';
 
 axios.defaults.withCredentials = true;
 
-const PersonalInfoSection = ({ user, form, handleSingleChange, setShowAvatarSelector }) => {
+const PersonalInfoSection = ({
+	user,
+	form,
+	handleSingleChange,
+	setShowAvatarSelector,
+	notSaved,
+	setNotSaved
+}) => {
 	return (
-		<Card className="mb-4 shadow-sm">
-			<Card.Body>
-				<div className="section-title">
-	        <h5>Informazioni personali</h5>
-				</div>
-
-				<div className="pers-form-container">
-					<div className="propic-container">
-						<Image
-							src={user.propic}
-							roundedCircle
-							width={100}
-							height={100}
-							alt="Propic"
-						/>
-						<Button
-							id="avatar-btn"
-							variant="dark"
-							size="sm"
-							className="change-propic-button"
-							onClick={() => setShowAvatarSelector(true)}
-						>
-							Cambia
-						</Button>
+		<>
+			{
+				notSaved.includes("personalInfo") ?
+				(
+					<span className="text-warning text-center">
+						Modifiche non salvate
+					</span>
+				) : null
+			}
+			<Card
+				className={
+					"mb-4 shadow-sm"
+					+ (notSaved.includes("personalInfo") ?
+							"border border-2 border-warning" : "")
+				}
+			>
+				<Card.Body>
+					<div className="section-title">
+		        <h5>Informazioni personali</h5>
 					</div>
 
-					<div className="pers-form-fields">
-						<div className="pers-form-group">
-							<Form.Label className="pers-form-label">Nome</Form.Label>
-							<Form.Control
-								type="text"
-								className="pers-form-control"
-								value={form.name}
-								onChange={(e) => handleSingleChange("name", e.target.value)}
+					<div className="pers-form-container">
+						<div className="propic-container">
+							<Image
+								src={user.propic}
+								roundedCircle
+								width={100}
+								height={100}
+								alt="Propic"
 							/>
+							<Button
+								id="avatar-btn"
+								variant="dark"
+								size="sm"
+								className="change-propic-button"
+								onClick={() => setShowAvatarSelector(true)}
+							>
+								Cambia
+							</Button>
 						</div>
 
-						<div className="pers-form-group">
-							<Form.Label className="pers-form-label">Email</Form.Label>
-							<Form.Control
-								type="email"
-								className="pers-form-control"
-								value={form.email}
-								onChange={(e) => handleSingleChange("email", e.target.value)}
-							/>
+						<div className="pers-form-fields">
+							<div className="pers-form-group">
+								<Form.Label className="pers-form-label">Nome</Form.Label>
+								<Form.Control
+									type="text"
+									className="pers-form-control"
+									value={form.name}
+									onChange={(e) => {
+										handleSingleChange("name", e.target.value);
+										setNotSaved(prev => [...prev, "personalInfo"]);
+									}}
+								/>
+							</div>
+
+							<div className="pers-form-group">
+								<Form.Label className="pers-form-label">Email</Form.Label>
+								<Form.Control
+									type="email"
+									className="pers-form-control"
+									value={form.email}
+									onChange={(e) => {
+										handleSingleChange("email", e.target.value);
+										setNotSaved(prev => [...prev, "personalInfo"]);
+									}}
+								/>
+							</div>
 						</div>
 					</div>
-				</div>
-      </Card.Body>
-    </Card>
+	      </Card.Body>
+	    </Card>
+    </>
 	);
 };
 
-const GeneralsSection = ({ form, handleSingleChange }) => {
+const GeneralsSection = ({
+	form,
+	handleSingleChange,
+	notSaved,
+	setNotSaved
+}) => {
 	return (
-		<Card className="mb-4 shadow-sm">
-			<Card.Body>
-				<div className="section-title">
-					<h5>Generali</h5>
-				</div>
+		<>
+			{
+				notSaved.includes("generals") ?
+				(
+					<span className="text-warning text-center">
+						Modifiche non salvate
+					</span>
+				) : null
+			}
+			<Card
+				className={
+					"mb-4 shadow-sm"
+					+ (notSaved.includes("generals") ?
+							"border border-2 border-warning" : "")
+				}
+			>
+				<Card.Body>
+					<div className="section-title">
+						<h5>Generali</h5>
+					</div>
 
-				<div className="gen-form-container">
-	        <Form.Group className="gen-form-group">
-	          <Form.Label className="gen-form-label">Lingua</Form.Label>
-	          <Form.Select
-	            name="language"
-							className="gen-form-control"
-	            value={form.language}
-	            onChange={(e) => handleSingleChange("language", e.target.value)}
-	          >
-	            <option value="it">Italiano</option>
-	            <option value="en">Inglese</option>
-	          </Form.Select>
-	        </Form.Group>
+					<div className="gen-form-container">
+		        <Form.Group className="gen-form-group">
+		          <Form.Label className="gen-form-label">Lingua</Form.Label>
+		          <Form.Select
+		            name="language"
+								className="gen-form-control"
+		            value={form.language}
+		            onChange={(e) => {
+									handleSingleChange("language", e.target.value);
+									setNotSaved(prev => [...prev, "generals"]);
+								}}
+		          >
+		            <option value="it">Italiano</option>
+		            <option value="en">Inglese</option>
+		          </Form.Select>
+		        </Form.Group>
 
-	        <Form.Group className="gen-form-group">
-	          <Form.Label className="gen-form-label">Inizio della settimana</Form.Label>
-	          <Form.Select
-	            name="weekStart"
-							className="gen-form-control"
-	            value={form.weekStart}
-	            onChange={(e) => handleSingleChange("weekStart", e.target.value)}
-	          >
-	            <option value="sunday">Domenica</option>
-	            <option value="monday">Lunedì</option>
-	          </Form.Select>
-	        </Form.Group>
+		        <Form.Group className="gen-form-group">
+		          <Form.Label className="gen-form-label">Inizio della settimana</Form.Label>
+		          <Form.Select
+		            name="weekStart"
+								className="gen-form-control"
+		            value={form.weekStart}
+		            onChange={(e) => {
+									handleSingleChange("weekStart", e.target.value);
+									setNotSaved(prev => [...prev, "generals"]);
+								}}
+		          >
+		            <option value="sunday">Domenica</option>
+		            <option value="monday">Lunedì</option>
+		          </Form.Select>
+		        </Form.Group>
 
-	        <Form.Group className="gen-form-group">
-	          <Form.Label className="gen-form-label">Posizione</Form.Label>
-	          <Form.Control
-	            type="text"
-	            name="location"
-							className="gen-form-control"
-	            value={form.location}
-	            onChange={(e) => handleSingleChange("location", e.target.value)}
-	            placeholder="es. Milano, Roma"
-	          />
-	        </Form.Group>
-        </div>
-      </Card.Body>
-    </Card>
+		        <Form.Group className="gen-form-group">
+		          <Form.Label className="gen-form-label">Posizione</Form.Label>
+		          <Form.Control
+		            type="text"
+		            name="location"
+								className="gen-form-control"
+		            value={form.location}
+		            onChange={(e) => {
+									handleSingleChange("location", e.target.value);
+									setNotSaved(prev => [...prev, "generals"]);
+								}}
+		            placeholder="es. Milano, Roma"
+		          />
+		        </Form.Group>
+	        </div>
+	      </Card.Body>
+	    </Card>
+    </>
 	);
 };
 
-const EventsSection = ({ form, setForm }) => {
+const EventsSection = ({
+	form,
+	setForm,
+	notSaved,
+	setNotSaved
+}) => {
 
 	const [newEventCat, setNewEventCat] = useState("");
 
 	const addEventCategory = () => {
-		try {
-	    if (!newEventCat.trim()) return;
-	    const updated = [...form.eventCategories, newEventCat.trim()];
-	    setForm((prev) => ({ ...prev, eventCategories: updated }));
-
-			toast(`Categoria "${newEventCat.trim()}" aggiunta!`, {
-				position: 'bottom-right',
-				type: 'success',
-				autoClose: 3000,
-				pauseOnHover: false
-			});
-
-	    setNewEventCat("");
+    if (!newEventCat.trim()) {
+			toast('Scegli un nome per la tua nuova categoria!', { type: 'warning' });
+			return;
 		}
-		catch(error) {
-			toast('Errore nel salvare la categoria...', {
-				position: 'bottom-right',
-				type: 'error',
-				autoClose: 5000,
-				pauseOnHover: false
-			});
-		}
+    const updated = [...form.eventCategories, newEventCat.trim()];
+    setForm((prev) => ({ ...prev, eventCategories: updated }));
+
+		setNotSaved(prev => [...prev, "events"]);
+
+		toast(`Categoria "${newEventCat.trim()}" aggiunta!`, {
+			type: 'success',
+			autoClose: 3000
+		});
+
+    setNewEventCat("");
   };
 
   const removeEventCategory = (index) => {
     const updated = [...form.eventCategories];
-    updated.splice(index, 1);
+    const deleted = updated.splice(index, 1);
+
     setForm((prev) => ({ ...prev, eventCategories: updated }));
+		setNotSaved(prev => [...prev, "events"]);
+
+		toast(`Categoria "${deleted}" eliminata!`, { type: 'success' });
   };
 
 	return (
-		<Card className="mb-4 shadow-sm">
-			<Card.Body>
-				<div className="section-title">
-	        <h5>Eventi calendario</h5>
-        </div>
+		<>
+			{
+				notSaved.includes("events") ?
+				(
+					<span className="text-warning text-center">
+						Modifiche non salvate
+					</span>
+				) : null
+			}
+			<Card
+				className={
+					"mb-4 shadow-sm"
+					+ (notSaved.includes("events") ?
+							"border border-2 border-warning" : "")
+				}
+			>
+				<Card.Body>
+					<div className="section-title">
+		        <h5>Eventi calendario</h5>
+	        </div>
 
-        {/* Categorie eventi */}
-        <fieldset className="fieldset-custom">
-          <legend className="legend-custom">Categorie eventi</legend>
-          <div className="d-flex mb-2">
-            <Form.Control
-              type="text"
-              placeholder="Aggiungi categoria..."
-              value={newEventCat}
-              onChange={(e) => setNewEventCat(e.target.value)}
-            />
-            <Button
-              variant="success"
-              className="ms-2"
-              onClick={addEventCategory}
-            >
-              Aggiungi
-            </Button>
-          </div>
-          <div
-            style={{
-              maxHeight: "120px",
-              overflowY: "auto",
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-              padding: "0.5rem",
-            }}
-          >
-            {form.eventCategories.map((cat, i) => (
-              <div key={i} className="d-flex justify-content-between mb-1">
-                <span>{cat}</span>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => removeEventCategory(i)}
-                >
-                  Elimina
-                </Button>
-              </div>
-            ))}
-          </div>
-        </fieldset>
-      </Card.Body>
-    </Card>
+	        {/* Categorie eventi */}
+	        <fieldset className="fieldset-custom">
+	          <legend className="legend-custom">Categorie eventi</legend>
+	          <div className="d-flex mb-2">
+	            <Form.Control
+	              type="text"
+	              placeholder="Aggiungi categoria..."
+	              value={newEventCat}
+	              onChange={(e) => setNewEventCat(e.target.value)}
+	            />
+	            <Button
+	              variant="success"
+	              className="ms-2"
+	              onClick={addEventCategory}
+	            >
+	              Aggiungi
+	            </Button>
+	          </div>
+	          <div
+	            style={{
+	              maxHeight: "120px",
+	              overflowY: "auto",
+	              border: "1px solid #ccc",
+	              borderRadius: "5px",
+	              padding: "0.5rem",
+	            }}
+	          >
+	            {form.eventCategories.map((cat, i) => (
+	              <div key={i} className="d-flex justify-content-between mb-1">
+	                <span>{cat}</span>
+	                <Button
+	                  variant="outline-danger"
+	                  size="sm"
+	                  onClick={() => removeEventCategory(i)}
+	                >
+	                  Elimina
+	                </Button>
+	              </div>
+	            ))}
+	          </div>
+	        </fieldset>
+	      </Card.Body>
+	    </Card>
+    </>
 	);
 };
 
-const NotesSection = ({ form, setForm, handleSingleChange }) => {
+const NotesSection = ({
+	form,
+	setForm,
+	notSaved,
+	setNotSaved,
+	handleSingleChange
+}) => {
 	const [newNoteCat, setNewNoteCat] = useState("");
 
   const addNoteCategory = () => {
-    if (!newNoteCat.trim()) return;
+    if (!newNoteCat.trim()) {
+			toast('Scegli un nome per la tua nuova categoria!', { type: 'warning' });
+			return;
+		}
     const updated = [...form.noteCategories, newNoteCat.trim()];
     setForm((prev) => ({ ...prev, noteCategories: updated }));
+
+		setNotSaved(prev => [...prev, "notes"]);
+
+		toast(`Categoria "${newNoteCat.trim()}" aggiunta!`, {
+			type: 'success',
+			autoClose: 3000
+		});
+
     setNewNoteCat("");
   };
 
   const removeNoteCategory = (index) => {
     const updated = [...form.noteCategories];
-    updated.splice(index, 1);
+    const deleted = updated.splice(index, 1);
+
     setForm((prev) => ({ ...prev, noteCategories: updated }));
+		setNotSaved(prev => [...prev, "notes"]);
+
+		toast(`Categoria "${deleted}" eliminata!`, { type: 'success' });
   };
 
 	return (
-		<Card className="mb-4 shadow-sm">
-			<Card.Body>
-				<div className="section-title">
-	        <h5>Note</h5>
-        </div>
+		<>
+			{
+				notSaved.includes("notes") ?
+				(
+					<span className="text-warning text-center">
+						Modifiche non salvate
+					</span>
+				) : null
+			}
+			<Card
+				className={
+					"mb-4 shadow-sm"
+					+ (notSaved.includes("notes") ?
+							"border border-2 border-warning" : "")
+				}
+			>
+				<Card.Body>
+					<div className="section-title">
+		        <h5>Note</h5>
+	        </div>
 
-        <fieldset className="fieldset-custom mb-2">
-          <legend className="legend-custom">Categorie note</legend>
-          <div className="d-flex mb-2">
-            <Form.Control
-              type="text"
-              placeholder="Aggiungi categoria..."
-              value={newNoteCat}
-              onChange={(e) => setNewNoteCat(e.target.value)}
-            />
-            <Button
-              variant="success"
-              className="ms-2"
-              onClick={addNoteCategory}
-            >
-              Aggiungi
-            </Button>
-          </div>
-          <div
-            style={{
-              maxHeight: "120px",
-              overflowY: "auto",
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-              padding: "0.5rem",
-            }}
-          >
-            {form.noteCategories.map((cat, i) => (
-              <div key={i} className="d-flex justify-content-between mb-1">
-                <span>{cat}</span>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => removeNoteCategory(i)}
-                >
-                  Elimina
-                </Button>
-              </div>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset className="fieldset-custom d-flex">
-	          <legend className="legend-custom">Varie</legend>
-	          <Form.Label className="mt-2 me-2 mb-0 text-nowrap">
-		          Note visibili nella home:
-	          </Form.Label>
-	          <Form.Control
-	            type="number"
-	            name="notesInHome"
-							className="underline-input"
-	            min={1}
-	            value={form.notesInHome}
-	            onChange={(e) => handleSingleChange("notesInHome", e.target.value)}
-	          />
+	        <fieldset className="fieldset-custom mb-2">
+	          <legend className="legend-custom">Categorie note</legend>
+	          <div className="d-flex mb-2">
+	            <Form.Control
+	              type="text"
+	              placeholder="Aggiungi categoria..."
+	              value={newNoteCat}
+	              onChange={(e) => setNewNoteCat(e.target.value)}
+	            />
+	            <Button
+	              variant="success"
+	              className="ms-2"
+	              onClick={addNoteCategory}
+	            >
+	              Aggiungi
+	            </Button>
+	          </div>
+	          <div
+	            style={{
+	              maxHeight: "120px",
+	              overflowY: "auto",
+	              border: "1px solid #ccc",
+	              borderRadius: "5px",
+	              padding: "0.5rem",
+	            }}
+	          >
+	            {form.noteCategories.map((cat, i) => (
+	              <div key={i} className="d-flex justify-content-between mb-1">
+	                <span>{cat}</span>
+	                <Button
+	                  variant="outline-danger"
+	                  size="sm"
+	                  onClick={() => removeNoteCategory(i)}
+	                >
+	                  Elimina
+	                </Button>
+	              </div>
+	            ))}
+	          </div>
 	        </fieldset>
-      </Card.Body>
-    </Card>
+
+	        <fieldset className="fieldset-custom d-flex">
+		          <legend className="legend-custom">Varie</legend>
+		          <Form.Label className="mt-2 me-2 mb-0 text-nowrap">
+			          Note visibili nella home:
+		          </Form.Label>
+		          <Form.Control
+		            type="number"
+		            name="notesInHome"
+								className="underline-input"
+		            min={1}
+		            value={form.notesInHome}
+		            onChange={(e) => handleSingleChange("notesInHome", e.target.value)}
+		          />
+		        </fieldset>
+	      </Card.Body>
+	    </Card>
+    </>
 	);
 };
 
@@ -316,6 +430,8 @@ function Settings({ user, updateUser }) {
     location: user.settings.position,
     notesInHome: user.settings.homeNotes,
   });
+
+	const [notSaved, setNotSaved] = useState([]);
 
   // Modal per conferma
   const [showConfirm, setShowConfirm] = useState(false);
@@ -371,10 +487,11 @@ function Settings({ user, updateUser }) {
 
       updateUser(updatedUser);
       closeConfirm();
-      alert("Impostazioni salvate!");
+      toast("Impostazioni salvate!", { type: 'success' });
+			setNotSaved([]);
     } catch (error) {
       console.error("Errore salvataggio:", error);
-      alert("Errore durante il salvataggio.");
+      toast("Errore durante il salvataggio", { type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -409,22 +526,30 @@ function Settings({ user, updateUser }) {
 					form={form}
 					handleSingleChange={handleSingleChange}
 					setShowAvatarSelector={setShowAvatarSelector}
+					notSaved={notSaved}
+					setNotSaved={setNotSaved}
 				/>
 
 				<GeneralsSection
 					form={form}
 					handleSingleChange={handleSingleChange}
+					notSaved={notSaved}
+					setNotSaved={setNotSaved}
 				/>
 
 				<EventsSection
 					form={form}
 					setForm={setForm}
+					notSaved={notSaved}
+					setNotSaved={setNotSaved}
 				/>
 
 				<NotesSection
 					form={form}
 					setForm={setForm}
 					handleSingleChange={handleSingleChange}
+					notSaved={notSaved}
+					setNotSaved={setNotSaved}
 				/>
 
         {/* Pulsante Salva */}
