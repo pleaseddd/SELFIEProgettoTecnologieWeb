@@ -17,25 +17,27 @@ function hexToRgb(hex) {
   return `${r}, ${g}, ${b}`;
 }
 
-function applyPaletteToRoot(key, fallbackKey = "avatar1") {
+function applyPaletteToRoot(key, fallbackKey = "avatar1", rootEl = null) {
   const palette = themes[key] || themes[fallbackKey];
   if (!palette) return;
 
+  const root = rootEl || document.getElementById('app-root') || document.documentElement;
+
   Object.entries(palette).forEach(([name, value]) => {
-    //setta colore esadecimale
-    document.documentElement.style.setProperty(`--color-${name}`, value);
-    //setta anche la versione rgb (utile per rgba/ombre)
+    root.style.setProperty(`--color-${name}`, value);
     try {
       const rgb = hexToRgb(value);
-      document.documentElement.style.setProperty(`--color-${name}-rgb`, rgb);
+      root.style.setProperty(`--color-${name}-rgb`, rgb);
     } catch (err) {
-      //se non è esadecimale, lascialo vuoto
-      document.documentElement.style.setProperty(`--color-${name}-rgb`, "");
+      root.style.setProperty(`--color-${name}-rgb`, "");
     }
   });
 
-  //attributo data per eventuali selettori CSS (es. [data-palette="avatar2"] ...)
-  document.documentElement.setAttribute("data-palette", key);
+  if (root === document.documentElement) {
+    document.documentElement.setAttribute("data-palette", key);
+  } else {
+    root.setAttribute("data-palette", key);
+  }
 }
 
 export function ThemeProvider({ children, initialKey = "avatar1" }) {
