@@ -30,7 +30,10 @@ const EventSchema = new mongoose.Schema({
 		trim: true,
 	},
 
-	googleCal: String,
+	google: {
+		calendarId: String,
+		eventId: String
+	},
 
 	isRecurring: Boolean,
 	rruleStr: String,
@@ -67,7 +70,7 @@ module.exports = {
 		if(opts) {
 			const { type, limit } = opts.split(' ');
 			if(type == 'upcoming')
-				res = res.sort({ begin: 1}).limit(limit);
+				res = res.sort({ begin: 1 }).limit(limit);
 		}
 
 		return res;

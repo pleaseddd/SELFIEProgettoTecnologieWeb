@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, Form, Button } from "react-bootstrap";
 
+import { toast } from 'react-toastify';
+
 import SwSubSwitch from "./switch-swsub.js";
 import EmailNotifSwitch from "./switch-email.js";
 
@@ -31,6 +33,8 @@ const BrowserNotif = ({ user }) => {
 			})
 		}).then(resp => resp.json());
 		console.log(update.message);
+
+		toast('Nome del dispositivo cambiato con successo!', { type: 'success' });
 
 		setDevice(prev => ({...prev, name: newName}));
 	};

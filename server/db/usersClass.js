@@ -3,10 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
+  name: { type: String, required: true },
 
   email: {
     type: String,
@@ -14,21 +11,12 @@ const UserSchema = new mongoose.Schema({
     unique: true,
   },
 
-  password: {
-    type: String,
-    required: true,
-  },
+  password: { type: String, required: true },
 
-  propic: {
-    type: String,
-    default: "https://dummyimage.com/80x80/023430/fff.jpg&text=not a propic",
-  },
+  propic: { type: String, default: "pfp/avatar1.png" },
 
   google: {
-    isLogged: {
-      type: Boolean,
-      default: false,
-    },
+    isLogged: { type: Boolean, default: false },
 
     tokens: {
       access_token: String,
@@ -39,58 +27,26 @@ const UserSchema = new mongoose.Schema({
 
 	gmail: {
 		address: String,
-		notifs: {
-			type: Boolean,
-			default: false
-		}
+		notifs: Boolean
 	}
   },
 
   settings: {
-    language: {
-      type: String,
-      default: "italian",
-    },
+    language: { type: String, default: "italian" },
 
-    categoryNotes: {
-      type: String,
-      default: "appunti/todo",
-    },
+    categoryNotes: { type: String, default: "appunti/todo" },
 
-    categoryEvents: {
-      type: String,
-      default: "studio/lavoro/sport",
-    },
+    categoryEvents: { type: String, default: "studio/lavoro/sport" },
 
-    theme: {
-      type: Boolean,
-      default: false, // false chiaro, true scuro
-    },
+    theme: { type: Boolean, default: false }, // false chiaro, true scuro
 
-    startDay: {
-      type: Boolean,
-      default: false, // false lunedì, true domenica
-    },
+    startDay: { type: Boolean, default: false }, // false lunedì, true domenica
 
-    position: {
-      type: String,
-      default: "world",
-    },
+    position: { type: String, default: "world" },
 
-    homeNotes: {
-      type: Number,
-      default: 3,
-    },
+    homeNotes: { type: Number, default: 3 },
 
-	theme: {
-		type: Boolean,
-		default: false,
-	},
-
-	paletteKey: {
-		type: String,
-		default: "avatar1",
-	},
+	paletteKey: { type: String, default: "avatar1" },
   },
 });
 
@@ -137,14 +93,18 @@ module.exports = {
 
   updateGoogleTokens: async (email, tokens) => {
     const filter = { email };
-    const update = { $set: { google: { isLogged: true, tokens } } };
+    const update = { $set: {
+		"google.isLogged": true,
+		"google.tokens": tokens,
+		"google.gmail.notifs": false
+	} };
 
     return await User.findOneAndUpdate(filter, update);
   },
 
   googleLogout: async (id) => {
     const filter = { _id: id };
-    const update = { $set: { google: { isLogged: false, tokens: {} } } };
+    const update = { $set: { google: { isLogged: false } } };
 	return await User.findOneAndUpdate(filter, update);
   },
 
@@ -165,5 +125,3 @@ module.exports = {
 	return await User.findOneAndUpdate(filter, update);
   },
 };
-
-

@@ -6,7 +6,7 @@ class EmailNotifSwitch extends Component {
 		super(props);
 
 		this.state = {
-			checked: props.user.google.gmail.notifs || false,
+			checked: props.user.google?.gmail?.notifs || false,
 			showError: false
 		};
 
@@ -37,12 +37,7 @@ class EmailNotifSwitch extends Component {
 			<div>
 				{
 					this.state.showError && (
-						<span
-							className="fs-6"
-							style={{
-								color: 'red'
-							}}
-						>
+						<span className="fs-6 text-danger">
 							Prima fai login a google
 						</span>
 					)

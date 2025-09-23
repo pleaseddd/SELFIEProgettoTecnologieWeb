@@ -31,8 +31,6 @@ async function POST_new(req, res) {
 		const refDate = new Date(req.body.begin);
 		const { title, urgency } = req.body;
 
-		const newEvent = await calendardb.newEvent({ ...req.body, author });
-
 		const urgencyNotifs = {
 			'urgente': [
 				new Time({ days: 1 }),
@@ -63,8 +61,20 @@ async function POST_new(req, res) {
 			});
 		});
 
-		if(req.body.googleCal) {
-			await googleCalendar.newEvent(req.body);
+		let newEvent;
+		if(req.body.googleCalId) {
+			const googleCalEvent = await googleCalendar.newEvent(req.body);
+			newEvent = await calendardb.newEvent({
+				...req.body,
+				author,
+				google: {
+					calendarId: req.body.googleCalId,
+					eventId: googleCalEvent.data.id
+				}
+			});
+		}
+		else {
+			newEvent = await calendardb.newEvent({ ...req.body, author });
 		}
 
 		res.status(201).json(newEvent);
@@ -97,8 +107,10 @@ async function POST_delete(req, res) {
 	try {
 	  const { _id, author } = req.body;
 	  const deleted = await calendardb.deleteBy({ _id, author });
-
 	  if (!deleted) return res.status(403).json({ error: "Accesso negato" });
+
+	  if(deleted.google?.eventId)
+		  await googleCalendar.deleteEvent(deleted);
 
 	  res.json({ message: "Evento eliminato" });
 	} catch (err) {

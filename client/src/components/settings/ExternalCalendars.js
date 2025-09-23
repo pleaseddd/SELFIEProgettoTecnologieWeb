@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import GoogleButton from 'react-google-button';
+import { toast } from 'react-toastify';
 
 import '../../style/settings/Settings.css';
 
@@ -20,11 +21,12 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 
 	useEffect(() => {
 		const load = async () => {
-			const data = await fetch('/api/google/getcalendars', {
+			let data = await fetch('/api/google/getcalendars', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify({ googleTokens: user.google.tokens })
 			}).then(resp => resp.json());
+
 			if(data.hasOwnProperty('message')) {
 				const logout = await fetch('/api/google/logout', {
 					method: 'POST',
@@ -33,8 +35,13 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 				}).then(resp => resp.json());
 				updateUser(logout);
 			}
-			else
+			else {
+				data = data.filter(cal => cal.accessRole == "owner");
+				if(!user.google.hasOwnProperty("calendarId"))
+					data.unshift({id: "nocal", summary: ""});
 				setCalslist(data);
+			}
+
 		}
 		load();
 	}, []);
@@ -48,6 +55,7 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 				calid: selCal
 			})
 		}).then(resp => resp.json());
+		toast('Calendario google impostato con successo!', { type: 'success' });
 		updateUser(update);
 	};
 
