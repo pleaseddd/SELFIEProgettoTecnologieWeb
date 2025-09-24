@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Form, Button } from 'react-bootstrap';
+import { Card, Form, Button, Image } from 'react-bootstrap';
 import GoogleButton from 'react-google-button';
 import { toast } from 'react-toastify';
 
@@ -11,6 +11,22 @@ const GoogleAuth = ({ user }) => {
 			<GoogleButton
 				onClick={() => window.location = `/auth/google?email=${user.email}`}
 			/>
+		</div>
+	);
+};
+
+const GoogleProfile = ({ user }) => {
+	return (
+		<div className="d-flex align-items-center mt-3 border border-2 rounded-pill p-1">
+			<Image
+				src={user.google.propic}
+				className="me-2"
+				roundedCircle
+				width={25}
+				height={25}
+				referrerPolicy="no-referrer"
+			/>
+			<p className="fs-6">{user.google.gmail.address}</p>
 		</div>
 	);
 };
@@ -130,6 +146,7 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 				{
 					googleLogin ?
 					(<div>
+						<GoogleProfile user={user} />
 						<GoogleCalendarUsed user={user} updateUser={updateUser} />
 
 						<Button

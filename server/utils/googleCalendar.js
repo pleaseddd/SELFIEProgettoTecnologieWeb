@@ -26,7 +26,33 @@ module.exports = {
 
 		return await calendar.events.insert({
 			calendarId: event.googleCalId,
-			sendNotifications: true,
+			requestBody: {
+				summary: event.title,
+				start: {
+					dateTime: event.begin,
+					timeZone: "Europe/Rome"
+				},
+				end: {
+					dateTime: event.end,
+					timeZone: "Europe/Rome"
+				},
+				recurrence: event.rruleStr?.split('\n').slice(1)
+			}
+		});
+	},
+
+	updateEvent: async (event) => {
+		const author = await usersdb.findBy({ id: event.userid });
+
+		oauth2Client.setCredentials(author.google.tokens);
+
+		const calendar = google.calendar({
+			version: 'v3',
+			auth: oauth2Client
+		});
+
+		return await calendar.events.update({
+			...event.google,
 			requestBody: {
 				summary: event.title,
 				start: {

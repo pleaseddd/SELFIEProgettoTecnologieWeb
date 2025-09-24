@@ -51,7 +51,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       setUrgency(initialData.urgency || "non urgente");
       setStart(initialData.begin || "");
       setEnd(initialData.end || "");
-			setGoogleCal(initialData.googleCal || false);
+			setGoogleCal(initialData.google?.eventId ? true : false);
       setIsRecurring(initialData.isRecurring || false);
       setColor(initialData.color || "#3788d8");
       setPomodoro({

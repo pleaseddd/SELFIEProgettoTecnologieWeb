@@ -7,7 +7,7 @@ class GcalEventSwitch extends Component {
 
 		this.state = {
 			checked: this.props.googleCal,
-			showError: false
+			showError: ''
 		};
 
 		this.handleChange = this.handleChange.bind(this);
@@ -15,7 +15,7 @@ class GcalEventSwitch extends Component {
 
 	async handleChange(checked) {
 		if(!this.props.user.google.hasOwnProperty("calendarId")) {
-			this.setState({ showError: true });
+			this.setState({ showError: "nocal" });
 			return;
 		}
 
@@ -27,9 +27,16 @@ class GcalEventSwitch extends Component {
 		return (
 			<div>
 				{
-					this.state.showError && (
+					this.state.showError == "nocal" && (
 						<span className="fs-6 text-danger">
 							Scegli il calendario google in cui salvare gli eventi nelle impostazioni
+						</span>
+					)
+				}
+				{
+					this.state.showError == "editing" && (
+						<span className="fs-6 text-warning">
+							Deselezionando questo pulsante l'evento su google Calendar verrà cancellato
 						</span>
 					)
 				}

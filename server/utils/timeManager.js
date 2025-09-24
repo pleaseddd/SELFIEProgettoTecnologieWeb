@@ -29,18 +29,20 @@ module.exports = {
 				console.log("notifica mandata con successo");
 
 				//sezione delle mail
-				const user = await usersdb.findBy({ id: notif.user });
 				const transporter = nodemailer.createTransport({
 					host: "smtp.gmail.com",
 					port: 465,
 					secure: true,
 					auth: {
 						type: "OAuth2",
-						user: user.google.gmail.address,
-						accessToken: user.google.tokens.access_token
+						user: process.env.GMAIL_SITE_ADDRESS,
+						clientId: process.env.GOOGLE_CLIENT_ID,
+						clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+						refreshToken: process.env.GMAIL_SITE_REFRESH_TOKEN
 					}
 				});
 
+				const user = await usersdb.findBy({ id: notif.user });
 				await transporter.sendMail({
 					from: 'me',
 					to: user.google.gmail.address,

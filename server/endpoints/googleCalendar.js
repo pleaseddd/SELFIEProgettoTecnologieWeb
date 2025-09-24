@@ -9,7 +9,8 @@ const oauth2Client = new google.auth.OAuth2(
 
 const scopes = [
 	'https://www.googleapis.com/auth/calendar',
-	'https://mail.google.com/'
+	'https://www.googleapis.com/auth/userinfo.profile',
+	'https://www.googleapis.com/auth/userinfo.email'
 ];
 
 module.exports = {
@@ -41,7 +42,23 @@ async function auth_callback(req, res) {
 	const { code, state } = req.query;
 	const { tokens } = await oauth2Client.getToken(code);
 
-	const user = await usersdb.updateGoogleTokens(state, tokens);
+	oauth2Client.setCredentials(tokens);
+	const oauth2 = google.oauth2({ auth: oauth2Client, version: 'v2'});
+	const profile = await oauth2.userinfo.get();
+
+	const googleInfo = { $set: {
+		google: {
+			isLogged: true,
+			tokens,
+			propic: profile.data.picture,
+			gmail: {
+				notifs: false,
+				address: profile.data.email
+			}
+		}
+	} };
+
+	const user = await usersdb.googleLogin(state, googleInfo);
 
 	res.redirect('/settings');
 }
@@ -107,19 +124,8 @@ async function POST_setcal(req, res) {
 }
 
 async function POST_emailconsent(req, res) {
-	const user = await usersdb.findBy({ id: req.body.user_id });
-	oauth2Client.setCredentials(user.google.tokens);
-
-	const gmail = google.gmail({
-		version: 'v1',
-		auth: oauth2Client
-	});
-
-	const profile = await gmail.users.getProfile({ userId: 'me' });
-
 	const filter = { _id: req.body.user_id };
 	const update = { $set: {
-		'google.gmail.address': profile.data.emailAddress,
 		'google.gmail.notifs': req.body.consent
 	} };
 

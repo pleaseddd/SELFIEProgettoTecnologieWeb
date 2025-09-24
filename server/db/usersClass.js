@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema({
       refresh_token: String,
     },
 
+	propic: String,
 	calendarId: String,
 
 	gmail: {
@@ -91,14 +92,8 @@ module.exports = {
 	return await User.findOneAndUpdate(filter, update);
   },
 
-  updateGoogleTokens: async (email, tokens) => {
+  googleLogin: async (email, update) => {
     const filter = { email };
-    const update = { $set: {
-		"google.isLogged": true,
-		"google.tokens": tokens,
-		"google.gmail.notifs": false
-	} };
-
     return await User.findOneAndUpdate(filter, update);
   },
 

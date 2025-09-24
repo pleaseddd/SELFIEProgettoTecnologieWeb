@@ -91,10 +91,34 @@ async function POST_update(req, res) {
 	  const { _id, userid } = req.body;
 	  const filter = { _id, author: userid };
 
-	  const updated = await calendardb.update(filter, req.body);
+		const oldEvent = await calendardb.findBy({ id: _id });
 
+		let update;
+		if(!oldEvent.google?.eventId && req.body.googleCalId) {
+			const googleCalEvent = await googleCalendar.newEvent(req.body);
+			update = {
+				...req.body,
+				google: {
+					calendarId: req.body.googleCalId,
+					eventId: googleCalEvent.data.id
+				}
+			}
+		}
+		else if(oldEvent.google?.eventId) {
+			update = {
+				...req.body,
+				google: oldEvent.google
+			};
+			await googleCalendar.updateEvent(update);
+		}
+		else {
+		  update = req.body;
+		}
+
+	  const updated = await calendardb.update(filter, update);
 	  if (!updated)
 		  return res.status(403).json({ error: "Accesso negato" });
+
 
 	  res.json(updated);
 	} catch (err) {
