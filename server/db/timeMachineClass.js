@@ -15,14 +15,17 @@ const TimeMachineSchema = new mongoose.Schema(
 const TimeMachine = mongoose.model("TimeMachine", TimeMachineSchema);
 
 let cachedOffset = 0;
+let flag=0;
 
 module.exports = {
 	newTime: async (fakeNow) => {
 		const newtime = await TimeMachine({ fakeNow });
+		flag=Date.now();
 		return await newtime.save();
 	},
 
 	deleteAll: async () => {
+		flag=Date.now();
 		return await TimeMachine.deleteMany({});
 	},
 
@@ -44,7 +47,7 @@ module.exports = {
 	},
 
 	getCache: () => cachedOffset,
-
+	getFlag: () => flag,
 	resetCache: () => {
 		cachedOffset = 0;
 	}
