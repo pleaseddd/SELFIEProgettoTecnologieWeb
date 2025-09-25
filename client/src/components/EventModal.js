@@ -1,8 +1,10 @@
-import ConfirmModal from "./ConfirmModal";
 import { useState, useEffect } from "react";
 import { RRule } from "rrule";
 import Switch from "react-switch";
 import "../style/eventModal.css";
+
+import ConfirmModal from "./ConfirmModal";
+import GcalEventSwitch from './switch-gcal-event';
 
 function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [title, setTitle] = useState("");
@@ -50,7 +52,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       setUrgency(initialData.urgency || "non urgente");
       setStart(initialData.begin || "");
       setEnd(initialData.end || "");
-			setGoogleCal(initialData.googleCal || false);
+			setGoogleCal(initialData.google?.eventId ? true : false);
       setIsRecurring(initialData.isRecurring || false);
       setColor(initialData.color || "#3788d8");
       setPomodoro({
@@ -147,7 +149,6 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   };
 
   const handleSubmit = () => {
-		console.log(user.google);
     const event = {
       title,
       category,
@@ -155,7 +156,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       urgency,
       begin: start,
       end: end,
-	    googleCal: googleCal ? user.google.calendarId : null,
+	    googleCalId: googleCal ? user.google.calendarId : null,
       isRecurring,
       rruleStr: isRecurring ? buildRRuleString() : null,
       color,
@@ -344,22 +345,12 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
 						user.google.isLogged ?
 						(<div className="mb-3">
 							<div className="d-flex align-items-center">
-								<Switch
-									className="me-2"
-									id="googlecal"
-									onChange={() => setGoogleCal(!googleCal)}
-									checked={googleCal}
-									onColor="#3788d8"
-                  offColor="#ccc"
-                  uncheckedIcon={false}
-                  checkedIcon={false}
+								<GcalEventSwitch
+										label="Salva su Google Calendar"
+										user={user}
+										googleCal={googleCal}
+										setGoogleCal={setGoogleCal}
 								/>
-								<label
-									className="form-check-label mb-0"
-									htmlFor="googlecal"
-								>
-									Salva su Google Calendar
-								</label>
 							</div>
 						</div>) : null
 						}

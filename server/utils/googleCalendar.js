@@ -24,9 +24,8 @@ module.exports = {
 			auth: oauth2Client
 		});
 
-		const res = await calendar.events.insert({
-			calendarId: event.googleCal,
-			sendNotifications: true,
+		return await calendar.events.insert({
+			calendarId: event.googleCalId,
 			requestBody: {
 				summary: event.title,
 				start: {
@@ -40,5 +39,45 @@ module.exports = {
 				recurrence: event.rruleStr?.split('\n').slice(1)
 			}
 		});
+	},
+
+	updateEvent: async (event) => {
+		const author = await usersdb.findBy({ id: event.userid });
+
+		oauth2Client.setCredentials(author.google.tokens);
+
+		const calendar = google.calendar({
+			version: 'v3',
+			auth: oauth2Client
+		});
+
+		return await calendar.events.update({
+			...event.google,
+			requestBody: {
+				summary: event.title,
+				start: {
+					dateTime: event.begin,
+					timeZone: "Europe/Rome"
+				},
+				end: {
+					dateTime: event.end,
+					timeZone: "Europe/Rome"
+				},
+				recurrence: event.rruleStr?.split('\n').slice(1)
+			}
+		});
+	},
+
+	deleteEvent: async (event) => {
+		const author = await usersdb.findBy({ id: event.author });
+
+		oauth2Client.setCredentials(author.google.tokens);
+
+		const calendar = google.calendar({
+			version: 'v3',
+			auth: oauth2Client
+		});
+
+		return await calendar.events.delete(event.google);
 	}
 };

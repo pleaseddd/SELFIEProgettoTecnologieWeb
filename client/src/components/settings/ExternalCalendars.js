@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Card, Form, Button } from 'react-bootstrap';
+import { Card, Form, Button, Image } from 'react-bootstrap';
 import GoogleButton from 'react-google-button';
+import { toast } from 'react-toastify';
 
 import '../../style/settings/Settings.css';
 
@@ -14,17 +15,34 @@ const GoogleAuth = ({ user }) => {
 	);
 };
 
+const GoogleProfile = ({ user }) => {
+	return (
+		<div className="d-flex align-items-center mb-2 border border-1 rounded-pill p-2">
+			<Image
+				src={user.google.propic}
+				className="me-2"
+				roundedCircle
+				width={25}
+				height={25}
+				referrerPolicy="no-referrer"
+			/>
+			<h6 className="mb-1">{user.google.gmail.address}</h6>
+		</div>
+	);
+};
+
 const GoogleCalendarUsed = ({ user, updateUser }) => {
 	const [calslist, setCalslist] = useState([]);
 	const [selCal, setSelCal] = useState("");
 
 	useEffect(() => {
 		const load = async () => {
-			const data = await fetch('/api/google/getcalendars', {
+			let data = await fetch('/api/google/getcalendars', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify({ googleTokens: user.google.tokens })
 			}).then(resp => resp.json());
+
 			if(data.hasOwnProperty('message')) {
 				const logout = await fetch('/api/google/logout', {
 					method: 'POST',
@@ -33,8 +51,13 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 				}).then(resp => resp.json());
 				updateUser(logout);
 			}
-			else
+			else {
+				data = data.filter(cal => cal.accessRole == "owner");
+				if(!user.google.hasOwnProperty("calendarId"))
+					data.unshift({id: "nocal", summary: ""});
 				setCalslist(data);
+			}
+
 		}
 		load();
 	}, []);
@@ -48,12 +71,13 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 				calid: selCal
 			})
 		}).then(resp => resp.json());
+		toast('Calendario google impostato con successo!', { type: 'success' });
 		updateUser(update);
 	};
 
 	return (
 		<div className="d-flex flex-column flex-md-row mb-2">
-			<Form.Label className="me-md-2 mt-md-2 mb-0 text-nowrap">
+			<Form.Label className="mt-2 me-md-2 mt-md-2 mb-0 text-nowrap">
 				Salvo gli eventi in
 			</Form.Label>
 
@@ -122,7 +146,13 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 				{
 					googleLogin ?
 					(<div>
-						<GoogleCalendarUsed user={user} updateUser={updateUser} />
+						<div className="d-flex justify-content-start column-gap-3">
+							<GoogleProfile user={user} />
+							<GoogleCalendarUsed
+								user={user}
+								updateUser={updateUser}
+							/>
+						</div>
 
 						<Button
 							variant="outline-danger"
