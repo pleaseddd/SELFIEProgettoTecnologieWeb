@@ -6,7 +6,7 @@ module.exports = {
 		router.get('/api/server-time', GET_servertime);
 		router.post("/api/server-time/set", POST_set);
 		router.post("/api/server-time/reset", POST_reset);
-		router.get('/api/server-time/flag', GET_current);
+		router.get("/api/server-time/flag", GET_flag);
 	}
 };
 
@@ -56,12 +56,12 @@ async function POST_reset(req, res) {
   }
 };
 
-async function GET_current(req, res) {
+async function GET_flag(req, res) {
   try {
-    const nowMs = Date.now() + timeMachineDB.getCache();
-    const nowIso = new Date(nowMs).toISOString();
-    res.json({ now: nowIso });
+    const flag = timeMachineDB.getFlag();
+    res.json({ flag });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+
 }
