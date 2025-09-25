@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./style/pomodoro.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
-import { FaPlay,FaPause,FaArrowsRotate,FaAnglesRight,FaAnglesLeft      } from "react-icons/fa6";
+import { FaPlay, FaPause, FaArrowsRotate, FaAnglesRight, FaAnglesLeft } from "react-icons/fa6";
 //componente principale Pomodoro
 export default function Pomodoro({ userId }) {
   const location = useLocation();
@@ -267,23 +267,30 @@ export default function Pomodoro({ userId }) {
             {/* → CERCHIO DI 60 TICK */}
             <div className="ticks-container">
               {Array.from({ length: tickCount }).map((_, i) => {
+                // totale secondi per la fase corrente
                 const totalSeconds =
                   phase === "work"
                     ? activeConfig.work * 60
                     : activeConfig.break * 60;
-                const progress =
-                  ((totalSeconds - timeLeft) / totalSeconds) * tickCount;
+
+                // quanti tick vanno considerati "consumati" dal progresso attuale
+                // uso Math.floor per garantire step discreti coerenti con il numero di tick
+                const progressCount = Math.floor(
+                  ((totalSeconds - timeLeft) / totalSeconds) * tickCount
+                );
+
+                // angolo equispaziato (i = 0 ... tickCount-1)
+                const angle = (i * 360) / tickCount;
+
+                // visibilità: qui nascondiamo i tick "consumati" dall'inizio (i piccoli)
+                const hidden = i < progressCount;
 
                 return (
                   <div
                     key={i}
-                    className={`tick ${
-                      i > tickCount - 1 - Math.floor(progress) ? "hidden" : ""
-                    }`}
+                    className={`tick ${hidden ? "hidden" : ""}`}
                     style={{
-                      transform: `rotate(${
-                        i * (360 / tickCount)
-                      }deg) translateY(-103px)`,
+                      transform: `rotate(${angle}deg) translateY(-103px)`,
                     }}
                   />
                 );
@@ -313,7 +320,7 @@ export default function Pomodoro({ userId }) {
               onClick={() =>
                 setTimeLeft(
                   (phase === "work" ? activeConfig.work : activeConfig.break) *
-                    60
+                  60
                 )
               }
             >
@@ -333,7 +340,7 @@ export default function Pomodoro({ userId }) {
               }}
             >
               {" "}
-              {finished ? (running ? <FaAnglesRight />: <FaAnglesLeft />) : <FaAnglesRight />}
+              {finished ? (running ? <FaAnglesRight /> : <FaAnglesLeft />) : <FaAnglesRight />}
             </button>
           </div>
         </div>

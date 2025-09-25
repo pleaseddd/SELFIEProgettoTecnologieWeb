@@ -150,8 +150,8 @@
 .timer-circle {
   box-sizing: border-box;
   position: relative;
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   background-color: var(--color-terziary);
   color: var(--on-tertiary, var(--color-button-text, #fff));
@@ -165,7 +165,7 @@
   pointer-events: auto;
 }
 
-.ticks-container { top: 50%; left: 50%; position: absolute; width: 120%; height: 120%; transform: translate(-50%, -50%); pointer-events: none; z-index: 10; }
+.ticks-container { top: 44%; left: 49.5%; position: absolute; width: 150%; height: 150%; transform: translate(-50%, -50%); pointer-events: none; z-index: 10; }
 .tick {
   position: absolute;
   background-color: rgba(var(--color-accents-rgb), 0.95);
