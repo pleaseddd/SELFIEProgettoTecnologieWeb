@@ -17,7 +17,7 @@ const GoogleAuth = ({ user }) => {
 
 const GoogleProfile = ({ user }) => {
 	return (
-		<div className="d-flex align-items-center mt-3 border border-2 rounded-pill p-1">
+		<div className="d-flex align-items-center mb-2 border border-1 rounded-pill p-2">
 			<Image
 				src={user.google.propic}
 				className="me-2"
@@ -26,7 +26,7 @@ const GoogleProfile = ({ user }) => {
 				height={25}
 				referrerPolicy="no-referrer"
 			/>
-			<p className="fs-6">{user.google.gmail.address}</p>
+			<h6 className="mb-1">{user.google.gmail.address}</h6>
 		</div>
 	);
 };
@@ -77,7 +77,7 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 
 	return (
 		<div className="d-flex flex-column flex-md-row mb-2">
-			<Form.Label className="me-md-2 mt-md-2 mb-0 text-nowrap">
+			<Form.Label className="mt-2 me-md-2 mt-md-2 mb-0 text-nowrap">
 				Salvo gli eventi in
 			</Form.Label>
 
@@ -146,8 +146,13 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 				{
 					googleLogin ?
 					(<div>
-						<GoogleProfile user={user} />
-						<GoogleCalendarUsed user={user} updateUser={updateUser} />
+						<div className="d-flex justify-content-start column-gap-3">
+							<GoogleProfile user={user} />
+							<GoogleCalendarUsed
+								user={user}
+								updateUser={updateUser}
+							/>
+						</div>
 
 						<Button
 							variant="outline-danger"
