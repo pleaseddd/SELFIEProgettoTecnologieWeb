@@ -201,7 +201,7 @@ function CalendarPage({ user }) {
         begin: localBegin.toISOString(),
         end: localEnd.toISOString(),
         _id: modalData?._id,
-        userid: user._id,
+        author: user._id,
       };
 
       const url = "/api/events" + (isEditing ? "/update" : "/new");

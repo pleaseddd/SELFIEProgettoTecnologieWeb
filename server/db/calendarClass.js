@@ -31,6 +31,7 @@ const EventSchema = new mongoose.Schema({
 	},
 
 	google: {
+		isSaved: { type: Boolean, default: false },
 		calendarId: String,
 		eventId: String
 	},

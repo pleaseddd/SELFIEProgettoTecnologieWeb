@@ -37,7 +37,7 @@ const PersonalInfoSection = ({
 			{
 				notSaved.includes("personalInfo") ?
 				(
-					<span className="text-warning text-center">
+					<span className="text-warning text-center mb-2">
 						Modifiche non salvate
 					</span>
 				) : null
@@ -119,7 +119,7 @@ const GeneralsSection = ({
 			{
 				notSaved.includes("generals") ?
 				(
-					<span className="text-warning text-center">
+					<span className="text-warning text-center mb-2">
 						Modifiche non salvate
 					</span>
 				) : null
@@ -232,7 +232,7 @@ const EventsSection = ({
 			{
 				notSaved.includes("events") ?
 				(
-					<span className="text-warning text-center">
+					<span className="text-warning text-center mb-2">
 						Modifiche non salvate
 					</span>
 				) : null
@@ -338,7 +338,7 @@ const NotesSection = ({
 			{
 				notSaved.includes("notes") ?
 				(
-					<span className="text-warning text-center">
+					<span className="text-warning text-center mb-2">
 						Modifiche non salvate
 					</span>
 				) : null

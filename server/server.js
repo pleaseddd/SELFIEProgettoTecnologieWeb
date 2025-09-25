@@ -55,7 +55,8 @@ const dir = './endpoints/';
 	'calendar',
 	'swsubs',
 	'googleCalendar',
-	'timeMachine'
+	'timeMachine',
+	'notifs'
 ].forEach(db => require(`${dir}${db}`).setEndpoints(app));
 
 app.use(express.static(path.join(__dirname, "../client/build")));

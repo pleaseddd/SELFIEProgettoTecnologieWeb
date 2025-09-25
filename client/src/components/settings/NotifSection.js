@@ -50,7 +50,7 @@ const BrowserNotif = ({ user }) => {
 			</div>
 
 			<div className="d-flex flex-column flex-md-row mb-2">
-				<Form.Label className="me-md-2 mt-2 mb-0 text-nowrap">
+				<Form.Label className="me-md-2 mt-2 mb-1 mb-md-0 text-nowrap">
 					Nome dispositivo:
 				</Form.Label>
 

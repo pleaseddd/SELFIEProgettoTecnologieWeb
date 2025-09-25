@@ -17,16 +17,16 @@ const GoogleAuth = ({ user }) => {
 
 const GoogleProfile = ({ user }) => {
 	return (
-		<div className="d-flex align-items-center mb-2 border border-1 rounded-pill p-2">
+		<div className="d-flex align-items-center mb-2 border border-1 rounded-pill px-2 py-1">
 			<Image
 				src={user.google.propic}
-				className="me-2"
+				className="me-1"
 				roundedCircle
-				width={25}
-				height={25}
+				width={22}
+				height={22}
 				referrerPolicy="no-referrer"
 			/>
-			<h6 className="mb-1">{user.google.gmail.address}</h6>
+			<h6 className="mb-0">{user.google?.gmail?.address}</h6>
 		</div>
 	);
 };
@@ -76,15 +76,15 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 	};
 
 	return (
-		<div className="d-flex flex-column flex-md-row mb-2">
-			<Form.Label className="mt-2 me-md-2 mt-md-2 mb-0 text-nowrap">
+		<div className="d-flex flex-column flex-md-row flex-grow-1 mb-2">
+			<Form.Label className="mt-2 me-md-2 mb-1 mb-md-0 text-nowrap">
 				Salvo gli eventi in
 			</Form.Label>
 
 			<div className="d-flex flex-grow-1">
 				<Form.Select
 					aria-label="default select"
-					className="underline-input"
+					className="flex-grow-1"
 					onChange={e => setSelCal(e.target.value)}
 				>
 				{
@@ -146,7 +146,7 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 				{
 					googleLogin ?
 					(<div>
-						<div className="d-flex justify-content-start column-gap-3">
+						<div className="d-flex flex-column flex-md-row justify-content-start align-items-center column-gap-3 flex-wrap">
 							<GoogleProfile user={user} />
 							<GoogleCalendarUsed
 								user={user}

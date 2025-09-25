@@ -1,7 +1,6 @@
 const calendardb = require('../db/calendarClass.js');
-const notifs = require('../db/notifClass.js');
 const googleCalendar = require('../utils/googleCalendar.js');
-const { Time, dateSubTime } = require("../utils/timeManager.js");
+const { generateNotifs } = require('../utils/calendar.js');
 
 module.exports = {
 	setEndpoints: (router) => {
@@ -27,55 +26,14 @@ async function POST_list(req, res) {
 // Nuovo evento
 async function POST_new(req, res) {
 	try {
-		const author = req.body.userid;
-		const refDate = new Date(req.body.begin);
-		const { title, urgency } = req.body;
-
-		const urgencyNotifs = {
-			'urgente': [
-				new Time({ days: 1 }),
-				new Time({ hours: 12 }),
-				new Time({ hours: 1 }),
-				new Time({ minutes: 15 }),
-			],
-
-			'non troppo urgente': [
-				new Time({ days: 1 }),
-				new Time({ hours: 12 }),
-				new Time({ hours: 1 })
-			],
-
-			'non urgente': [
-				new Time({ days: 1 }),
-				new Time({ hours: 1 })
-			]
-		};
-
-		urgencyNotifs[urgency].forEach(async time => {
-			const sendDate = dateSubTime(refDate, time);
-			await notifs.new_notif({
-				user: author,
-				title,
-				body: time.toString(),
-				time: sendDate,
-			});
-		});
-
-		let newEvent;
-		if(req.body.googleCalId) {
-			const googleCalEvent = await googleCalendar.newEvent(req.body);
-			newEvent = await calendardb.newEvent({
-				...req.body,
-				author,
-				google: {
-					calendarId: req.body.googleCalId,
-					eventId: googleCalEvent.data.id
-				}
-			});
+		if(req.body.google.isSaved) {
+			const gCalEvent = await googleCalendar.newEvent(req.body);
+			req.body.google.eventId = gCalEvent.data.id;
 		}
-		else {
-			newEvent = await calendardb.newEvent({ ...req.body, author });
-		}
+
+		newEvent = await calendardb.newEvent(req.body);
+
+		await generateNotifs(newEvent);
 
 		res.status(201).json(newEvent);
 	}
@@ -88,41 +46,31 @@ async function POST_new(req, res) {
 // Aggiorna evento
 async function POST_update(req, res) {
 	try {
-	  const { _id, userid } = req.body;
-	  const filter = { _id, author: userid };
+		const { _id, author } = req.body;
+		const filter = { _id, author };
 
 		const oldEvent = await calendardb.findBy({ id: _id });
 
-		let update;
-		if(!oldEvent.google?.eventId && req.body.googleCalId) {
-			const googleCalEvent = await googleCalendar.newEvent(req.body);
-			update = {
-				...req.body,
-				google: {
-					calendarId: req.body.googleCalId,
-					eventId: googleCalEvent.data.id
-				}
+		if(req.body.google.isSaved) {
+			if(!oldEvent.google.isSaved) {
+				const gCalEvent = await googleCalendar.newEvent(req.body);
+				req.body.google.eventId = gCalEvent.data.id;
+			}
+			else {
+				req.body.google.eventId = oldEvent.google.eventId;
+				await googleCalendar.updateEvent(req.body);
 			}
 		}
-		else if(oldEvent.google?.eventId) {
-			update = {
-				...req.body,
-				google: oldEvent.google
-			};
-			await googleCalendar.updateEvent(update);
-		}
-		else {
-		  update = req.body;
-		}
 
-	  const updated = await calendardb.update(filter, update);
-	  if (!updated)
-		  return res.status(403).json({ error: "Accesso negato" });
+	    const updated = await calendardb.update(filter, req.body);
 
+		if (!updated)
+			return res.status(403).json({ error: "Accesso negato" });
 
-	  res.json(updated);
-	} catch (err) {
-	  res.status(400).json({ error: err.message });
+		res.json(updated);
+	}
+	catch (err) {
+		res.status(400).json({ error: err.message });
 	}
 }
 
@@ -131,7 +79,8 @@ async function POST_delete(req, res) {
 	try {
 	  const { _id, author } = req.body;
 	  const deleted = await calendardb.deleteBy({ _id, author });
-	  if (!deleted) return res.status(403).json({ error: "Accesso negato" });
+	  if (!deleted)
+		  return res.status(403).json({ error: "Accesso negato" });
 
 	  if(deleted.google?.eventId)
 		  await googleCalendar.deleteEvent(deleted);

@@ -6,7 +6,7 @@ class GcalEventSwitch extends Component {
 		super(props);
 
 		this.state = {
-			checked: this.props.googleCal,
+			checked: this.props.saveOnGoogle,
 			showError: ''
 		};
 
@@ -19,7 +19,7 @@ class GcalEventSwitch extends Component {
 			return;
 		}
 
-		this.props.setGoogleCal(!this.props.googleCal)
+		this.props.setSaveOnGoogle(!this.props.saveOnGoogle);
 		this.setState({ checked });
 	}
 
@@ -45,7 +45,7 @@ class GcalEventSwitch extends Component {
 						id="googlecal"
 						className="me-2"
 						onChange={this.handleChange}
-						checked={this.props.googleCal}
+						checked={this.props.saveOnGoogle}
 						onColor="#3788d8"
 						offColor="#ccc"
 						uncheckedIcon={false}

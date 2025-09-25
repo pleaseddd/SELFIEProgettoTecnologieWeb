@@ -15,7 +15,7 @@ const scopes = [
 
 module.exports = {
 	newEvent: async (event) => {
-		const author = await usersdb.findBy({ id: event.userid });
+		const author = await usersdb.findBy({ id: event.author });
 
 		oauth2Client.setCredentials(author.google.tokens);
 
@@ -25,7 +25,7 @@ module.exports = {
 		});
 
 		return await calendar.events.insert({
-			calendarId: event.googleCalId,
+			calendarId: event.google.calendarId,
 			requestBody: {
 				summary: event.title,
 				start: {
@@ -42,7 +42,7 @@ module.exports = {
 	},
 
 	updateEvent: async (event) => {
-		const author = await usersdb.findBy({ id: event.userid });
+		const author = await usersdb.findBy({ id: event.author });
 
 		oauth2Client.setCredentials(author.google.tokens);
 
