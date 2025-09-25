@@ -1,0 +1,154 @@
+:root {
+  --nt-surface: var(--color-surface, var(--surface, #FFFFFF));
+  --nt-on-surface: var(--color-onSurface, var(--onSurface, var(--color-on-surface, #0B1220)));
+  --nt-primary: var(--color-primary, var(--primary, #23273B));
+  --nt-secondary: var(--color-secondary, var(--secondary, #F0F0F0));
+  --nt-tertiary: var(--color-terziary, var(--terziary, #262333));
+  --nt-accents: var(--color-accents, var(--accents, #A25C2F));
+  --nt-details: var(--color-details, var(--details, rgba(0,0,0,0.06)));
+  --nt-shadows-rgb: var(--color-shadows-rgb, var(--shadows-rgb, 5,5,10));
+  --nt-accents-rgb: var(--color-accents-rgb, var(--accents-rgb, 162,92,47));
+  --notes-card-bg: var(--note-editor-bg, var(--nt-tertiary, #262333));
+  --notes-card-text: var(--note-editor-text, var(--nt-on-surface, #D0DBCF));
+  --notes-input-bg: var(--note-input-bg, #ffffff);
+  --notes-input-text: var(--note-input-text, #0B1220);
+  --notes-placeholder: var(--note-placeholder, rgba(11,18,32,0.45));
+}
+
+.p-3.bg-light .card,
+.note-card--light,
+.p-3.bg-light.note-editor,
+.p-3.bg-light > .card {
+  color: var(--notes-card-text);
+  border: 1px solid rgba(var(--nt-shadows-rgb), 0.06);
+  box-shadow: 0 10px 26px rgba(var(--nt-shadows-rgb), 0.10);
+}
+
+/* titoli e sottotitoli: mantieni gerarchia e contrasto */
+.p-3.bg-light .card-title,
+.note-card--light .card-title {
+  color: var(--nt-tertiary);
+  font-weight: 700;
+}
+.p-3.bg-light .card-subtitle,
+.note-card--light .card-subtitle {
+  color: var(--color-muted, rgba(255,255,255,0.72));
+}
+
+/* card text (preview) */
+.p-3.bg-light .card-text,
+.note-card--light .card-text {
+  color: var(--notes-card-text);
+  background: transparent;
+}
+
+.p-3.bg-light .form-control,
+.p-3.bg-light input.form-control,
+.p-3.bg-light textarea.form-control,
+.p-3.bg-light select.form-control,
+.note-card--light .form-control,
+.note-card--light input.form-control,
+.note-card--light textarea.form-control,
+.note-card--light select.form-control {
+  background: var(--notes-input-bg) !important;
+  color: var(--notes-input-text) !important;
+  border: 1px solid rgba(var(--nt-shadows-rgb), 0.08) !important;
+  box-shadow: none !important;
+  caret-color: var(--notes-input-text) !important;
+  border-radius: 6px;
+}
+
+.p-3.bg-light ::-webkit-input-placeholder,
+.p-3.bg-light ::-moz-placeholder,
+.p-3.bg-light :-ms-input-placeholder,
+.p-3.bg-light ::placeholder,
+.note-card--light ::-webkit-input-placeholder,
+.note-card--light ::-moz-placeholder,
+.note-card--light :-ms-input-placeholder,
+.note-card--light ::placeholder {
+  color: var(--notes-placeholder) !important;
+  opacity: 1;
+}
+
+.p-3.bg-light textarea::-webkit-scrollbar,
+.note-card--light textarea::-webkit-scrollbar {
+  width: 10px;
+}
+.p-3.bg-light textarea::-webkit-scrollbar-thumb,
+.note-card--light textarea::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--nt-shadows-rgb), 0.12);
+  border-radius: 8px;
+  border: 1px solid rgba(var(--nt-shadows-rgb), 0.03);
+}
+
+.p-3.bg-light .form-control:focus,
+.note-card--light .form-control:focus,
+.p-3.bg-light input:focus,
+.note-card--light input:focus,
+.p-3.bg-light textarea:focus,
+.note-card--light textarea:focus {
+  outline: 2px solid rgba(var(--nt-accents-rgb), 0.18);
+  box-shadow: 0 8px 20px rgba(var(--nt-shadows-rgb), 0.06);
+}
+
+.p-3.bg-light trix-editor,
+.note-card--light trix-editor {
+  background: var(--notes-input-bg) !important;
+  color: var(--notes-input-text) !important;
+  border: 1px solid rgba(var(--nt-shadows-rgb), 0.08);
+  border-radius: 6px;
+  min-height: 180px;
+  padding: 0.8rem;
+  box-sizing: border-box;
+}
+
+/* hidden input that holds trix content */
+.p-3.bg-light #trix_input,
+.note-card--light #trix_input {
+  color: var(--notes-input-text);
+}
+
+/* toolbar buttons contrast: use on-card text or accents */
+.p-3.bg-light trix-toolbar .trix-button,
+.note-card--light trix-toolbar .trix-button {
+  color: var(--notes-card-text);
+  background: transparent;
+  border: 1px solid rgba(var(--nt-shadows-rgb), 0.02);
+  border-radius: 6px;
+  padding: 0.28rem 0.45rem;
+}
+.p-3.bg-light trix-toolbar .trix-button:hover,
+.note-card--light trix-toolbar .trix-button:hover {
+  background: rgba(var(--nt-shadows-rgb), 0.03);
+  color: var(--nt-tertiary);
+}
+
+/* toolbar group spacing (keeps previous custom sizing) */
+.p-3.bg-light .trix-button-row,
+.note-card--light .trix-button-row {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.p-3.bg-light .card-footer .btn,
+.note-card--light .card-footer .btn {
+  color: var(--color-buttonText, var(--color-button-text, var(--notes-card-text)));
+  background: var(--color-buttonBg, var(--color-button-bg, var(--nt-accents)));
+  border: 1px solid rgba(var(--nt-shadows-rgb), 0.06);
+}
+.p-3.bg-light .btn.btn-outline-primary,
+.note-card--light .btn.btn-outline-primary {
+  color: var(--nt-tertiary);
+  border-color: rgba(var(--nt-shadows-rgb), 0.06);
+}
+
+.p-3.bg-light .card-title,
+.note-card--light .card-title {
+  text-shadow: 0 1px 0 rgba(var(--nt-shadows-rgb), 0.04);
+}
+
+/* fallback for any plain .card elements in notes area */
+.p-3.bg-light .card,
+.note-card--light {
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}

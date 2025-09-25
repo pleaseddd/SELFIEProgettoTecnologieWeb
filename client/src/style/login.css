@@ -1,3 +1,30 @@
+:root{
+  --color-primary: #023430;
+  --color-secondary: #ffffff;    
+  --color-terziary: #ff0000; 
+  --color-details: #ffffff;
+  --color-accents: #0a6f66;    
+  --color-shadows-rgb: 0,0,0;    
+
+  --color-primary-rgb: 2, 52, 48;    
+  --color-secondary-rgb: 255,255,255;
+  --color-terziary-rgb: 255,0,0;    
+  --color-details-rgb: 255,255,255;
+  --color-accents-rgb: 10,111,102;
+  --color-shadows-rgb: 0,0,0;
+
+  --surface: var(--color-secondary);         
+  --on-surface: var(--color-primary);     
+  --card-bg: rgba(var(--color-primary-rgb), 0.04); 
+  --muted: rgba(var(--color-primary-rgb), 0.6);
+
+  --button-bg: var(--color-terziary);
+  --button-text: #ffffff;
+  --on-tertiary: #ffffff;   
+
+  --panel-width: 400px;
+}
+
 .login-page {
   --lp-bg: #071428;
   --lp-bg-gradient: linear-gradient(135deg, #071428 0%, #0B1E3A 100%);

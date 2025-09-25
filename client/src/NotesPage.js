@@ -118,7 +118,7 @@ function NotesPages({ user }) {
                   >
                     <div className="card-body flex-grow-1">
                       <h5 className="card-title">{note.title}</h5>
-                      <h6 className="card-subtitle mb-2 text-muted">
+                      <h6 className="card-subtitle mb-2">
                         {note.category || "Senza categoria"}
                       </h6>
                       <p className="card-text">

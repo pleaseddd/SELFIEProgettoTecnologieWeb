@@ -3,6 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "trix/dist/trix.css";
 import "trix";
+import "../style/addNote.css";
+
 function AddNote({ user, selectedNote, clearSelectedNote }) {
   // Recupero dal USER le categorie possibili per le note e le metto sottoforma di Array per ciclarle 
   const categories = user.settings.categoryNotes.split("/");

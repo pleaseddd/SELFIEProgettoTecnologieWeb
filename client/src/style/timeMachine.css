@@ -1,25 +1,25 @@
-/* timeMachine.css — palette-aware (assume .theme-avatar1..7 definite globalmente) */
-
-/* variabili usate con fallback */
 .tm-toggle-btn {
     position: fixed;
-    z-index: 1000;
-    /* usa colore degli accents se fornito, altrimenti fallback bootstrap blue */
-    background-color: var(--color-accents, #007bff);
-    color: var(--color-details, #fff);
+    z-index: 1100;
+    background-color: var(--tm-accent, var(--color-accents));
+    color: var(--tm-details, var(--color-details));
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: var(--tm-toggle-size, 56px);
+    height: var(--tm-toggle-size, 56px);
     font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.12s ease;
+    transition: transform 0.12s ease, box-shadow 0.16s ease, background-color 0.12s ease;
+    box-shadow: 0 8px 20px rgba(var(--color-shadows-rgb), 0.12);
+    will-change: transform;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* mobile posizione */
+/* posizionamenti responsive */
 @media (max-width: 767px) {
     .tm-toggle-btn {
         bottom: 20px;
@@ -28,14 +28,14 @@
 
     .tm-panel {
         position: fixed;
-        bottom: 80px;
+        bottom: calc(20px + var(--tm-toggle-size, 56px) + 16px);
         left: 20px;
         width: 90vw;
-        max-width: 280px;
+        max-width: var(--tm-panel-width, 420px);
+        transform-origin: bottom left;
     }
 }
 
-/* desktop posizione */
 @media (min-width: 768px) {
     .tm-toggle-btn {
         top: 20px;
@@ -46,122 +46,161 @@
         position: fixed;
         top: 100px;
         left: 100px;
-        width: 280px;
+        width: var(--tm-panel-width, 360px);
+        transform-origin: top left;
     }
 
     .draggable-panel {
-        cursor: default;
+        cursor: grab; 
     }
 }
 
-/* hover: prova a usare la versione rgba dell'accent, fallback al blu scuro */
+/* Hover / Active / Focus per il toggle */
 .tm-toggle-btn:hover {
-    background-color: rgba(var(--color-accents-rgb, 0,123,255), 0.95);
-    transform: translateY(-2px);
+    background-color: rgba(var(--color-accents-rgb), 0.95);
+    transform: translateY(-3px);
+    box-shadow: 0 14px 36px rgba(var(--color-shadows-rgb), 0.14);
 }
+.tm-toggle-btn:active { transform: translateY(-1px) scale(0.99); }
 
-/* focus visibile */
-.tm-toggle-btn:focus {
+.tm-toggle-btn:focus-visible {
+    box-shadow: 0 0 0 6px rgba(var(--color-accents-rgb), 0.14);
     outline: none;
-    box-shadow: 0 0 0 4px rgba(var(--color-accents-rgb, 0,123,255), 0.18);
 }
 
-/* pannello */
+/* Panel */
 .tm-panel {
-    z-index: 1000;
-    background-color: var(--color-details, #ffffff);
-    border: 1px solid rgba(var(--color-shadows-rgb, 206,212,218), 0.9); /* fallback #ced4da */
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(var(--color-shadows-rgb, 0,0,0), 0.15);
+    z-index: 1090;
+    background-color: var(--tm-surface, var(--color-surface, var(--color-card-bg)));
+    color: var(--tm-on-surface, var(--color-on-surface));
+    border: 1px solid rgba(var(--color-shadows-rgb), 0.08);
+    border-radius: var(--tm-border-radius, 12px);
+    box-shadow: 0 8px 26px rgba(var(--color-shadows-rgb), 0.12);
     padding: 12px;
+    transition: transform 220ms cubic-bezier(.2,.9,.28,1), opacity 160ms ease;
+    will-change: transform, opacity;
+    pointer-events: auto;
 }
 
-/* titoli e testo */
+.tm-panel.hidden {
+    transform: scale(0.98);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Titolo e form */
 .tm-title {
     margin: 0 0 8px;
     font-size: 16px;
     text-align: center;
-    color: var(--color-primary, #023430);
+    color: var(--tm-primary, var(--color-primary));
+    font-weight: 700;
 }
 
-.tm-form {
-    display: flex;
-    flex-direction: column;
-}
+.tm-form { display: flex; flex-direction: column; gap: 8px; }
 
 .tm-label {
     margin-bottom: 4px;
     font-size: 14px;
-    color: var(--color-primary, #023430);
+    color: var(--tm-primary, var(--color-primary));
 }
 
+/* Input */
 .tm-input {
     margin-bottom: 8px;
-    padding: 4px 8px;
+    padding: 6px 8px;
     font-size: 14px;
-    border: 1px solid rgba(var(--color-shadows-rgb, 206,212,218), 0.9);
-    border-radius: 4px;
-    background: rgba(var(--color-details-rgb, 255,255,255), 0.98);
-    color: var(--color-primary, #023430);
+    border: 1px solid rgba(var(--color-shadows-rgb), 0.12);
+    border-radius: 6px;
+    background: linear-gradient(180deg, var(--tm-card-bg, var(--color-card-bg)), transparent);
+    color: var(--tm-on-surface, var(--color-on-surface));
+    outline: none;
+    transition: box-shadow 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+}
+.tm-input::placeholder { color: var(--tm-muted, var(--color-muted)); opacity: 1; }
+
+.tm-input:focus {
+    box-shadow: 0 8px 20px rgba(var(--color-shadows-rgb), 0.06);
+    border-color: rgba(var(--color-accents-rgb), 0.9);
+    transform: translateY(-1px);
 }
 
-/* bottoni nel pannello */
+/* Buttons area */
 .tm-buttons {
     display: flex;
     justify-content: space-between;
-    gap: 6px;
+    gap: 8px;
 }
 
+/* Bottoni base */
 .tm-btn {
     flex: 1;
-    margin: 0 2px;
+    margin: 0;
     font-size: 13px;
-    padding: 6px 8px;
-    border-radius: 4px;
-    border: 1px solid rgba(var(--color-shadows-rgb, 0,0,0), 0.08);
-    background: var(--color-secondary, rgba(255,255,255,0.06));
-    color: var(--color-primary, #023430);
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(var(--color-shadows-rgb), 0.08);
+    background: var(--tm-card-bg, var(--color-card-bg));
+    color: var(--tm-primary, var(--color-primary));
     cursor: pointer;
-    transition: background 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease;
+    transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.12s ease;
+    box-shadow: 0 6px 14px rgba(var(--color-shadows-rgb), 0.06);
 }
 .tm-btn:hover {
-    transform: translateY(-1px);
-    background: rgba(var(--color-secondary-rgb, 255,255,255), 0.12);
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--tm-surface, var(--color-surface)) 88%, var(--color-details) 12%);
 }
 
-/* Primary button: usa gli accents (fondo colorato) */
+.tm-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Bottoni primari / accentuati */
 .tm-btn--primary {
-    background: var(--color-accents, #007bff);
-    color: var(--color-details, #ffffff);
-    border: 1px solid rgba(var(--color-accents-rgb, 0,123,255), 0.95);
-    box-shadow: 0 4px 10px rgba(var(--color-accents-rgb, 0,123,255), 0.12);
+    background: var(--tm-accent, var(--color-accents));
+    color: var(--tm-onSurface, var(--color-onSurface));
+    border: 1px solid rgba(var(--color-accents-rgb), 0.95);
+    box-shadow: 0 8px 28px rgba(var(--color-accents-rgb), 0.10);
 }
 .tm-btn--primary:hover {
-    background: rgba(var(--color-accents-rgb, 0,123,255), 0.95);
-    transform: translateY(-2px);
+    background: rgba(var(--color-accents-rgb), 0.95);
+    transform: translateY(-3px);
 }
-.tm-btn--primary:focus {
+.tm-btn--primary:focus-visible {
+    box-shadow: 0 0 0 8px rgba(var(--color-accents-rgb), 0.12);
     outline: none;
-    box-shadow: 0 0 0 6px rgba(var(--color-accents-rgb, 0,123,255), 0.14);
 }
 
-/* Muted button: usa secondary (superficie/panel) */
+/* Bottoni muted / secondari */
 .tm-btn--muted {
-    background: var(--color-secondary, rgba(255,255,255,0.06));
-    color: var(--color-primary, #023430);
-    border: 1px solid rgba(var(--color-shadows-rgb, 0,0,0), 0.08);
+    background: var(--tm-surface, var(--color-surface));
+    color: var(--tm-primary, var(--color-primary));
+    border: 1px solid rgba(var(--color-shadows-rgb), 0.08);
     box-shadow: none;
 }
 .tm-btn--muted:hover {
-    background: rgba(var(--color-secondary-rgb, 255,255,255), 0.12);
+    background: color-mix(in srgb, var(--tm-surface, var(--color-surface)) 88%, var(--color-details) 12%);
     transform: translateY(-1px);
 }
-.tm-btn--muted:focus {
+.tm-btn--muted:focus-visible {
+    box-shadow: 0 0 0 6px rgba(var(--color-shadows-rgb), 0.06);
     outline: none;
-    box-shadow: 0 0 0 4px rgba(var(--color-secondary-rgb, 255,255,255), 0.08);
 }
 
-.tm-btn--large {
-    padding: 8px 12px;
-    font-size: 14px;
+.tm-btn--large { padding: 10px 14px; font-size: 14px; }
+
+.draggable-panel:active { cursor: grabbing; }
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce) {
+    .tm-toggle-btn,
+    .tm-panel,
+    .tm-btn,
+    .tm-input {
+        transition: none !important;
+        animation: none !important;
+    }
 }

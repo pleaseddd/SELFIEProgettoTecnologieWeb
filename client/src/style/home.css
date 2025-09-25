@@ -1,0 +1,76 @@
+
+
+.home-root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--app-bg-gradient-top),
+      var(--app-bg-gradient-bottom)
+    ),
+    var(--app-bg);
+
+  color: var(--app-text);
+  max-width: var(--app-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+
+  transition: 
+    background-color 220ms ease, 
+    color 200ms ease, 
+    background 260ms ease,
+    border-color 200ms ease,
+    box-shadow 220ms ease;
+}
+
+.home-root > * {
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+/* Card / container styles */
+.card {
+  background: var(--color-card-bg);
+  color: var(--app-text);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px var(--color-shadows);
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+
+/* Buttons */
+button {
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 200ms ease, color 200ms ease, transform 150ms ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Muted text */
+.muted {
+  color: var(--color-muted);
+}
+
+/* Responsive padding */
+@media (max-width: 768px) {
+  .home-root {
+    padding: 0.5rem;
+  }
+  .home-root > * {
+    padding: 0 0.5rem;
+  }
+}

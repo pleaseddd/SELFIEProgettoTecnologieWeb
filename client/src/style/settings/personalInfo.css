@@ -1,76 +1,229 @@
-/* immagine profilo con dentro il pulsante "cambia" */
+:root{
+  --on-surface-effective: var(--on-surface, var(--color-on-surface, var(--colorOnSurface, #0B1220)));
+  --color-shadows-rgb-effective: var(--color-shadows-rgb, var(--shadows-rgb, 18,49,54));
+  --color-accents-rgb-effective: var(--color-accents-rgb, var(--accents-rgb, 46,107,115));
+  --color-details-rgb-effective: var(--color-details-rgb, var(--details-rgb, 255,255,255));
+  --button-text-effective: var(--button-text, var(--color-button-text, var(--buttonText, #ffffff)));
+  --card-bg-effective: var(--card-bg, var(--color-card-bg, rgba(var(--color-shadows-rgb, 18,49,54), 0.03)));
+
+  --propic-size: 96px;
+  --propic-border-radius: 999px;
+  --propic-border-rgb: var(--color-shadows-rgb-effective, 18,49,54);
+  --propic-overlay-rgb: var(--color-accents-rgb-effective, 46,107,115);
+  --propic-overlay-alpha: 0.18;
+  --propic-button-bg: rgba(var(--propic-overlay-rgb), 0.94);
+  --propic-button-color: var(--button-text-effective, #ffffff);
+  --propic-focus-ring: rgba(var(--propic-overlay-rgb), 0.18);
+
+  --form-gap: 0.5rem;
+  --form-label-color: var(--on-surface-effective, #0B1220);
+  --form-control-color: var(--on-surface-effective, #0B1220);
+  --form-control-bg: transparent;
+  --form-control-border-rgb: var(--color-shadows-rgb-effective, 18,49,54);
+  --form-helper-color: var(--muted-effective, rgba(0,0,0,0.45));
+
+  --low-contrast-bg: rgba(var(--color-details-rgb-effective, 255,255,255), 0.06);
+  --force-contrast-text-dark: #0B1220;
+  --force-contrast-text-light: #FFFFFF;
+}
 
 .propic-container {
-	position: relative;
-	display: inline-block;
-	align-self: center;
-	margin-bottom: .5rem;
+  position: relative;
+  display: inline-block;
+  align-self: center;
+  margin-bottom: .5rem;
+  width: var(--propic-size);
+  height: var(--propic-size);
+  border-radius: var(--propic-border-radius);
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(var(--propic-border-rgb), 0.10);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  background: var(--card-bg-effective, rgba(var(--propic-border-rgb), 0.04));
+}
+
+.propic-container:focus-within,
+.propic-container:focus {
+  outline: none;
+  box-shadow:
+    0 10px 26px rgba(var(--propic-border-rgb), 0.12),
+    0 0 0 4px var(--propic-focus-ring);
+  transform: translateY(-2px);
+}
+
+.propic-container img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .change-propic-button {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	opacity: 0;
-	transition: opacity 0.3s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms ease, background-color 160ms ease;
+  background: linear-gradient(180deg, rgba(var(--propic-overlay-rgb), 0.98), rgba(var(--propic-overlay-rgb), 0.86));
+  color: var(--propic-button-color);
+  border: none;
+  padding: 0.45rem 0.65rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 8px 20px rgba(var(--propic-border-rgb), 0.16);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.6rem;
+  min-height: 2.6rem;
+  text-align: center;
 }
 
-.propic-container:hover .change-propic-button {
-	opacity: 1;
+.propic-container:hover .change-propic-button,
+.propic-container:focus-within .change-propic-button,
+.change-propic-button:focus {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1.02);
 }
+
+.change-propic-button:focus {
+  outline: none;
+  box-shadow: 0 10px 26px rgba(var(--propic-border-rgb), 0.12), 0 0 0 4px rgba(var(--propic-overlay-rgb), 0.14);
+}
+
+.propic-container.propic--small { width: 64px; height: 64px; --propic-size: 64px; }
 
 .pers-form-container {
-	display: flex;
-	flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  gap: var(--form-gap);
+  color: var(--form-control-color);
 }
 
 .pers-form-fields {
-	display: flex;
-	flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .pers-form-group {
-	display: flex;
-	flex-direction: column;
-	margin-bottom: .5rem;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: .5rem;
+  gap: 0.375rem;
 }
 
 .pers-form-label {
-	margin-bottom: .25rem;
+  margin-bottom: .25rem;
+  color: var(--color-details-rgb);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.25;
 }
 
 .pers-form-control {
-	margin-bottom: .5rem;
+  margin-bottom: .5rem;
+  display: block;
+}
+
+.pers-form-control input,
+.pers-form-control textarea,
+.pers-form-control select {
+  width: 100%;
+  padding: 0.56rem 0.7rem;
+  border-radius: 10px;
+  background: var(--form-control-bg);
+  color: var(--form-control-color);
+  border: 1px solid rgba(var(--form-control-border-rgb), 0.10);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 120ms ease;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+.low-trast .pers-form-control input,
+.low-contrast .pers-form-control textarea,
+.low-contrast .pers-form-control select {
+  background: var(--low-contrast-bg);
+  border: 1px solid rgba(var(--form-control-border-rgb), 0.16);
+}
+
+.pers-form-control input::placeholder,
+.pers-form-control textarea::placeholder { color: var(--form-helper-color); opacity: 1; }
+
+.pers-form-control input:focus,
+.pers-form-control textarea:focus,
+.pers-form-control select:focus {
+  outline: none;
+  border-color: rgba(var(--propic-overlay-rgb), 0.96);
+  box-shadow: 0 8px 0 0 rgba(var(--propic-overlay-rgb), var(--propic-overlay-alpha));
+  transform: translateY(-1px);
+}
+
+.pers-form-control input[aria-invalid="true"],
+.pers-form-control textarea[aria-invalid="true"],
+.pers-form-control select[aria-invalid="true"] {
+  border-color: var(--error-color, #D6282E);
+  box-shadow: 0 2px 0 0 rgba(214,40,46,0.10);
+}
+
+.pers-form-control input:disabled,
+.pers-form-control textarea:disabled,
+.pers-form-control select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(var(--form-control-border-rgb), 0.02);
 }
 
 @media (min-width: 768px) {
-	.propic-container {
-		margin: 0 1.5rem .5rem 0;
-	}
+  .propic-container {
+    margin: 0 1.5rem .5rem 0;
+    flex: 0 0 auto;
+  }
 
-	.pers-form-container {
-		flex-direction: row;
-		align-items: flex-start;
-	}
+  .pers-form-container {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
 
-	.pers-form-fields {
-		flex: 5;
-	}
+  .pers-form-fields {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
-	.pers-form-group {
-		flex-direction: row;
-		justify-content: start;
-	}
+  .pers-form-group {
+    flex-direction: row;
+    gap: 1rem;
+    align-items: flex-start;
+  }
 
-	.pers-form-label {
-		flex: 3;
-		margin-top: .5rem;
-		margin-right: .5rem;
-		margin-bottom: 0;
-	}
+  .pers-form-label {
+    flex: 0 0 28%;
+    margin-top: .5rem;
+    margin-right: .5rem;
+    margin-bottom: 0;
+    text-align: left;
+  }
 
-	.pers-form-control {
-		flex: 3;
-	}
+  .pers-form-control {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+  }
 }
+
+@media (prefers-contrast: more) {
+  .propic-container { box-shadow: 0 10px 28px rgba(var(--propic-border-rgb), 0.16); }
+  .pers-form-control input, .pers-form-control textarea, .pers-form-control select {
+    border-color: rgba(var(--form-control-border-rgb), 0.22);
+  }
+}
+
+.force-text-dark { color: var(--force-contrast-text-dark) !important; }
+.force-text-light { color: var(--force-contrast-text-light) !important; }

@@ -2,6 +2,7 @@ import ConfirmModal from "./ConfirmModal";
 import { useState, useEffect } from "react";
 import { RRule } from "rrule";
 import Switch from "react-switch";
+import "../style/eventModal.css";
 
 function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [title, setTitle] = useState("");

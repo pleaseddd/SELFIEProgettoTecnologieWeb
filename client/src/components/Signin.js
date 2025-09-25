@@ -6,10 +6,13 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 function Signin({ change, setUser }) {
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
   const handleLogin = async (event) => {
     event.preventDefault();
-    const email = event.target.email.value;
+    const email = event.target.email.value.trim();
     const password = event.target.password.value;
+
+    setError(""); // reset
 
     try {
       // 1 Login
@@ -21,8 +24,7 @@ function Signin({ change, setUser }) {
       });
 
       if (!loginRes.ok) {
-        setError("Email o Password errati!");
-        alert("Email o Password errati!");
+        setError("Email o password errati.");
         return;
       }
 
@@ -33,56 +35,60 @@ function Signin({ change, setUser }) {
       });
 
       if (!meRes.ok) {
-        alert("Login effettuato, ma impossibile recuperare i dati utente.");
+        setError("Login effettuato, impossibile recuperare i dati utente.");
         return;
       }
 
       const userData = await meRes.json();
       setUser(userData);
       navigate("/home");
-    } catch (error) {
-      console.error("Errore di rete:", error);
-      alert("Errore di connessione al server.");
+    } catch (err) {
+      console.error("Errore di rete:", err);
+      setError("Errore di connessione al server.");
     }
   };
 
-  
   return (
-    <div className="col-md-6 d-flex justify-content-center align-items-center mb-4 mb-md-0">
-      <div className="card p-4 shadow-lg login-card">
-        <h2 className="text-center mb-4">Login</h2>
+    <div className="col-md-6 d-flex justify-content-center align-items-center mb-3 mb-md-0">
+      <div className="card p-3 shadow-sm login-card" style={{ maxWidth: 420, width: "100%" }}>
+        <h2 className="text-center mb-3" style={{ fontSize: "1.25rem" }}>Login</h2>
+
+        {error && <div className="alert alert-danger py-1 mb-2" role="alert">{error}</div>}
+
         <form onSubmit={handleLogin}>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email
-            </label>
+          <div className="mb-2">
+            <label htmlFor="email" className="form-label small">Email</label>
             <input
               type="email"
-              className="form-control"
+              className="form-control form-control-sm"
               id="email"
               name="email"
               placeholder="Email"
+              required
             />
           </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
+
+          <div className="mb-2">
+            <label htmlFor="password" className="form-label small">Password</label>
             <input
               type="password"
-              className="form-control"
+              className="form-control form-control-sm"
               id="password"
               name="password"
               placeholder="Password"
+              required
             />
           </div>
-          <button type="submit" className="login-btn btn btn-primary w-100">
+
+          <button type="submit" className="login-btn btn btn-primary w-100 btn-sm mb-2">
             Accedi
           </button>
         </form>
+
         <button
-          className="register-btn btn btn-primary w-100 mt-2"
+          className="register-btn btn btn-outline-secondary w-100 btn-sm"
           onClick={change}
+          type="button"
         >
           Registrati
         </button>

@@ -7,37 +7,41 @@ axios.defaults.withCredentials = true; //importante: invia cookie al server
 
 const ThemeContext = createContext();
 
-function hexToRgb(hex) {
-  //accetta: "#aabbcc" o "aabbcc"
-  const h = hex.replace("#", "");
-  const bigint = parseInt(h, 16);
+function hexToRgb(value) {
+  if (value.startsWith("rgba") || value.startsWith("rgb")) {
+    const nums = value.match(/\d+/g);
+    if (nums && nums.length >= 3) {
+      return `${nums[0]},${nums[1]},${nums[2]}`; // senza spazi
+    }
+    return "0,0,0";
+  }
+
+  const hex = value.replace("#", "");
+  const bigint = parseInt(hex, 16);
   const r = (bigint >> 16) & 255;
   const g = (bigint >> 8) & 255;
   const b = bigint & 255;
-  return `${r}, ${g}, ${b}`;
+  return `${r},${g},${b}`; // senza spazi
 }
 
 function applyPaletteToRoot(key, fallbackKey = "avatar1", rootEl = null) {
   const palette = themes[key] || themes[fallbackKey];
   if (!palette) return;
 
-  const root = rootEl || document.getElementById('app-root') || document.documentElement;
+  const root = rootEl || document.documentElement;
 
   Object.entries(palette).forEach(([name, value]) => {
     root.style.setProperty(`--color-${name}`, value);
+
     try {
       const rgb = hexToRgb(value);
       root.style.setProperty(`--color-${name}-rgb`, rgb);
     } catch (err) {
-      root.style.setProperty(`--color-${name}-rgb`, "");
+      root.style.setProperty(`--color-${name}-rgb`, "0,0,0");
     }
   });
 
-  if (root === document.documentElement) {
-    document.documentElement.setAttribute("data-palette", key);
-  } else {
-    root.setAttribute("data-palette", key);
-  }
+  root.setAttribute("data-palette", key);
 }
 
 export function ThemeProvider({ children, initialKey = "avatar1" }) {
