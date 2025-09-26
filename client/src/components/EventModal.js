@@ -5,6 +5,7 @@ import "../style/eventModal.css";
 
 import ConfirmModal from "./ConfirmModal";
 import GcalEventSwitch from './switch-gcal-event';
+import NotifsModal from  './calendar/NotifsModal';
 
 function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [title, setTitle] = useState("");
@@ -13,7 +14,8 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [urgency, setUrgency] = useState("non urgente");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
-	const [googleCal, setGoogleCal] = useState(false);
+	const [saveOnGoogle, setSaveOnGoogle] = useState(false);
+	const [sendNotifs, setSendNotifs] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
   const [Pomodoro, setPomodoro] = useState({
     on: false,
@@ -52,7 +54,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       setUrgency(initialData.urgency || "non urgente");
       setStart(initialData.begin || "");
       setEnd(initialData.end || "");
-			setGoogleCal(initialData.google?.eventId ? true : false);
+			setSaveOnGoogle(initialData.google?.eventId ? true : false);
       setIsRecurring(initialData.isRecurring || false);
       setColor(initialData.color || "#3788d8");
       setPomodoro({
@@ -156,7 +158,10 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
       urgency,
       begin: start,
       end: end,
-	    googleCalId: googleCal ? user.google.calendarId : null,
+	    google: {
+				isSaved: saveOnGoogle,
+				calendarId: (saveOnGoogle ? user.google?.calendarId : undefined)
+			},
       isRecurring,
       rruleStr: isRecurring ? buildRRuleString() : null,
       color,
@@ -348,8 +353,8 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
 								<GcalEventSwitch
 										label="Salva su Google Calendar"
 										user={user}
-										googleCal={googleCal}
-										setGoogleCal={setGoogleCal}
+										saveOnGoogle={saveOnGoogle}
+										setSaveOnGoogle={setSaveOnGoogle}
 								/>
 							</div>
 						</div>) : null
@@ -535,6 +540,12 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
                 </div>
               </div>
             )}
+
+						<NotifsModal
+							user={user}
+							sendNotifs={sendNotifs}
+							setSendNotifs={setSendNotifs}
+						/>
           </div>
           <div className="modal-footer d-flex justify-content-between">
             <button

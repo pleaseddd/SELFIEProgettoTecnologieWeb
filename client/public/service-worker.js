@@ -8,13 +8,21 @@ self.addEventListener("push", event => {
 
 	self.registration.showNotification(data.title, {
 		body: data.body,
-		title: data.title
+		title: data.title,
+		actions: [{ action: "snooze", title: "fai snooze" }]
 	});
 });
 
-self.addEventListener("notificationclick", event => {
+self.addEventListener("notificationclick", async (event) => {
     event.notification.close();
-    clients.openWindow("/")
+	if(event.action == "snooze")
+		await fetch('/api/notifs/snooze', {
+			method: "POST",
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ })
+		});
+	else
+		clients.openWindow("/");
 });
 
 self.addEventListener("activate", () => {
@@ -22,7 +30,3 @@ self.addEventListener("activate", () => {
 	// tabs.forEach(tab => tab.navigate(tab.url));
 	console.log('service worker attivato');
 });
-
-// self.addEventListener('fetch', event => {
-// 	event.respondWith(fetch(event.request));
-// });

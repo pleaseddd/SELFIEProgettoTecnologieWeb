@@ -3,6 +3,7 @@ import "./style/home.css";
 import NotesCarousel from "./components/home/NotesCarousel.js";
 import Weather from "./components/home/Weather.js";
 import CalendarCarousel from "./components/home/CalendarCarousel.js";
+import LastPomodoro from "./components/home/LastPomodoro.js";
 
 function Home({ user }) {
   return (
@@ -10,6 +11,7 @@ function Home({ user }) {
       <CalendarCarousel user={user} />
       <Weather />
       <NotesCarousel user={user} />
+      <LastPomodoro user={user} />
     </div>
   );
 }
