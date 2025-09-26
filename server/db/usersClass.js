@@ -23,13 +23,13 @@ const UserSchema = new mongoose.Schema({
       refresh_token: String,
     },
 
-	propic: String,
-	calendarId: String,
+    propic: String,
+    calendarId: String,
 
-	gmail: {
-		address: String,
-		notifs: Boolean
-	}
+    gmail: {
+      address: String,
+      notifs: Boolean,
+    },
   },
 
   settings: {
@@ -47,7 +47,14 @@ const UserSchema = new mongoose.Schema({
 
     homeNotes: { type: Number, default: 3 },
 
-	paletteKey: { type: String, default: "avatar1" },
+    paletteKey: { type: String, default: "avatar1" },
+  },
+
+  lastPomodoroSession: {
+    total:{ type: Number, default: 0 },
+    work: { type: Number, default: 0 },
+    break: { type: Number, default: 0 },
+    updatedAt: { type: Date, default: Date.now },
   },
 });
 
@@ -78,18 +85,16 @@ const User = mongoose.model("User", UserSchema);
 module.exports = {
   newUser: async (user) => {
     const newuser = new User(user);
-	return await newuser.save();
+    return await newuser.save();
   },
 
   findBy: async (filter) => {
-    if(filter.hasOwnProperty("id"))
-	    return await User.findById(filter.id);
-    if(filter.hasOwnProperty('email'))
-		return await User.findOne(filter);
+    if (filter.hasOwnProperty("id")) return await User.findById(filter.id);
+    if (filter.hasOwnProperty("email")) return await User.findOne(filter);
   },
 
   update: async (filter, update) => {
-	return await User.findOneAndUpdate(filter, update);
+    return await User.findOneAndUpdate(filter, update);
   },
 
   googleLogin: async (email, update) => {
@@ -100,23 +105,40 @@ module.exports = {
   googleLogout: async (id) => {
     const filter = { _id: id };
     const update = { $set: { google: { isLogged: false } } };
-	return await User.findOneAndUpdate(filter, update);
+    return await User.findOneAndUpdate(filter, update);
   },
 
   setGoogleCal: async (userid, calid) => {
-	const filter = { _id: userid };
-	const update = { $set: { 'google.calendarId': calid } };
-	return await User.findOneAndUpdate(filter, update);
+    const filter = { _id: userid };
+    const update = { $set: { "google.calendarId": calid } };
+    return await User.findOneAndUpdate(filter, update);
+  },
+
+  setLastPomodoro: async (userid, session) => {
+    const filter = { _id: userid };
+    const update = {
+      $set: {
+        lastPomodoroSession: {
+          total:session.totalminutes,
+          work: session.w,
+          break: session.b,
+          updatedAt: new Date(),
+        },
+      },
+    };
+    return await User.findOneAndUpdate(filter, update, { new: true });
   },
 
   setPaletteKey: async (userid, paletteKey) => {
-	const url = `/pfp/${paletteKey}.png`;
-	const filter = { _id: userid };
-	const update = { $set: {
-		'settings.paletteKey': paletteKey,
-		propic: url
-	}};
+    const url = `/pfp/${paletteKey}.png`;
+    const filter = { _id: userid };
+    const update = {
+      $set: {
+        "settings.paletteKey": paletteKey,
+        propic: url,
+      },
+    };
 
-	return await User.findOneAndUpdate(filter, update);
+    return await User.findOneAndUpdate(filter, update);
   },
 };

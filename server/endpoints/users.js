@@ -9,6 +9,8 @@ module.exports = {
 		router.post('/api/user/logout', POST_authLogout);
 		router.post('/api/user/updatesettings', POST_settings);
 		router.post('/api/user/setPaletteKey', ensureAuth, POST_setPaletteKey);
+		router.post('/api/user/setLastPomodoro', ensureAuth, POST_setLastPomodoro);
+		router.post('/api/user/info', ensureAuth, POST_userinfo);
 	}
 };
 
@@ -136,4 +138,28 @@ async function POST_setPaletteKey(req, res) {
 	} catch (err) {
 		res.status(500).json({ error: "Errore nell'aggiornamento della palette" });
 	}
+}
+
+async function POST_setLastPomodoro(req, res) {
+  try {
+    const updatedUser = await userdb.setLastPomodoro(req.body.user.userid, req.body.user.lastPomodoroSession);
+    res.status(200).json(updatedUser.lastPomodoroSession);
+  } catch (err) {
+	console.log(error)
+    res.status(500).json({ error: "Errore nell'aggiornamento della sessione" });
+  }
+}
+
+async function POST_userinfo(req, res) {
+	console.log(req)
+  try {
+    const user = await userdb.findBy(req.body);
+
+    if (!user) {
+      return res.status(404).json({ message: "Utente non trovato" });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Errore nel recupero informazioni: " + err });
+  }
 }

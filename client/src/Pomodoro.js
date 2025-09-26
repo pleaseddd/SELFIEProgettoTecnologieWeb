@@ -2,9 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import "./style/pomodoro.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
-import { FaPlay, FaPause, FaArrowsRotate, FaAnglesRight, FaAnglesLeft } from "react-icons/fa6";
+import {
+  FaPlay,
+  FaPause,
+  FaArrowsRotate,
+  FaAnglesRight,
+  FaAnglesLeft,
+} from "react-icons/fa6";
 //componente principale Pomodoro
-export default function Pomodoro({ userId }) {
+export default function Pomodoro({ user }) {
   const location = useLocation();
   //inizializzazione stato dal local storage
   const [totalMinutes, setTotalMinutes] = useState(
@@ -162,6 +168,27 @@ export default function Pomodoro({ userId }) {
     localStorage.setItem("pomodoroTimeLeft", String(timeLeft));
   }
 
+  //SALVO PER LA HOME L'ULTIMA SESSIONE
+  const lastPomodoroSession = async (w, b) => {
+    const totalminutes= Number(totalMinutes);
+    try {
+      const payload = {
+        user: {
+          userid: user._id,
+          lastPomodoroSession: { totalminutes,w, b },
+        },
+      };
+
+      const data = await fetch("/api/user/setLastPomodoro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).then((resp) => resp.json());
+    } catch (error) {
+      console.error("Errore salvataggio ultima sessione:", error);
+    }
+  };
+
   // -- GENERAZIONE SUGGERIMENTI CICLI --
   const generateCycles = () => {
     const total = Number(totalMinutes);
@@ -204,6 +231,7 @@ export default function Pomodoro({ userId }) {
     circle.classList.add("working");
     circle.style.setProperty("--dur", `${work * 60}s`);
     persistState();
+    lastPomodoroSession(work, brk);
   };
 
   // -- GESTIONE PASSAGGIO FASI --
@@ -320,7 +348,7 @@ export default function Pomodoro({ userId }) {
               onClick={() =>
                 setTimeLeft(
                   (phase === "work" ? activeConfig.work : activeConfig.break) *
-                  60
+                    60
                 )
               }
             >
@@ -340,7 +368,15 @@ export default function Pomodoro({ userId }) {
               }}
             >
               {" "}
-              {finished ? (running ? <FaAnglesRight /> : <FaAnglesLeft />) : <FaAnglesRight />}
+              {finished ? (
+                running ? (
+                  <FaAnglesRight />
+                ) : (
+                  <FaAnglesLeft />
+                )
+              ) : (
+                <FaAnglesRight />
+              )}
             </button>
           </div>
         </div>
@@ -462,8 +498,7 @@ export default function Pomodoro({ userId }) {
                       <strong>
                         {c.work}+{c.break}
                       </strong>{" "}
-                      min →{" "}
-                      <span className="text-muted">{c.total} minuti</span>
+                      min → <span className="text-muted">{c.total} minuti</span>
                     </p>
                     <button
                       className="btn btn-sm btn-outline-success"
