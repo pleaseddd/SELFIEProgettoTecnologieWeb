@@ -1,6 +1,6 @@
 :root {
   --nt-surface: var(--color-surface, var(--surface, #FFFFFF));
-  --nt-on-surface: var(--color-onSurface, var(--onSurface, var(--color-on-surface, #0B1220)));
+  --nt-on-surface: var(--color-details, var(--details, var(--color-details, #0B1220)));
   --nt-primary: var(--color-primary, var(--primary, #23273B));
   --nt-secondary: var(--color-secondary, var(--secondary, #F0F0F0));
   --nt-tertiary: var(--color-terziary, var(--terziary, #262333));

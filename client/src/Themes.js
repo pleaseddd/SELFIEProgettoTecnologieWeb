@@ -8,7 +8,7 @@ export const themes = {
     accents: "#A25C2F",
     onPrimary: "#D0DBCF",
     surface: "#12112D",
-    onSurface: "#D0DBCF",
+    onSurface: "#c1e3beff",
     buttonBg: "#8ABD54",
     buttonText: "#050326",
     muted: "rgba(255,255,255,0.7)",

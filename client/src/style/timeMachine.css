@@ -112,8 +112,8 @@
     font-size: 14px;
     border: 1px solid rgba(var(--color-shadows-rgb), 0.12);
     border-radius: 6px;
-    background: linear-gradient(180deg, var(--tm-card-bg, var(--color-card-bg)), transparent);
-    color: var(--tm-on-surface, var(--color-on-surface));
+    background: var(--tm-on-surface, var(--color-on-surface)); 
+    color: var(--tm-surface, var(--color-surface));
     outline: none;
     transition: box-shadow 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
 }
@@ -176,8 +176,8 @@
 
 /* Bottoni muted / secondari */
 .tm-btn--muted {
-    background: var(--tm-surface, var(--color-surface));
-    color: var(--tm-primary, var(--color-primary));
+    background: var(--tm-primary, var(--color-primary));
+    color: var(--tm-button-text, var(--color-buttnon-text));
     border: 1px solid rgba(var(--color-shadows-rgb), 0.08);
     box-shadow: none;
 }

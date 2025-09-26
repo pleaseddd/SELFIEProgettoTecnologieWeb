@@ -1,18 +1,9 @@
+// src/components/AvatarSelectorModal.jsx
 import React from "react";
 import { Modal, Row, Col, Image } from "react-bootstrap";
 import { themes } from "../Themes";
-import { useTheme } from "./ThemeContext";
-import axios from "axios";
 
-export default function AvatarSelectorModal({ show, onHide, onSelect }) {
-  const { setThemeKey } = useTheme();
-
-  const handleSelect = (key) => {
-    setThemeKey(key);
-    onSelect(key);
-    onHide();
-  };
-
+export default function AvatarSelectorModal({ show, onHide, onSelect, currentKey }) {
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
@@ -25,8 +16,19 @@ export default function AvatarSelectorModal({ show, onHide, onSelect }) {
               <Image
                 src={`/pfp/${key}.png`}
                 roundedCircle
-                style={{ cursor: "pointer", width: 80, height: 80 }}
-                onClick={() => handleSelect(key)}
+                alt={key}
+                style={{
+                  cursor: "pointer",
+                  width: 80,
+                  height: 80,
+                  boxShadow: currentKey === key ? "0 8px 22px rgba(0,0,0,0.12)" : undefined,
+                  transform: currentKey === key ? "translateY(-4px) scale(1.02)" : undefined,
+                  transition: "transform .12s ease, box-shadow .12s ease",
+                }}
+                onClick={() => {
+                  // NON applicare il tema qui — solo notificare la selezione
+                  if (typeof onSelect === "function") onSelect(key);
+                }}
               />
             </Col>
           ))}
