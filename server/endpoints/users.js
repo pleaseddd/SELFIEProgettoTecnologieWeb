@@ -151,7 +151,6 @@ async function POST_setLastPomodoro(req, res) {
 }
 
 async function POST_userinfo(req, res) {
-	// console.log(req)
   try {
     const user = await userdb.findBy(req.body);
 

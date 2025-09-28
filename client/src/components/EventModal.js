@@ -22,7 +22,12 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
     workoption: 25,
     breakoption: 5,
   });
-
+  const labels = {
+    DAILY: "giorni",
+    WEEKLY: "settimane",
+    MONTHLY: "mesi",
+    YEARLY: "anni",
+  };
 	const [sendNotifs, setSendNotifs] = useState(false);
 	const [notifsList, setNotifsList] = useState([]);
 
@@ -413,7 +418,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
 
                 <div className="mb-2">
                   <label className="form-label">
-                    Ogni quanti {freq.toLowerCase()}?
+                    Ogni quanti <strong>{labels[freq] || ""}</strong>?
                   </label>
                   <input
                     type="number"
