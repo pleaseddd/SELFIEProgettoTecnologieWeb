@@ -15,7 +15,6 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
 	const [saveOnGoogle, setSaveOnGoogle] = useState(false);
-	const [sendNotifs, setSendNotifs] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
   const [Pomodoro, setPomodoro] = useState({
     on: false,
@@ -23,6 +22,9 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
     workoption: 25,
     breakoption: 5,
   });
+
+	const [sendNotifs, setSendNotifs] = useState(false);
+	const [notifsForm, setNotifsForm] = useState({});
 
   const [freq, setFreq] = useState("");
   const [interval, setInterval] = useState(1);
@@ -63,6 +65,9 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
         workoption: initialData.pomodoro?.workoption || 25,
         breakoption: initialData.pomodoro?.breakoption || 5,
       });
+
+			setNotifsForm(initialData.notifs);
+
 
       if (initialData.rruleStr) {
         const rule = RRule.fromString(initialData.rruleStr);
@@ -171,6 +176,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
         workoption: Pomodoro.workoption,
         breakoption: Pomodoro.breakoption,
       },
+			notifs: notifsForm
     };
     onSave(event);
   };
@@ -545,7 +551,10 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
 							user={user}
 							sendNotifs={sendNotifs}
 							setSendNotifs={setSendNotifs}
+							notifsForm={notifsForm}
+							setNotifsForm={setNotifsForm}
 						/>
+
           </div>
           <div className="modal-footer d-flex justify-content-between">
             <button

@@ -1,4 +1,4 @@
-//pacchetti node
+//pacchetti nodejs
 const express = require("express"); //gestisce la nostra api
 const mongoose = require("mongoose"); //per accedere al database
 const path = require("path"); //per manipolare i percorsi dei file

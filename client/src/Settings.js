@@ -4,8 +4,7 @@ import {
 	Form,
 	Button,
 	Card,
-	Image,
-	Modal,
+	Image
 } from "react-bootstrap";
 
 import { toast } from 'react-toastify';
@@ -13,6 +12,8 @@ import { toast } from 'react-toastify';
 import ConfirmModal from "./components/ConfirmModal";
 import ExternalCalsSection from "./components/settings/ExternalCalendars.js";
 import NotifSection from "./components/settings/NotifSection.js";
+
+import { DinamicList } from './utils/reusableComponents.js';
 
 import { useTheme } from "./components/ThemeContext";
 import AvatarSelectorModal from "./components/AvatarSelectorModal";
@@ -252,6 +253,7 @@ const EventsSection = ({
 					{/* Categorie eventi */}
 					<fieldset className="fieldset-custom">
 						<legend className="legend-custom">Categorie eventi</legend>
+
 						<div className="d-flex mb-2">
 							<Form.Control
 								type="text"
@@ -267,28 +269,11 @@ const EventsSection = ({
 								Aggiungi
 							</Button>
 						</div>
-						<div
-							style={{
-								maxHeight: "120px",
-								overflowY: "auto",
-								border: "1px solid #ccc",
-								borderRadius: "5px",
-								padding: "0.5rem",
-							}}
-						>
-							{form.eventCategories.map((cat, i) => (
-								<div key={i} className="d-flex justify-content-between mb-1">
-									<span>{cat}</span>
-									<Button
-										variant="outline-danger"
-										size="sm"
-										onClick={() => removeEventCategory(i)}
-									>
-										Elimina
-									</Button>
-								</div>
-							))}
-						</div>
+
+						<DinamicList
+							list={form.eventCategories}
+							removeItem={removeEventCategory}
+						/>
 					</fieldset>
 				</Card.Body>
 			</Card>
@@ -372,28 +357,11 @@ const NotesSection = ({
 								Aggiungi
 							</Button>
 						</div>
-						<div
-							style={{
-								maxHeight: "120px",
-								overflowY: "auto",
-								border: "1px solid #ccc",
-								borderRadius: "5px",
-								padding: "0.5rem",
-							}}
-						>
-							{form.noteCategories.map((cat, i) => (
-								<div key={i} className="d-flex justify-content-between mb-1">
-									<span>{cat}</span>
-									<Button
-										variant="outline-danger"
-										size="sm"
-										onClick={() => removeNoteCategory(i)}
-									>
-										Elimina
-									</Button>
-								</div>
-							))}
-						</div>
+
+						<DinamicList
+							list={form.noteCategories}
+							removeItem={removeNoteCategory}
+						/>
 					</fieldset>
 
 					<fieldset className="fieldset-custom d-flex">
