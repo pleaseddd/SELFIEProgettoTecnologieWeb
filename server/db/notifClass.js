@@ -8,9 +8,9 @@ const options = {
 };
 
 const NotifSchema = new mongoose.Schema({
-	user: {
+	event: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User',
+		ref: 'Event',
 		required: true
 	},
 
@@ -29,36 +29,28 @@ const NotifSchema = new mongoose.Schema({
 		required: true
 	},
 
-	sent: {
-		type: Boolean,
-		default: false
+	rawData: {
+		mod: String,
+		advance: {
+			minutes: Number,
+			hours: Number,
+			days: Number,
+			weeks: Number,
+			months: Number
+		}
 	}
 }, options);
 
 const Notification = mongoose.model('Notification', NotifSchema);
 
-/*
-const EventNotif = Notification.discriminator(
-	'EventNotif',
-	new mongoose.Schema({
-		event: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Event'
-		},
-	}, options)
-);
-
-const PomodoroNotif = Notification.discriminator(
-	'PomodoroNotif',
-	new mongoose.Schema({
-		pomodoro: {}
-	}, options)
-);*/
-
 module.exports = {
 	new_notif: async (notif) => {
 		const newnotif = new Notification(notif);
 		return newnotif.save();
+	},
+
+	findByEvent: async (event) => {
+		return await Notification.find({ event });
 	},
 
 	findCurrentPendings: async () => {
@@ -73,10 +65,11 @@ module.exports = {
 		return await Notification.find();
 	},
 
-	notif_sent: async (id) => {
-		const filter = { _id: id };
-		const update = { sent: true };
+	deleteNotif: async (id) => {
+		return await Notification.deleteOne({_id: id});
+	},
 
-		await Notification.findOneAndUpdate(filter, update);
+	deleteByEvent: async(event) => {
+		return await Notification.deleteMany({ event });
 	}
 };

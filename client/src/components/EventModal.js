@@ -24,7 +24,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   });
 
 	const [sendNotifs, setSendNotifs] = useState(false);
-	const [notifsForm, setNotifsForm] = useState({});
+	const [notifsList, setNotifsList] = useState([]);
 
   const [freq, setFreq] = useState("");
   const [interval, setInterval] = useState(1);
@@ -66,8 +66,15 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
         breakoption: initialData.pomodoro?.breakoption || 5,
       });
 
-			setNotifsForm(initialData.notifs);
-
+			const load = async () => {
+				const notifs = await fetch('/api/notifs/list', {
+					method: "POST",
+	        headers: { "Content-Type": "application/json" },
+	        body: JSON.stringify(initialData)
+				}).then(resp => resp.json());
+				setNotifsList(notifs.map(notif => notif.rawData) || []);
+			};
+			load();
 
       if (initialData.rruleStr) {
         const rule = RRule.fromString(initialData.rruleStr);
@@ -176,7 +183,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
         workoption: Pomodoro.workoption,
         breakoption: Pomodoro.breakoption,
       },
-			notifs: notifsForm
+			notifs: notifsList
     };
     onSave(event);
   };
@@ -548,11 +555,10 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
             )}
 
 						<NotifsModal
-							user={user}
 							sendNotifs={sendNotifs}
 							setSendNotifs={setSendNotifs}
-							notifsForm={notifsForm}
-							setNotifsForm={setNotifsForm}
+							notifsList={notifsList}
+							setNotifsList={setNotifsList}
 						/>
 
           </div>
