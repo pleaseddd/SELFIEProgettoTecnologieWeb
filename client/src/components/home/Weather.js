@@ -69,9 +69,6 @@ function Weather() {
           <>
             <div>{getWeatherIcon(weather.now.weathercode)}</div>
             <Card.Text className="mb-1 fs-4">{weather.now.temperature}°C</Card.Text>
-            <Card.Text className="text-muted" style={{ fontSize: "0.9rem" }}>
-              ↑ {weather.max}°C &nbsp; ↓ {weather.min}°C
-            </Card.Text>
           </>
         ) : (
           <Spinner animation="border" variant="primary" />

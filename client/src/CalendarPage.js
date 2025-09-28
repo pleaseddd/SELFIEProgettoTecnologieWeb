@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -29,6 +29,19 @@ function toLocalInput(date) {
 }
 
 function CalendarPage({ user }) {
+  const localizer = useMemo(() => {
+  return dateFnsLocalizer({
+    format,
+    parse,
+    getDay,
+    locales,
+    startOfWeek: (date, options) => {
+      const weekStartsOn = user.settings.startDay ? 0 : 1;
+      return startOfWeek(date, { ...options, weekStartsOn });
+    },
+  });
+}, [user.settings.startDay]);
+
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
