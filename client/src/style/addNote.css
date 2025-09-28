@@ -9,7 +9,7 @@
   --nt-shadows-rgb: var(--color-shadows-rgb, var(--shadows-rgb, 5,5,10));
   --nt-accents-rgb: var(--color-accents-rgb, var(--accents-rgb, 162,92,47));
   --notes-card-bg: var(--note-editor-bg, var(--nt-tertiary, #262333));
-  --notes-card-text: var(--note-editor-text, var(--nt-on-surface, #D0DBCF));
+  --notes-card-text: var(--color-onPrimary);
   --notes-input-bg: var(--note-input-bg, #ffffff);
   --notes-input-text: var(--note-input-text, #0B1220);
   --notes-placeholder: var(--note-placeholder, rgba(11,18,32,0.45));
@@ -32,7 +32,7 @@
 }
 .p-3.bg-light .card-subtitle,
 .note-card--light .card-subtitle {
-  color: var(--color-muted, rgba(255,255,255,0.72));
+  color: var(--notes-card-text);
 }
 
 /* card text (preview) */

@@ -112,12 +112,15 @@
     font-size: 14px;
     border: 1px solid rgba(var(--color-shadows-rgb), 0.12);
     border-radius: 6px;
-    background: var(--tm-on-surface, var(--color-on-surface)); 
+    background: var(--color-onPrimary); 
     color: var(--tm-surface, var(--color-surface));
     outline: none;
     transition: box-shadow 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
 }
-.tm-input::placeholder { color: var(--tm-muted, var(--color-muted)); opacity: 1; }
+.tm-input::placeholder { 
+    color: var(--color-details); 
+    opacity: 1; 
+}
 
 .tm-input:focus {
     box-shadow: 0 8px 20px rgba(var(--color-shadows-rgb), 0.06);
@@ -177,7 +180,7 @@
 /* Bottoni muted / secondari */
 .tm-btn--muted {
     background: var(--tm-primary, var(--color-primary));
-    color: var(--tm-button-text, var(--color-buttnon-text));
+    color: var(--color-onPrimary);
     border: 1px solid rgba(var(--color-shadows-rgb), 0.08);
     box-shadow: none;
 }

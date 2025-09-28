@@ -1,11 +1,15 @@
 import "../style/sidebar.css";
+import { AiOutlineClose } from "react-icons/ai"; 
+import { useTheme } from "../components/ThemeContext";
 
 function Sidebar({ toggleSidebar, logout }) {
   return (
     <>
       <div className="sidebar-overlay" onClick={toggleSidebar}></div>
       <div className="sidebar open">
-        <button type="button" className="btn-close close-btn" onClick={toggleSidebar}></button>
+        <button type="button" className="close-btn" onClick={toggleSidebar}>
+          <AiOutlineClose className="close-icon" />
+        </button>
 
         <div className="sidebar-content">
           <ul className="nav flex-column w-100">
@@ -15,7 +19,7 @@ function Sidebar({ toggleSidebar, logout }) {
             <li><a href="/settings" className="nav-link btn btn-outline-secondary">Impostazioni</a></li>
             <li><a href="/Pomodoro" className="nav-link btn btn-outline-secondary">Pomodoro</a></li>
           </ul>
-          <button className="btn btn-danger logout" onClick={logout}>Logout</button>
+          <button className="logout" onClick={logout}>Logout</button>
         </div>
       </div>
     </>

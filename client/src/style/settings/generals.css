@@ -49,6 +49,14 @@
   gap: 0.375rem;
 }
 
+.gen-form-control {
+  display: block; 
+  width: 100%;
+  margin-bottom: .5rem;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 .gen-form-label {
   flex: 0 0 auto;
   margin-bottom: .25rem;
@@ -72,31 +80,39 @@
 .gen-form-control input[type="password"],
 .gen-form-control input[type="search"],
 .gen-form-control textarea,
-.gen-form-control select {
+.gen-form-control select,
+.gen-form-control .form-control,
+.gen-form-control input,
+input.gen-form-control,
+textarea.gen-form-control,
+select.gen-form-control {
   width: 100%;
   padding: 0.5rem 0.625rem;
   border-radius: 8px;
   border: 1px solid rgba(var(--input-border-rgb), 0.10);
 
-  /* usa la palette: sfondo = secondary, testo = onPrimary (fallback on-surface) */
-  background: var(--form-control-bg);
-  color: var(--form-control-color);
-  caret-color: var(--form-control-color);
-  -webkit-text-fill-color: var(--form-control-color);
+  /* forza la palette: sfondo/testo/caret e -webkit-text-fill per prevenire override UA */
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  caret-color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
 
   font-size: 0.95rem;
   line-height: 1.3;
   box-shadow: none;
-  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease, transform 120ms ease;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease, transform 120ms ease, color 120ms ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
+  appearance: none;
 }
 
+/* low-contrast variant (mantiene forcing se presente) */
 .low-contrast .gen-form-control input,
 .low-contrast .gen-form-control textarea,
-.low-contrast .gen-form-control select {
-  background: var(--low-contrast-bg);
+.low-contrast .gen-form-control select,
+.low-contrast .gen-form-control .form-control {
+  background: var(--low-contrast-bg) !important;
   border: 1px solid rgba(var(--input-border-rgb), 0.16);
 }
 
@@ -107,13 +123,18 @@
   opacity: 1;
 }
 
-/* focus: manteniamo lo stesso bg/colore ed aggiungiamo highlight */
+/* focus: forziamo bg/colore identici e usiamo bordo/ombra solo per evidenziare */
 .gen-form-control input:focus,
 .gen-form-control textarea:focus,
-.gen-form-control select:focus {
+.gen-form-control select:focus,
+.gen-form-control input:focus-visible,
+.gen-form-control textarea:focus-visible,
+.gen-form-control select:focus-visible,
+.gen-form-control .form-control:focus,
+.gen-form-control .form-control:focus-visible {
   outline: none;
 
-  /* garantiamo che Bootstrap/UA non sovrascrivano */
+  /* forza ancora (important) per evitare che il browser imposti bianco o altro */
   background: var(--form-control-bg) !important;
   color: var(--form-control-color) !important;
   caret-color: var(--form-control-color) !important;
@@ -124,6 +145,7 @@
   transform: translateY(-1px);
 }
 
+/* focus-visible con anello aggiuntivo */
 .gen-form-control input:focus-visible,
 .gen-form-control textarea:focus-visible,
 .gen-form-control select:focus-visible {
@@ -133,39 +155,48 @@
   border-color: rgba(var(--focus-accent-rgb), 1);
 }
 
+/* invalid state */
 .gen-form-control input[aria-invalid="true"],
 .gen-form-control textarea[aria-invalid="true"],
-.gen-form-control select[aria-invalid="true"] {
+.gen-form-control select[aria-invalid="true"],
+.gen-form-control .form-control[aria-invalid="true"] {
   border-color: var(--error-color);
   box-shadow: 0 2px 0 0 rgba(214, 40, 46, 0.10);
 }
 
+/* disabled: manteniamo palette e contrasto */
 .gen-form-control input:disabled,
 .gen-form-control textarea:disabled,
-.gen-form-control select:disabled {
-  opacity: 0.6;
+.gen-form-control select:disabled,
+.gen-form-control .form-control:disabled {
+  opacity: 0.85;
   cursor: not-allowed;
-  background: rgba(var(--input-border-rgb), 0.02);
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+}
+
+/* data-overridden helper */
+.gen-form-control input[data-overridden],
+.gen-form-control textarea[data-overridden],
+.gen-form-control select[data-overridden],
+.gen-form-control .form-control[data-overridden] {
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
 }
 
 .gen-form-control input::selection,
-.gen-form-control textarea::selection {
+.gen-form-control textarea::selection,
+.gen-form-control .form-control::selection {
   background: rgba(var(--focus-accent-rgb), 0.18);
-  color: var(--form-control-color);
-}
-
-.gen-form-group.inline-center {
-  align-items: center;
-}
-
-.gen-form-label.small {
-  font-size: 0.9rem;
-  font-weight: 600;
+  color: var(--form-control-color) !important;
 }
 
 .gen-form-control input:-webkit-autofill,
 .gen-form-control textarea:-webkit-autofill,
-.gen-form-control select:-webkit-autofill {
+.gen-form-control select:-webkit-autofill,
+.gen-form-control .form-control:-webkit-autofill {
   -webkit-box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
   box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
   -webkit-text-fill-color: var(--form-control-color) !important;
@@ -175,7 +206,8 @@
 @media (prefers-contrast: more) {
   .gen-form-control input,
   .gen-form-control textarea,
-  .gen-form-control select {
+  .gen-form-control select,
+  .gen-form-control .form-control {
     border-color: rgba(var(--input-border-rgb), 0.22);
     box-shadow: 0 6px 18px rgba(var(--input-border-rgb), 0.06);
   }
@@ -184,31 +216,25 @@
 @media (min-width: 768px) {
   .gen-form-group {
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center; 
     gap: 1rem;
   }
 
   .gen-form-label {
     flex: 0 0 var(--label-width-desktop);
-
-    margin-top: .5rem;
-    margin-bottom: 0;
+    margin-top: .5rem;  
+    margin-bottom: 0;  
     text-align: left;
   }
 
-  .gen-form-control {
+  .gen-form-control,
+  .gen-form-group > input,
+  .gen-form-group > select,
+  .gen-form-group > .form-control {
     flex: 1 1 auto;
     margin-bottom: 0;
-  }
-}
-
-@media (prefers-contrast: more) {
-
-  .gen-form-control input,
-  .gen-form-control textarea,
-  .gen-form-control select {
-    border-color: rgba(var(--input-border-rgb), 0.22);
-    box-shadow: 0 6px 18px rgba(var(--input-border-rgb), 0.06);
+    width: auto; 
+    min-width: 0; 
   }
 }
 
@@ -216,14 +242,7 @@
 .gen-form-group,
 .gen-form-control input,
 .gen-form-control textarea,
-.gen-form-control select {
+.gen-form-control select,
+.gen-form-control .form-control {
   transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease, color 120ms ease;
-}
-
-.force-text-dark {
-  color: var(--force-contrast-text-dark) !important;
-}
-
-.force-text-light {
-  color: var(--force-contrast-text-light) !important;
 }

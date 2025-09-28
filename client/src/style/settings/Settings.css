@@ -1,28 +1,26 @@
-:root{
+:root {
   --on-surface-effective: var(--on-surface, var(--color-on-surface, var(--colorOnSurface, #0B1220)));
-  --color-shadows-rgb-effective: var(--color-shadows-rgb, var(--shadows-rgb, 18,49,54));
-  --color-accents-rgb-effective: var(--color-accents-rgb, var(--accents-rgb, 46,107,115));
-  --color-details-rgb-effective: var(--color-details-rgb, var(--details-rgb, 255,255,255));
+  --color-shadows-rgb-effective: var(--color-shadows-rgb, var(--shadows-rgb, 18, 49, 54));
+  --color-accents-rgb-effective: var(--color-accents-rgb, var(--accents-rgb, 46, 107, 115));
   --button-text-effective: var(--button-text, var(--color-button-text, var(--buttonText, #ffffff)));
-  --card-bg-effective: var(--card-bg, var(--color-card-bg, rgba(var(--color-shadows-rgb, 18,49,54), 0.03)));
+  --card-bg-effective: var(--card-bg, var(--color-card-bg, rgba(var(--color-shadows-rgb, 18, 49, 54), 0.03)));
 
   --propic-size: 96px;
   --propic-border-radius: 999px;
-  --propic-border-rgb: var(--color-shadows-rgb-effective, 18,49,54);
-  --propic-overlay-rgb: var(--color-accents-rgb-effective, 46,107,115);
+  --propic-border-rgb: var(--color-shadows-rgb-effective, 18, 49, 54);
+  --propic-overlay-rgb: var(--color-accents-rgb-effective, 46, 107, 115);
   --propic-overlay-alpha: 0.18;
   --propic-button-bg: rgba(var(--propic-overlay-rgb), 0.94);
   --propic-button-color: var(--button-text-effective, #ffffff);
   --propic-focus-ring: rgba(var(--propic-overlay-rgb), 0.18);
 
   --form-gap: 0.5rem;
-  --form-label-color: var(--on-surface-effective, #0B1220);
-  --form-control-color: var(--on-surface-effective, #0B1220);
+  --form-label-color: var(--color-on-surface);
+  --form-control-color: var(--color-on-surface);
   --form-control-bg: transparent;
-  --form-control-border-rgb: var(--color-shadows-rgb-effective, 18,49,54);
-  --form-helper-color: var(--muted-effective, rgba(0,0,0,0.45));
+  --form-control-border-rgb: var(--color-shadows-rgb-effective, 18, 49, 54);
+  --form-helper-color: var(--muted-effective, rgba(0, 0, 0, 0.45));
 
-  --low-contrast-bg: rgba(var(--color-details-rgb-effective, 255,255,255), 0.06);
   --force-contrast-text-dark: #0B1220;
   --force-contrast-text-light: #FFFFFF;
 }
@@ -98,7 +96,11 @@
   box-shadow: 0 10px 26px rgba(var(--propic-border-rgb), 0.12), 0 0 0 4px rgba(var(--propic-overlay-rgb), 0.14);
 }
 
-.propic-container.propic--small { width: 64px; height: 64px; --propic-size: 64px; }
+.propic-container.propic--small {
+  width: 64px;
+  height: 64px;
+  --propic-size: 64px;
+}
 
 .pers-form-container {
   display: flex;
@@ -135,50 +137,445 @@
 
 .pers-form-control input,
 .pers-form-control textarea,
-.pers-form-control select {
+.pers-form-control select,
+.pers-form-control .form-control,
+input.pers-form-control,
+textarea.pers-form-control,
+select.pers-form-control {
   width: 100%;
   padding: 0.56rem 0.7rem;
   border-radius: 10px;
-  background: var(--form-control-bg);
-  color: var(--form-control-color);
+
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  caret-color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+
   border: 1px solid rgba(var(--form-control-border-rgb), 0.10);
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 120ms ease;
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 120ms ease, color 120ms ease, background 120ms ease;
+  appearance: none;
 }
 
-.low-trast .pers-form-control input,
+.low-contrast .pers-form-control input,
 .low-contrast .pers-form-control textarea,
-.low-contrast .pers-form-control select {
-  background: var(--low-contrast-bg);
+.low-contrast .pers-form-control select,
+.low-contrast .pers-form-control .form-control {
+  background: var(--low-contrast-bg) !important;
   border: 1px solid rgba(var(--form-control-border-rgb), 0.16);
 }
 
 .pers-form-control input::placeholder,
-.pers-form-control textarea::placeholder { color: var(--form-helper-color); opacity: 1; }
+.pers-form-control textarea::placeholder {
+  color: var(--form-helper-color);
+  opacity: 1;
+}
 
 .pers-form-control input:focus,
 .pers-form-control textarea:focus,
-.pers-form-control select:focus {
+.pers-form-control select:focus,
+.pers-form-control input:focus-visible,
+.pers-form-control textarea:focus-visible,
+.pers-form-control select:focus-visible,
+.pers-form-control .form-control:focus,
+.pers-form-control .form-control:focus-visible {
   outline: none;
+
+  /* forza ancora per evitare che il browser cambi il colore/sfondo */
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  caret-color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+
   border-color: rgba(var(--propic-overlay-rgb), 0.96);
   box-shadow: 0 8px 0 0 rgba(var(--propic-overlay-rgb), var(--propic-overlay-alpha));
   transform: translateY(-1px);
 }
 
+.pers-form-control input:focus-visible,
+.pers-form-control textarea:focus-visible,
+.pers-form-control select:focus-visible {
+  box-shadow:
+    0 8px 0 0 rgba(var(--propic-overlay-rgb), var(--propic-overlay-alpha)),
+    0 0 0 4px rgba(var(--propic-overlay-rgb), 0.06);
+  border-color: rgba(var(--propic-overlay-rgb), 1);
+}
+
+
 .pers-form-control input[aria-invalid="true"],
 .pers-form-control textarea[aria-invalid="true"],
-.pers-form-control select[aria-invalid="true"] {
+.pers-form-control select[aria-invalid="true"],
+.pers-form-control .form-control[aria-invalid="true"] {
   border-color: var(--error-color, #D6282E);
-  box-shadow: 0 2px 0 0 rgba(214,40,46,0.10);
+  box-shadow: 0 2px 0 0 rgba(214, 40, 46, 0.10);
 }
 
 .pers-form-control input:disabled,
 .pers-form-control textarea:disabled,
-.pers-form-control select:disabled {
+.pers-form-control select:disabled,
+.pers-form-control .form-control:disabled {
+  opacity: 0.85;
+  cursor: not-allowed;
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+}
+
+
+.pers-form-control input[data-overridden],
+.pers-form-control textarea[data-overridden],
+.pers-form-control select[data-overridden],
+.pers-form-control .form-control[data-overridden] {
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+}
+
+
+.pers-form-control input::selection,
+.pers-form-control textarea::selection,
+.pers-form-control .form-control::selection {
+  background: rgba(var(--propic-overlay-rgb), 0.18);
+  color: var(--form-control-color) !important;
+}
+
+.pers-form-control input:-webkit-autofill,
+.pers-form-control textarea:-webkit-autofill,
+.pers-form-control select:-webkit-autofill,
+.pers-form-control .form-control:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
+  box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+  caret-color: var(--form-control-color) !important;
+}
+
+.fieldset-custom .form-control,
+.fieldset-custom input,
+.fieldset-custom textarea,
+.fieldset-custom select,
+.fieldset-custom .underline-input,
+.underline-input {
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  caret-color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease, color 120ms ease;
+}
+
+.fieldset-custom input::placeholder,
+.fieldset-custom textarea::placeholder,
+.fieldset-custom .underline-input::placeholder {
+  color: var(--form-helper-color);
+  opacity: 1;
+}
+
+.fieldset-custom .form-control:focus,
+.fieldset-custom input:focus,
+.fieldset-custom textarea:focus,
+.fieldset-custom select:focus,
+.fieldset-custom .underline-input:focus,
+.fieldset-custom .form-control:focus-visible,
+.fieldset-custom input:focus-visible,
+.fieldset-custom textarea:focus-visible,
+.fieldset-custom select:focus-visible,
+.fieldset-custom .underline-input:focus-visible {
+  outline: none;
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  caret-color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+
+  border-color: rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.96);
+  box-shadow: 0 6px 0 0 rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.12);
+  transform: translateY(-1px);
+}
+
+.fieldset-custom .form-control:focus-visible,
+.fieldset-custom input:focus-visible,
+.fieldset-custom textarea:focus-visible,
+.fieldset-custom select:focus-visible,
+.fieldset-custom .underline-input:focus-visible {
+  box-shadow:
+    0 6px 0 0 rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.12),
+    0 0 0 4px rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.06);
+  border-color: rgba(var(--color-accents-rgb-effective, 46, 107, 115), 1);
+}
+
+.fieldset-custom input::selection,
+.fieldset-custom textarea::selection,
+.fieldset-custom .form-control::selection,
+.fieldset-custom .underline-input::selection {
+  background: rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.18);
+  color: var(--form-control-color) !important;
+}
+
+.fieldset-custom input:-webkit-autofill,
+.fieldset-custom textarea:-webkit-autofill,
+.fieldset-custom select:-webkit-autofill,
+.fieldset-custom .underline-input:-webkit-autofill,
+.fieldset-custom .form-control:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
+  box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+  caret-color: var(--form-control-color) !important;
+}
+
+.fieldset-custom .form-control:disabled,
+.fieldset-custom input:disabled,
+.fieldset-custom textarea:disabled,
+.fieldset-custom select:disabled,
+.fieldset-custom .underline-input:disabled {
+  background: var(--form-control-bg) !important;
+  color: var(--form-control-color) !important;
+  -webkit-text-fill-color: var(--form-control-color) !important;
+  opacity: .85;
+  cursor: not-allowed;
+}
+
+.fieldset-custom .form-control[aria-invalid="true"],
+.fieldset-custom input[aria-invalid="true"],
+.fieldset-custom textarea[aria-invalid="true"],
+.fieldset-custom select[aria-invalid="true"],
+.fieldset-custom .underline-input[aria-invalid="true"] {
+  border-color: var(--error-color, #D6282E);
+  box-shadow: 0 2px 0 0 rgba(214, 40, 46, 0.10);
+}
+
+.d-grid.mb-4>.btn,
+.d-grid>.btn,
+.d-grid .btn-primary,
+.btn-primary {
+  background: var(--button-bg, var(--propic-button-bg)) !important;
+  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 8px 20px rgba(var(--propic-border-rgb, 18, 49, 54), 0.16);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease, color 120ms ease;
+}
+
+.d-grid.mb-4>.btn:hover,
+.d-grid>.btn:hover,
+.d-grid .btn-primary:hover,
+.btn-primary:hover,
+.btn-primary:focus {
+  background: var(--button-bg, var(--propic-button-bg)) !important;
+  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
+  border-color: rgba(var(--propic-overlay-rgb, 46, 107, 115), 0.9) !important;
+  box-shadow:
+    0 10px 26px rgba(var(--propic-border-rgb, 18, 49, 54), 0.14),
+    0 0 0 4px rgba(var(--propic-overlay-rgb, 46, 107, 115), 0.08);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.btn-primary:focus-visible,
+.d-grid .btn-primary:focus-visible {
+  box-shadow:
+    0 10px 26px rgba(var(--propic-border-rgb, 18, 49, 54), 0.14),
+    0 0 0 6px rgba(var(--propic-overlay-rgb, 46, 107, 115), 0.06);
+  border-color: rgba(var(--propic-overlay-rgb, 46, 107, 115), 1) !important;
+  background: var(--button-bg, var(--propic-button-bg)) !important;
+  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
+}
+
+.btn-primary:active,
+.d-grid .btn-primary:active {
+  transform: translateY(0) scale(0.997);
+  box-shadow: 0 6px 14px rgba(var(--propic-border-rgb, 18, 49, 54), 0.12);
+}
+
+.btn-primary:disabled,
+.btn-primary[disabled],
+.d-grid>.btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  box-shadow: none !important;
+  background: var(--button-bg, var(--propic-button-bg)) !important;
+  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
+}
+
+.btn-lg.btn-primary,
+.d-grid .btn-lg {
+  background: var(--button-bg, var(--propic-button-bg)) !important;
+  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
+}
+
+/* modal */
+.confirm-modal {
+  color: var(--on-surface-effective);
+  font-family: inherit;
+  /* assicurati che il modal venga sopra gli altri elementi */
+  z-index: 11000;
+}
+
+/* contenitore interno (adatta al markup del tuo modal) */
+.confirm-modal .modal-content,
+.confirm-modal .modal {
+  background: var(--card-bg-effective);
+  color: var(--on-surface-effective);
+  border-radius: 12px;
+  border: 1px solid rgba(var(--color-shadows-rgb-effective), 0.06);
+  box-shadow: 0 18px 36px rgba(var(--color-shadows-rgb-effective), 0.12);
+}
+
+/* header */
+.confirm-modal .modal-header {
+  padding: 1rem 1.25rem 0.5rem;
+  border-bottom: none;
+  background: transparent;
+}
+
+.confirm-modal .modal-title {
+  margin: 0;
+  font-weight: 700;
+  color: var(--on-surface-effective);
+  font-size: 1.05rem;
+}
+
+/* body */
+.confirm-modal .modal-body {
+  padding: 0.75rem 1.25rem 1rem;
+  color: var(--form-control-color);
+  text-align: center;
+  background: transparent;
+}
+
+/* propic / immagine nella conferma */
+.confirm-modal .confirm-propic,
+.confirm-modal img.confirm-propic {
+  width: var(--propic-size);
+  height: var(--propic-size);
+  border-radius: var(--propic-border-radius);
+  object-fit: cover;
+  display: block;
+  margin: 0.6rem auto;
+  border: 2px solid rgba(var(--propic-border-rgb), 0.08);
+  box-shadow: 0 10px 22px rgba(var(--propic-border-rgb), 0.06);
+}
+
+/* testi secondari */
+.confirm-modal .confirm-subtext {
+  color: var(--form-helper-color);
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+/* footer / bottoni */
+.confirm-modal .modal-footer {
+  display: flex;
+  gap: 0.65rem;
+  justify-content: center;
+  padding: 0.75rem 1.25rem 1.25rem;
+  background: transparent;
+}
+
+/* confirm (primary) button — usa le variabili propic/btn che hai definito */
+.confirm-modal .btn.confirm,
+.confirm-modal .btn-confirm {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-weight: 700;
+  background: var(--propic-button-bg);
+  color: var(--propic-button-color);
+  box-shadow: 0 8px 20px rgba(var(--color-shadows-rgb-effective), 0.06);
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 140ms ease;
+  min-width: 120px;
+}
+
+/* hover/focus for confirm */
+.confirm-modal .btn.confirm:hover,
+.confirm-modal .btn-confirm:hover,
+.confirm-modal .btn.confirm:focus,
+.confirm-modal .btn-confirm:focus {
+  transform: translateY(-2px);
+  filter: brightness(0.98);
+  outline: none;
+  box-shadow: 0 10px 26px rgba(var(--color-shadows-rgb-effective), 0.09);
+}
+
+/* focus-visible ring (accessibility) */
+.confirm-modal .btn.confirm:focus-visible,
+.confirm-modal .btn-confirm:focus-visible {
+  box-shadow:
+    0 8px 18px rgba(var(--color-shadows-rgb-effective), 0.06),
+    0 0 0 6px var(--propic-focus-ring);
+  outline: none;
+}
+
+/* cancel (secondary) */
+.confirm-modal .btn.cancel,
+.confirm-modal .btn-cancel {
+  background: transparent;
+  color: var(--on-surface-effective);
+  border: 1px solid rgba(var(--color-shadows-rgb-effective), 0.08);
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.confirm-modal .btn.cancel:hover,
+.confirm-modal .btn-cancel:hover,
+.confirm-modal .btn.cancel:focus,
+.confirm-modal .btn-cancel:focus {
+  transform: translateY(-2px);
+  background: rgba(var(--color-details-rgb-effective), 0.06);
+  outline: none;
+}
+
+/* disabled state */
+.confirm-modal .btn[disabled],
+.confirm-modal button[disabled] {
   opacity: 0.6;
   cursor: not-allowed;
-  background: rgba(var(--form-control-border-rgb), 0.02);
+  filter: none;
+}
+
+/* piccolo adattamento per mobile */
+@media (max-width: 480px) {
+  .confirm-modal .modal-content {
+    border-radius: 8px;
+  }
+
+  .confirm-modal .btn.confirm,
+  .confirm-modal .btn.cancel {
+    min-width: 100px;
+    padding: 0.55rem 0.8rem;
+  }
+}
+
+/* prefers-contrast */
+@media (prefers-contrast: more) {
+
+  .fieldset-custom .form-control,
+  .fieldset-custom input,
+  .fieldset-custom textarea,
+  .fieldset-custom select,
+  .fieldset-custom .underline-input {
+    border-color: rgba(var(--form-control-border-rgb, 18, 49, 54), 0.22);
+    box-shadow: 0 6px 18px rgba(var(--form-control-border-rgb, 18, 49, 54), 0.06);
+  }
+}
+
+@media (prefers-contrast: more) {
+
+  .pers-form-control input,
+  .pers-form-control textarea,
+  .pers-form-control select,
+  .pers-form-control .form-control {
+    border-color: rgba(var(--form-control-border-rgb), 0.22);
+    box-shadow: 0 6px 18px rgba(var(--form-control-border-rgb), 0.06);
+  }
 }
 
 @media (min-width: 768px) {
@@ -219,11 +616,21 @@
 }
 
 @media (prefers-contrast: more) {
-  .propic-container { box-shadow: 0 10px 28px rgba(var(--propic-border-rgb), 0.16); }
-  .pers-form-control input, .pers-form-control textarea, .pers-form-control select {
+  .propic-container {
+    box-shadow: 0 10px 28px rgba(var(--propic-border-rgb), 0.16);
+  }
+
+  .pers-form-control input,
+  .pers-form-control textarea,
+  .pers-form-control select {
     border-color: rgba(var(--form-control-border-rgb), 0.22);
   }
 }
 
-.force-text-dark { color: var(--force-contrast-text-dark) !important; }
-.force-text-light { color: var(--force-contrast-text-light) !important; }
+.force-text-dark {
+  color: var(--force-contrast-text-dark) !important;
+}
+
+.force-text-light {
+  color: var(--force-contrast-text-light) !important;
+}
