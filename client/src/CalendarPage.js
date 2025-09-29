@@ -10,17 +10,7 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import it from "date-fns/locale/it";
 import ConfirmModal from "./components/ConfirmModal";
 
-const locales = {
-  "it-IT": it,
-};
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
+const locales = { "it-IT": it };
 
 function toLocalInput(date) {
   const local = new Date(date);
@@ -29,18 +19,19 @@ function toLocalInput(date) {
 }
 
 function CalendarPage({ user }) {
+  const userTz = user.settings.position || "Europe/Rome";
   const localizer = useMemo(() => {
-  return dateFnsLocalizer({
-    format,
-    parse,
-    getDay,
-    locales,
-    startOfWeek: (date, options) => {
-      const weekStartsOn = user.settings.startDay ? 0 : 1;
-      return startOfWeek(date, { ...options, weekStartsOn });
-    },
-  });
-}, [user.settings.startDay]);
+    return dateFnsLocalizer({
+      format,
+      parse,
+      getDay,
+      locales,
+      startOfWeek: (date, options) => {
+        const weekStartsOn = user.settings.startDay ? 0 : 1;
+        return startOfWeek(date, { ...options, weekStartsOn });
+      },
+    });
+  }, [user.settings.startDay]);
 
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -67,7 +58,7 @@ function CalendarPage({ user }) {
       });
   }, [timeMachineFlag]);
 
-  //TIME MACHINE
+  // TIME MACHINE
   useEffect(() => {
     const checkForServerTimeUpdate = async () => {
       try {
@@ -84,15 +75,13 @@ function CalendarPage({ user }) {
     checkForServerTimeUpdate();
     return () => clearInterval(interval);
   }, []);
-  //FINE TIME MACHINE
+  // FINE TIME MACHINE
 
   const loadEvents = useCallback(async () => {
     try {
       const response = await fetch("/api/events/list", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userid: user._id }),
       });
       const data = await response.json();
@@ -114,24 +103,28 @@ function CalendarPage({ user }) {
               true
             );
             dates.forEach((date) => {
-              const begin = Temporal.Instant.from(date.toISOString());
+              const beginInstant = Temporal.Instant.from(date.toISOString());
               const originalBegin = Temporal.Instant.from(event.begin);
               const originalEnd = Temporal.Instant.from(event.end);
               const duration = originalEnd.since(originalBegin);
-              const end = begin.add(duration);
+              const endInstant = beginInstant.add(duration);
+
+              const zonedBegin = beginInstant.toZonedDateTimeISO(userTz);
+              const zonedEnd = endInstant.toZonedDateTimeISO(userTz);
+
               allEvents.push({
                 ...event,
-                start: new Date(begin.epochMilliseconds),
-                end: new Date(end.epochMilliseconds),
+                start: new Date(zonedBegin.epochMilliseconds),
+                end: new Date(zonedEnd.epochMilliseconds),
               });
             });
           } else {
+            const begin = Temporal.Instant.from(event.begin).toZonedDateTimeISO(userTz);
+            const end = Temporal.Instant.from(event.end).toZonedDateTimeISO(userTz);
             allEvents.push({
               ...event,
-              start: new Date(
-                Temporal.Instant.from(event.begin).epochMilliseconds
-              ),
-              end: new Date(Temporal.Instant.from(event.end).epochMilliseconds),
+              start: new Date(begin.epochMilliseconds),
+              end: new Date(end.epochMilliseconds),
             });
           }
         });
@@ -142,7 +135,7 @@ function CalendarPage({ user }) {
     } catch (error) {
       console.error("Errore durante il recupero degli eventi:", error);
     }
-  }, [serverTime, user._id]);
+  }, [serverTime, user._id, userTz]);
 
   useEffect(() => {
     if (serverTime) {
@@ -190,7 +183,7 @@ function CalendarPage({ user }) {
         break: event.pomodoro.breakoption,
         duration: event.pomodoro.duration,
       });
-      setSelectedEvent(event); // salva evento completo per riuso
+      setSelectedEvent(event);
       setShowPomodoroConfirm(true);
     } else {
       const beginDate = new Date(event.start);
@@ -206,13 +199,32 @@ function CalendarPage({ user }) {
   }, []);
 
   const handleModalSave = async (eventData) => {
-    const localBegin = new Date(eventData.begin);
-    const localEnd = new Date(eventData.end);
     try {
+      const localBegin = new Date(eventData.begin);
+      const localEnd = new Date(eventData.end);
+
+      // Interpreta come orari nel timezone utente
+      const zonedBegin = Temporal.ZonedDateTime.from({
+        timeZone: userTz,
+        year: localBegin.getFullYear(),
+        month: localBegin.getMonth() + 1,
+        day: localBegin.getDate(),
+        hour: localBegin.getHours(),
+        minute: localBegin.getMinutes(),
+      });
+      const zonedEnd = Temporal.ZonedDateTime.from({
+        timeZone: userTz,
+        year: localEnd.getFullYear(),
+        month: localEnd.getMonth() + 1,
+        day: localEnd.getDate(),
+        hour: localEnd.getHours(),
+        minute: localEnd.getMinutes(),
+      });
+
       const payload = {
         ...eventData,
-        begin: localBegin.toISOString(),
-        end: localEnd.toISOString(),
+        begin: zonedBegin.toInstant().toString(), // UTC coerente con fuso utente
+        end: zonedEnd.toInstant().toString(),
         _id: modalData?._id,
         author: user._id,
       };
@@ -269,11 +281,9 @@ function CalendarPage({ user }) {
           startAccessor="start"
           endAccessor="end"
           selectable
-          //TIME MACHINE
           date={currentDate}
           onNavigate={(newDate) => setCurrentDate(newDate)}
           getNow={() => new Date(serverTime.epochMilliseconds)}
-          //FINE TIME MACHINE
           style={{ height: "80vh" }}
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleSelectEvent}
