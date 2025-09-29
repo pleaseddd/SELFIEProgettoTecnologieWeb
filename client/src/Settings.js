@@ -22,6 +22,7 @@ import axios from 'axios';
 import './style/settings/Settings.css';
 import './style/settings/personalInfo.css';
 import './style/settings/generals.css';
+import './style/settings/avatarModal.css';
 
 axios.defaults.withCredentials = true;
 
@@ -477,8 +478,8 @@ function Settings({ user, updateUser }) {
 
 		try {
 			const url = `/pfp/${key}.png`;
-			await setThemeKey(key);
 
+			await setThemeKey(key); // aggiorna palette locale + server via ThemeContext (updateThemeKey)
 			const updatedUserLocal = {
 				...user,
 				propic: url,
@@ -488,12 +489,8 @@ function Settings({ user, updateUser }) {
 
 			try {
 				await axios.post("/api/user/setPaletteKey", { paletteKey: key });
-				await axios.post("/api/user/setPropic", { propic: url });
-
-				const refreshed = await axios.get("/userauth");
-				if (refreshed?.data) {
-					updateUser(refreshed.data);
-				}
+				const refreshed = await axios.get("/api/user/auth", { withCredentials: true });
+				if (refreshed?.data) updateUser(refreshed.data);
 			} catch (serverErr) {
 				console.error("Errore salvataggio avatar/palette sul server:", serverErr);
 				toast("Impossibile salvare l'avatar sul server. Aggiornamento locale applicato.", { type: "warning" });
@@ -592,12 +589,13 @@ function Settings({ user, updateUser }) {
 			/>
 
 			<ConfirmModal
+				className="confirm-modal"
 				show={showAvatarConfirm}
 				title="Conferma cambio avatar"
 				body={
 					pendingThemeKey ? (
-						<div style={{ textAlign: "center" }}>
-							<p>Vuoi cambiare avatar in <strong>{pendingThemeKey}</strong>?</p>
+						<div className="confirm-body" style={{ textAlign: "center" }}>
+							<p className="confirm-text">Vuoi cambiare avatar in <strong>{pendingThemeKey}</strong>?</p>
 							<img
 								src={`/pfp/${pendingThemeKey}.png`}
 								alt={pendingThemeKey}

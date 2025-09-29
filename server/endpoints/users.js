@@ -43,10 +43,10 @@ async function POST_new(req, res) {
 				name,
 				email,
 				password,
-				propic: "https://dummyimage.com/80x80/023430/fff.jpg&text=propic",
+				propic: "/pfp/avatar1.png",
 			});
 			res.status(201).json(newUser);
-	    }
+		}
 	}
 	catch (err) {
 		res.status(400).json({ message: err.message });
@@ -70,8 +70,8 @@ async function POST_authLogin(req, res) {
 
 		res.cookie("token", token, {
 			httpOnly: true,
-			secure: true,
-			sameSite: "Strict",
+			secure: process.env.NODE_ENV === 'production', // secure solo in produzione perchè in localhost i cookie secure:true non vengono settati
+			sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
 			maxAge: 7 * 24 * 60 * 60 * 1000,
 		});
 
@@ -112,22 +112,22 @@ async function POST_authLogout(req, res) {
 // aggiorna le impostazioni
 async function POST_settings(req, res) {
 	try {
-	    const filter = { _id: req.body.user.id };
-	    const update = {
+		const filter = { _id: req.body.user.id };
+		const update = {
 			$set: {
 				name: req.body.user.name,
 				email: req.body.user.email,
 				settings: req.body.user.settings,
 			},
-	    };
-	    const user = await userdb.update(filter, update);
+		};
+		const user = await userdb.update(filter, update);
 
-	    res.status(201).json({
+		res.status(201).json({
 			message: "impostazioni cambiate"
 		});
 	}
 	catch (error) {
-	    res.status(500).json({ error: "errore nel cambiare le impostazioni:" + error });
+		res.status(500).json({ error: "errore nel cambiare le impostazioni:" + error });
 	}
 }
 
@@ -141,25 +141,25 @@ async function POST_setPaletteKey(req, res) {
 }
 
 async function POST_setLastPomodoro(req, res) {
-  try {
-    const updatedUser = await userdb.setLastPomodoro(req.body.user.userid, req.body.user.lastPomodoroSession);
-    res.status(200).json(updatedUser.lastPomodoroSession);
-  } catch (err) {
-	console.log(error)
-    res.status(500).json({ error: "Errore nell'aggiornamento della sessione" });
-  }
+	try {
+		const updatedUser = await userdb.setLastPomodoro(req.body.user.userid, req.body.user.lastPomodoroSession);
+		res.status(200).json(updatedUser.lastPomodoroSession);
+	} catch (err) {
+		console.log(error)
+		res.status(500).json({ error: "Errore nell'aggiornamento della sessione" });
+	}
 }
 
 async function POST_userinfo(req, res) {
 	// console.log(req)
-  try {
-    const user = await userdb.findBy(req.body);
+	try {
+		const user = await userdb.findBy(req.body);
 
-    if (!user) {
-      return res.status(404).json({ message: "Utente non trovato" });
-    }
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json({ error: "Errore nel recupero informazioni: " + err });
-  }
+		if (!user) {
+			return res.status(404).json({ message: "Utente non trovato" });
+		}
+		res.status(200).json(user);
+	} catch (err) {
+		res.status(500).json({ error: "Errore nel recupero informazioni: " + err });
+	}
 }
