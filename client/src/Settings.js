@@ -590,8 +590,9 @@ function Settings({ user, updateUser }) {
 
 			<ConfirmModal
 				className="confirm-modal"
+				contentClassName="confirm-modal--content"
 				show={showAvatarConfirm}
-				title="Conferma cambio avatar"
+				title={<span className="confirm-modal__title">Conferma cambio avatar</span>}
 				body={
 					pendingThemeKey ? (
 						<div className="confirm-body" style={{ textAlign: "center" }}>

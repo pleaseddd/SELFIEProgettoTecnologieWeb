@@ -19,7 +19,7 @@ export const themes = {
     primary: "#8EDEED",
     secondary: "#A7E4F0",
     terziary: "#5C7845",
-    details: "#3c3939ff",
+    details: "#d88686ff",
     shadows: "#4F2111",
     accents: "#DB9052",
     onPrimary: "#301107ff",
