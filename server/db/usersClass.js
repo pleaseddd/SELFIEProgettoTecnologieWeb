@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
 
   password: { type: String, required: true },
 
-  propic: { type: String, default: "pfp/avatar1.png" },
+  propic: { type: String, default: "/pfp/avatar1.png" },
 
   google: {
     isLogged: { type: Boolean, default: false },
@@ -51,7 +51,7 @@ const UserSchema = new mongoose.Schema({
   },
 
   lastPomodoroSession: {
-    total:{ type: Number, default: 0 },
+    total: { type: Number, default: 0 },
     work: { type: Number, default: 0 },
     break: { type: Number, default: 0 },
     updatedAt: { type: Date, default: Date.now },
@@ -119,7 +119,7 @@ module.exports = {
     const update = {
       $set: {
         lastPomodoroSession: {
-          total:session.totalminutes,
+          total: session.totalminutes,
           work: session.w,
           break: session.b,
           updatedAt: new Date(),
@@ -139,6 +139,6 @@ module.exports = {
       },
     };
 
-    return await User.findOneAndUpdate(filter, update);
+    return await User.findOneAndUpdate(filter, update, { new: true });
   },
 };

@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && cd build && chown :site232479 -R . && chmod -R 775 .",
+    "build": "react-scripts build && cd build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -77,14 +77,14 @@ export function ThemeProvider({ children, initialKey = "avatar1" }) {
     let mounted = true;
 
     axios
-      .get("/userauth")
+      .get("/api/user/auth")
       .then((res) => {
         if (!mounted) return;
         const serverKey = res.data?.settings?.paletteKey;
         //se non presente, prova a estrarre da propic (es. /pfp/avatar2.png)
         const fromPropic =
           res.data?.propic &&
-          (/\/pfp\/(avatar\d+)\.png/.exec(res.data.propic) || [])[1];
+          (/(?:\/?pfp\/(avatar\d+)\.png)/.exec(res.data.propic) || [])[1];
 
         const keyToUse = serverKey || fromPropic;
         if (keyToUse && keyToUse !== themeKey) {
