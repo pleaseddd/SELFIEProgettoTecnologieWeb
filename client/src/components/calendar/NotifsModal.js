@@ -39,8 +39,19 @@ const notifsPrettify = (notif) => {
 	let resStr = res[0];
 	if(res.length > 1)
 		resStr = res.slice(0, -1).join(', ') + ' e ' + res.slice(-1);
+	else if(notif.mod == "ripetition" && res[0].substring(0, 2) == '1 ')
+		resStr = resStr.substring(2);
 
-	return notif.mod == "advance" ? resStr+" prima" : "ogni "+resStr;
+	if(notif.mod == "advance")
+		return resStr + " prima";
+	else {
+		return 'ogni '
+			+ resStr
+			+ ' per '
+			+ actualNotif.howMany
+			+ ' volt'
+			+ (actualNotif.howMany==1 ? 'a' : 'e');
+	}
 };
 
 const AdvanceSection = ({ newNotif, setNewNotif}) => {
@@ -118,11 +129,11 @@ const AdvanceSection = ({ newNotif, setNewNotif}) => {
 };
 
 const RipetitionSection = ({ newNotif, setNewNotif}) => {
-	const handleChangeTimeUnit = (timeUnit, value) => {
+	const handleChangeParam = (param, value) => {
 		setNewNotif(
 			prev => ({
 				...prev,
-				ripetition: {...prev.ripetition, [timeUnit]: value}
+				ripetition: {...prev.ripetition, [param]: value}
 			})
 		);
 	};
@@ -136,9 +147,7 @@ const RipetitionSection = ({ newNotif, setNewNotif}) => {
 					className="w-25"
 					value={newNotif.ripetition.howMany}
 					onChange={
-						e => setNewNotif(prev => (
-							{...prev, howMany: e.target.value}
-						))
+						e => handleChangeParam("howMany", e.target.value)
 					}
 				>
 				</Form.Control>
@@ -156,7 +165,7 @@ const RipetitionSection = ({ newNotif, setNewNotif}) => {
 								className="w-50"
 								value={newNotif.ripetition[timeUnit]}
 								onChange={
-									e => handleChangeTimeUnit(timeUnit, e.target.value)
+									e => handleChangeParam(timeUnit, e.target.value)
 								}
 							>
 							</Form.Control>
@@ -243,23 +252,33 @@ const NotifsModal = ({
 		 */
 
 		//Almeno un parametro deve essere maggiore di zero
-		const totalSum = Object.values(newNotif[mod])
-			.reduce((a, c) => a+c, 0);
-		if(!totalSum) {
+		const zeroFinds = Object.values(newNotif[mod])
+			.reduce((a, c) => a && (c == 0), true);
+		if(zeroFinds) {
 			toast('Non puoi avere tutti i valori a zero!', { type: 'warning' });
 			return;
 		}
 
-		//In particolare, il numero di ripetizioni non può
-		//mai essere zero
-		if(mod == 'ripetition' && newNotif[mod].howMany == 0) {
-			toast('Non puoi avere il numero di ripetizioni a zero!', { type: 'warning' });
-			return;
+		//In particolare, il numero di ripetizioni non può mai essere zero
+		if(mod == 'ripetition') {
+			if(newNotif[mod].howMany == 0) {
+				toast('Non puoi avere il numero di ripetizioni a zero!', { type: 'warning' });
+				return;
+			}
+			//E se il numero di ripetizione è maggiore di zero,
+			//le unità di tempo devono avere almeno un valore positivo
+			else if(
+				timeUnits.slice(0, 3)
+					.reduce((a, c) => a && (newNotif[mod][c] == 0), true)
+			) {
+				toast("Almeno un'unità di tempo deve essere positiva!", { type: 'warning' });
+				return;
+			}
 		}
 
 		//E nessun parametro deve essere negativo
 		const negativeFinds = Object.values(newNotif[mod])
-			.reduce((a, c) => a||(c<0), false);
+			.reduce((a, c) => a || (c < 0), false);
 		if(negativeFinds) {
 			toast('Non puoi avere un valore negativo!', { type: 'warning' });
 			return;
@@ -314,9 +333,12 @@ const NotifsModal = ({
 							<Form.Select
 								aria-label="default select"
 								onChange={
-									e => setNewNotif(prev => (
-										{...prev, mod: e.target.value }
-									))
+									e => {
+										setNewNotif(prev => (
+											{...prev, mod: e.target.value }
+										));
+										setNotifsList([]);
+									}
 								}
 							>
 								<option value="advance">
