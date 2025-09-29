@@ -1,6 +1,7 @@
 import { Form, Button } from 'react-bootstrap';
 
 export const DinamicList = ({ list, removeItem }) => {
+
 	return (
 		<div
 			style={{

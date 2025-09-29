@@ -1,5 +1,6 @@
 const calendardb = require('../db/calendarClass.js');
 const googleCalendar = require('../utils/googleCalendar.js');
+const notifsdb = require('../db/notifClass.js');
 const { generateNotifs } = require('../utils/calendar.js');
 
 module.exports = {
@@ -26,6 +27,7 @@ async function POST_list(req, res) {
 // Nuovo evento
 async function POST_new(req, res) {
 	try {
+
 		if(req.body.google.isSaved) {
 			const gCalEvent = await googleCalendar.newEvent(req.body);
 			req.body.google.eventId = gCalEvent.data.id;
@@ -33,7 +35,7 @@ async function POST_new(req, res) {
 
 		newEvent = await calendardb.newEvent(req.body);
 
-		await generateNotifs(newEvent);
+		await generateNotifs(newEvent, req.body.notifs);
 
 		res.status(201).json(newEvent);
 	}
@@ -64,6 +66,9 @@ async function POST_update(req, res) {
 
 	    const updated = await calendardb.update(filter, req.body);
 
+		await notifsdb.deleteByEvent(updated._id);
+		await generateNotifs(updated, req.body.notifs);
+
 		if (!updated)
 			return res.status(403).json({ error: "Accesso negato" });
 
@@ -84,6 +89,8 @@ async function POST_delete(req, res) {
 
 	  if(deleted.google?.eventId)
 		  await googleCalendar.deleteEvent(deleted);
+
+	  await notifsdb.deleteByEvent(deleted._id);
 
 	  res.json({ message: "Evento eliminato" });
 	} catch (err) {

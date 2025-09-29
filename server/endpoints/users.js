@@ -154,6 +154,8 @@ async function POST_userinfo(req, res) {
 	// console.log(req)
 	try {
 		const user = await userdb.findBy(req.body);
+  try {
+    const user = await userdb.findBy(req.body);
 
 		if (!user) {
 			return res.status(404).json({ message: "Utente non trovato" });
