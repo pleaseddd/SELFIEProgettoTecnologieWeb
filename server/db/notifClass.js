@@ -55,10 +55,7 @@ module.exports = {
 
 	findCurrentPendings: async () => {
 		const now = new Date().setSeconds(0, 0);
-		return await Notification.find({ 
-			time: now,
-			sent: false
-		});
+		return await Notification.find({  time: now });
 	},
 
 	findAll: async () => {
