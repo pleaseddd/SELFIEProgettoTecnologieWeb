@@ -40,7 +40,7 @@ const notifsPrettify = (notif) => {
 	if(res.length > 1)
 		resStr = res.slice(0, -1).join(', ') + ' e ' + res.slice(-1);
 
-	return resStr + ' prima';
+	return notif.mod == "advance" ? resStr+" prima" : "ogni "+resStr;
 };
 
 const AdvanceSection = ({ newNotif, setNewNotif}) => {
@@ -118,24 +118,33 @@ const AdvanceSection = ({ newNotif, setNewNotif}) => {
 };
 
 const RipetitionSection = ({ newNotif, setNewNotif}) => {
-	const [showMore, setShowMore] = useState(false);
-
 	const handleChangeTimeUnit = (timeUnit, value) => {
 		setNewNotif(
 			prev => ({
 				...prev,
-				advance: {...prev.advance, [timeUnit]: value}
+				ripetition: {...prev.ripetition, [timeUnit]: value}
 			})
 		);
 	};
 
-	const handleClickShowMore = () => {
-		setShowMore(!showMore);
-	};
-
 	return (
 		<>
-			<div>Mandami una notifica ogni</div>
+			<div className="d-flex justify-content-start align-items-center column-gap-1 my-2">
+				<div>Ricordamelo per</div>
+				<Form.Control
+					type="number"
+					className="w-25"
+					value={newNotif.ripetition.howMany}
+					onChange={
+						e => setNewNotif(prev => (
+							{...prev, howMany: e.target.value}
+						))
+					}
+				>
+				</Form.Control>
+				<div>volte, ogni:</div>
+			</div>
+
 			<div className="d-flex flex-column flex-md-row mb-2 gap-2">
 				{timeUnits.slice(0, 3).map((timeUnit, i) => (
 					<div key={i}>
@@ -145,36 +154,7 @@ const RipetitionSection = ({ newNotif, setNewNotif}) => {
 							<Form.Control
 								type="number"
 								className="w-50"
-								value={newNotif.advance[timeUnit]}
-								onChange={
-									e => handleChangeTimeUnit(timeUnit, e.target.value)
-								}
-							>
-							</Form.Control>
-							<Form.Label className="mb-0">{timeUnit}</Form.Label>
-						</Form.Group>
-					</div>
-				))}
-			</div>
-
-			<Button
-				className="mb-2"
-				onClick={handleClickShowMore}
-				size="sm"
-			>
-				{showMore ? "Nascondi" : "Mostra altro"}
-			</Button>
-
-			<div className="d-flex flex-column flex-md-row mb-2 gap-2">
-				{showMore && timeUnits.slice(3).map((timeUnit, i) => (
-					<div key={i}>
-						<Form.Group
-							className="d-flex justify-content-start align-items-center column-gap-2"
-						>
-							<Form.Control
-								type="number"
-								className="w-50"
-								value={newNotif.advance[timeUnit]}
+								value={newNotif.ripetition[timeUnit]}
 								onChange={
 									e => handleChangeTimeUnit(timeUnit, e.target.value)
 								}
@@ -190,10 +170,22 @@ const RipetitionSection = ({ newNotif, setNewNotif}) => {
 };
 
 const NotifsModal = ({
-	sendNotifs, setSendNotifs,
-	notifsList, setNotifsList
+	sendNotifs, setSendNotifs, //Lo stato dello switch per le notifiche
+	notifsList, setNotifsList //L'insieme delle notifiche dell'evento
 }) => {
 
+	/*
+	 * La lista può essere non vuota:
+	 * se l'utente modifica un evento
+	 * con delle notifiche pre-esistenti,
+	 * queste vengono estratte dall'api
+	 * in tramite initialData in EventModal.js,
+	 * l'unica cosa che faccio in questo if è aggiungere
+	 * la funzione .toString() a tutti i suoi elementi,
+	 * in quanto la funzione è molto lunga e non avrei
+	 * potuto farlo in EventModal.js per non ripetere
+	 * la stessa funzione
+	 */
 	if(notifsList) {
 		notifsList.forEach(notif => {
 			notif.toString = () => notifsPrettify(notif);
@@ -201,37 +193,95 @@ const NotifsModal = ({
 		setNotifsList(notifsList);
 	}
 
-	const advanceDefault = Object.fromEntries(
-		timeUnits.map(timeUnit => [timeUnit, 0])
-	);
+	/*
+	 * I dati della singola notifica vengono confezionati
+	 * in questo modo:
+	 * l'utente sceglie se ricerverla prima dell'inizio
+	 * ("advance"), o dopo la fine con ripetizione ("ripetition")
+	 * e questo valore è la proprietà .mod,
+	 * e a seconda di quest'ultimo viene riferito
+	 * il suo sotto-oggetto per i dati effettivi.
+	 * le proprietà .advance e .ripetition coesistono,
+	 * ma solo una di queste è modificata e letta, mentre l'altra
+	 * rimane sempre con i valori di default
+	 */
+
+	/*
+	 * Costruisco l'oggetto con i valori predifiniti
+	 * in maniera programmatica, in questo modo
+	 * se volessi aggiungere altri parametri
+	 * dovrei solo modificare timeUnits
+	 */
+	const defaults = {
+		advance: Object.fromEntries(
+			timeUnits.map(timeUnit => [timeUnit, 0])
+		),
+		ripetition: {
+			howMany: 0,
+			...Object.fromEntries(
+				timeUnits.slice(0, 3).map(timeUnit => [timeUnit, 0])
+			)
+		}
+	};
+
 	const [newNotif, setNewNotif] = useState({
 		mod: "advance",
-		advance: advanceDefault,
+		advance: defaults.advance,
+		ripetition: defaults.ripetition,
 		toString() { return notifsPrettify(this); }
 	});
 
+	//La funzione attivata quando il pulsante "Aggiungi" viene premuto
 	const addNotif = () => {
-		const totalSum = Object.values(newNotif.advance).reduce((a, c) => a+c, 0);
+		const mod = newNotif.mod;
+
+		/*
+		 * Controlli dei parametri del form:
+		 * se anche un controllo non passa,
+		 * mando un messaggio di avviso sotto forma di toast
+		 * ed esco dalla funzione senza fare nient'altro
+		 */
+
+		//Almeno un parametro deve essere maggiore di zero
+		const totalSum = Object.values(newNotif[mod])
+			.reduce((a, c) => a+c, 0);
 		if(!totalSum) {
 			toast('Non puoi avere tutti i valori a zero!', { type: 'warning' });
 			return;
 		}
 
+		//In particolare, il numero di ripetizioni non può
+		//mai essere zero
+		if(mod == 'ripetition' && newNotif[mod].howMany == 0) {
+			toast('Non puoi avere il numero di ripetizioni a zero!', { type: 'warning' });
+			return;
+		}
+
+		//E nessun parametro deve essere negativo
+		const negativeFinds = Object.values(newNotif[mod])
+			.reduce((a, c) => a||(c<0), false);
+		if(negativeFinds) {
+			toast('Non puoi avere un valore negativo!', { type: 'warning' });
+			return;
+		}
+
+		//I dati sono corretti, aggiungo la nuova notifica alle altre
 		const updated = [...notifsList, newNotif];
 		setNotifsList(updated);
 
+		//Feedback visivo per l'utente
 		toast("Notifica aggiunta!", {
 			type: 'success',
 			autoClose: 3000
 		});
 
-		setNewNotif(prev => ({...prev, advance: advanceDefault}));
+		//Resetto i parametri del form
+		setNewNotif(prev => ({...prev, [mod]: defaults[mod]}));
 	};
 
+	//La funzione per rimuovere una notifica dalla lista
 	const removeNotif = (index) => {
-		const updated = [...notifsList];
-		updated.splice(index, 1);
-	  setNotifsList(updated);
+	  setNotifsList(notifsList.toSpliced(index, 1));
 		toast("Notifica eliminata!", { type: 'success' });
 	};
 
@@ -264,45 +314,59 @@ const NotifsModal = ({
 							<Form.Select
 								aria-label="default select"
 								onChange={
-									e => setNewNotif(
-										prev => ({...prev, mod:e.target.id})
-									)
+									e => setNewNotif(prev => (
+										{...prev, mod: e.target.value }
+									))
 								}
 							>
-								<option value="anticipo" id="advance">
-									Con anticipo
+								<option value="advance">
+									Prima dell'inizio dell'evento
 								</option>
-								<option value="ripetizione" id="ripetition">
-									Con ripetizione
+								<option value="ripetition">
+									Dopo la fine dell'attività
 								</option>
 							</Form.Select>
 
-							{newNotif.mod=="advance" && (
+							{newNotif.mod=="advance" && (<>
 								<AdvanceSection
 									newNotif={newNotif}
 									setNewNotif={setNewNotif}
 								/>
-							)}
 
-							{newNotif.mod=="ripetition" && (
+								<Button
+									className="mb-2"
+									variant="success"
+									onClick={addNotif}
+								>
+									Aggiungi
+								</Button>
+
+								<DinamicList
+									list={notifsList}
+									removeItem={removeNotif}
+								/>
+							</>)}
+
+							{newNotif.mod=="ripetition" && (<>
 								<RipetitionSection
 									newNotif={newNotif}
 									setNewNotif={setNewNotif}
 								/>
-							)}
 
-							<Button
-								variant="success"
-								onClick={addNotif}
-							>
-								Aggiungi
-							</Button>
+								<Button
+									className="mb-2"
+									variant="success"
+									onClick={addNotif}
+								>
+									Aggiungi
+								</Button>
+
+								<DinamicList
+									list={notifsList}
+									removeItem={removeNotif}
+								/>
+							</>)}
 						</Form>
-
-						<DinamicList
-							list={notifsList}
-							removeItem={removeNotif}
-						/>
 					</div>
 			)}
 	  </>

@@ -17,7 +17,6 @@ module.exports = {
 
 		cron.schedule('* * * * *', async () => {
 			const pendings = await notifs.findCurrentPendings();
-
 			pendings.forEach(async (notif) => {
 				const event = await calendardb.findBy({ id: notif.event });
 				const subs = await swsubs.findBy({ user: event.author });
@@ -32,28 +31,28 @@ module.exports = {
 				console.log("notifica mandata con successo");
 
 				//sezione delle mail
-				const transporter = nodemailer.createTransport({
-					host: "smtp.gmail.com",
-					port: 465,
-					secure: true,
-					auth: {
-						type: "OAuth2",
-						user: process.env.GMAIL_SITE_ADDRESS,
-						clientId: process.env.GOOGLE_CLIENT_ID,
-						clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-						refreshToken: process.env.GMAIL_SITE_REFRESH_TOKEN
-					}
-				});
-
-				const user = await usersdb.findBy({ id: notif.user });
-				await transporter.sendMail({
-					from: 'me',
-					to: user.google.gmail.address,
-					subject: `Notifica per l'evento "${notif.title}"`,
-					html: `<p>${notif.body} al tuo evento!</p>`
-				});
-
-				console.log('email mandata con successo');
+				// const transporter = nodemailer.createTransport({
+				// 	host: "smtp.gmail.com",
+				// 	port: 465,
+				// 	secure: true,
+				// 	auth: {
+				// 		type: "OAuth2",
+				// 		user: process.env.GMAIL_SITE_ADDRESS,
+				// 		clientId: process.env.GOOGLE_CLIENT_ID,
+				// 		clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+				// 		refreshToken: process.env.GMAIL_SITE_REFRESH_TOKEN
+				// 	}
+				// });
+    //
+				// const user = await usersdb.findBy({ id: notif.user });
+				// await transporter.sendMail({
+				// 	from: 'me',
+				// 	to: user.google.gmail.address,
+				// 	subject: `Notifica per l'evento "${notif.title}"`,
+				// 	html: `<p>${notif.body} al tuo evento!</p>`
+				// });
+    //
+				// console.log('email mandata con successo');
 
 			});
 		});
@@ -63,44 +62,55 @@ module.exports = {
 
 	Time: class Time {
 		constructor(time) {
-			const timeUnits = [
+			this.timeUnits = [
 				'minutes',
 				'hours',
 				'days',
 				'weeks',
 				'months'
 			];
-			for(const timeUnit of timeUnits) {
+			for(const timeUnit of this.timeUnits) {
 				if(time.hasOwnProperty(timeUnit))
 					this[timeUnit] = parseInt(time[timeUnit]);
 			}
 		}
 
 		toString() {
+			const oneOrMore = (n, str) =>
+				n == 1 ? str[str.length-2] : str[str.length-1];
+
 			let res = [];
 
-			const oneOrMore = (count, charOpts) => {
-				if(count == 1)
-					return charOpts[0];
-				else
-					return charOpts[1];
-			};
+			[
+				'mesei',
+				'settimanae',
+				'giornoi',
+				'orae',
+				'minutoi'
+			].map((t, i) => [this.timeUnits.toReversed()[i], t])
+				.forEach(timeUnit => {;
+					const [objProp, objStr] = timeUnit;
+					if(this[objProp])
+						res.push(
+							this[objProp]
+							+ ' ' + objStr.slice(0, -2)
+							+ oneOrMore(this[objProp], objStr)
+						);
+				});
 
-			if(this.months)
-				res.push(`${this.months} mes${oneOrMore(this.months, 'ei')}`);
-			if(this.weeks)
-				res.push(`${this.weeks} settiman${oneOrMore(this.weeks, 'ae')}`);
-			if(this.days)
-				res.push(`${this.days} giorn${oneOrMore(this.days, 'oi')}`);
-			if(this.hours)
-				res.push(`${this.hours} or${oneOrMore(this.hours, 'ae')}`);
-			if(this.minutes)
-				res.push(`${this.minutes} minut${oneOrMore(this.minutes, 'oi')}`);
-
-			if(res.length <= 1)
-				return (res[0].substring(0, 2) == '1 ' ? "Manca " : "Mancano ") + res[0];
+			let resStr;
+			if(res.length > 1) {
+				resStr = "Mancano "
+					+ res.slice(0, -1).join(', ')
+					+ ' e '
+					+ res.slice(-1);
+			}
+			else if(res[0].substring(0, 2) == '1 ')
+				resStr = "Manca " + res[0];
 			else
-				return "Mancano " + res.slice(0, -1).join(', ') + ' e ' + res.slice(-1);
+				resStr = "Mancano " + res[0];
+
+			return resStr + '!';
 		}
 	},
 
