@@ -1,4 +1,3 @@
-/* ProPic */
 .propic-container {
   position: relative;
   display: inline-block;
@@ -64,7 +63,6 @@
   transform: translate(-50%, -50%) scale(1.02);
 }
 
-/* Form layout */
 .pers-form-container {
   display: flex;
   flex-direction: column;
@@ -109,7 +107,6 @@ select.pers-form-control,
   padding: .56rem .7rem;
   border-radius: 10px;
 
-  /* ora usiamo le variabili specifiche per i controlli */
   background: var(--color-secondary) !important;
   color: var(--color-onPrimary) !important;
   caret-color: var(--color-onPrimary) !important;
@@ -123,7 +120,6 @@ select.pers-form-control,
   transition: border-color 160ms ease, box-shadow 160ms ease, transform 120ms ease;
 }
 
-/* placeholder -> usare muted della palette */
 .pers-form-control input::placeholder,
 .pers-form-control textarea::placeholder,
 input.pers-form-control::placeholder,
@@ -152,7 +148,6 @@ select.pers-form-control:focus,
 }
 
 
-/* invalid state */
 .pers-form-control input[aria-invalid="true"],
 .pers-form-control textarea[aria-invalid="true"],
 .pers-form-control select[aria-invalid="true"],
@@ -163,7 +158,6 @@ select.pers-form-control[aria-invalid="true"] {
   box-shadow: 0 2px 0 0 rgba(214, 40, 46, 0.10);
 }
 
-/* selection inside inputs */
 .pers-form-control input::selection,
 .pers-form-control textarea::selection,
 input.pers-form-control::selection,
@@ -173,7 +167,6 @@ textarea.pers-form-control::selection,
   color: var(--color-onPrimary, var(--color-onPrimary, var(--color-onSurface, #0B1220)));
 }
 
-/* disabled */
 .pers-form-control input:disabled,
 .pers-form-control textarea:disabled,
 .pers-form-control select:disabled,
@@ -188,7 +181,6 @@ select.pers-form-control:disabled,
   cursor: not-allowed;
 }
 
-/* data-overridden helper */
 .pers-form-control input[data-overridden],
 .pers-form-control textarea[data-overridden],
 .pers-form-control select[data-overridden],
@@ -200,7 +192,6 @@ select.pers-form-control[data-overridden],
   color: var(--color-onPrimary, var(--color-onPrimary, var(--color-onSurface, #0B1220))) !important;
 }
 
-/* Autofill (Chrome) — must override UA rules */
 .pers-form-control input:-webkit-autofill,
 .pers-form-control textarea:-webkit-autofill,
 .pers-form-control select:-webkit-autofill,
@@ -214,7 +205,6 @@ select.pers-form-control:-webkit-autofill,
   caret-color: var(--color-onPrimary, var(--color-onPrimary, var(--color-onSurface, #0B1220))) !important;
 }
 
-/* responsive tweaks */
 @media (min-width:768px) {
   .propic-container {
     margin: 0 1.5rem .5rem 0;
@@ -252,7 +242,6 @@ select.pers-form-control:-webkit-autofill,
   }
 }
 
-/* prefers-contrast tweak */
 @media (prefers-contrast: more) {
   .propic-container {
     box-shadow: 0 10px 28px rgba(var(--color-shadows-rgb, 18, 49, 54), 0.16);
@@ -265,7 +254,6 @@ select.pers-form-control:-webkit-autofill,
   }
 }
 
-/* contrast helpers */
 .force-text-dark {
   color: #0B1220 !important;
 }

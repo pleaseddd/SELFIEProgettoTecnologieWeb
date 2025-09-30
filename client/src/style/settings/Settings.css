@@ -157,7 +157,6 @@ select.pers-form-control {
 .pers-form-control .form-control:focus-visible {
   outline: none;
 
-  /* forza ancora per evitare che il browser cambi il colore/sfondo */
   background: var(transparent) !important;
   color: var(--color-onSurface) !important;
   caret-color: var(--color-onSurface) !important;
@@ -378,7 +377,6 @@ select.pers-form-control {
   color: var(--color-buttonText, var(--color-buttonText, #fff)) !important;
 }
 
-/* propic / immagine nella conferma */
 .confirm-modal .confirm-propic,
 .confirm-modal img.confirm-propic {
   width: 96px;
@@ -391,7 +389,6 @@ select.pers-form-control {
   box-shadow: 0 10px 22px rgba(var(--color-shadows), 0.06);
 }
 
-/* disabled state */
 .confirm-modal .btn[disabled],
 .confirm-modal button[disabled] {
   opacity: 0.6;
@@ -399,7 +396,6 @@ select.pers-form-control {
   filter: none;
 }
 
-/* piccolo adattamento per mobile */
 @media (max-width: 480px) {
   .confirm-modal .modal-content {
     border-radius: 8px;
@@ -412,7 +408,6 @@ select.pers-form-control {
   }
 }
 
-/* prefers-contrast */
 @media (prefers-contrast: more) {
 
   .fieldset-custom .form-control,

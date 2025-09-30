@@ -70,7 +70,6 @@
   transform: translateY(-1px);
 }
 
-/* placeholder */
 .login-page .login-card input::placeholder,
 .login-page .login-card textarea::placeholder,
 .login-page .login-card select::placeholder {

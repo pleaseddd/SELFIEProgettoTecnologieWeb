@@ -34,8 +34,6 @@
 
 }
 
-
-/* Card / container styles */
 .card {
   background: var(--color-card-bg);
   color: var(--app-text);
@@ -45,7 +43,6 @@
   transition: background 200ms ease, box-shadow 200ms ease;
 }
 
-/* Buttons */
 button {
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
@@ -61,7 +58,6 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* Muted text */
 .muted {
   color: var(--color-muted);
 }
@@ -70,35 +66,22 @@ button:hover {
 .home-root {
   width: 100%;
   min-height: 100vh;
-  /* assicura altezza schermo */
   height: 100vh;
   display: block;
-  /* non serve flex che centri; la griglia riempie la viewport */
   box-sizing: border-box;
   padding: 16px;
-  /* respiro intorno alla griglia */
 }
 
-/* Griglia principale 3 colonne - 2 righe, occupa tutta la root */
 .parent {
   display: grid;
   grid-template-columns: 1fr 1fr 0.5fr 0.5fr;
-  /* tre colonne uguali */
   grid-template-rows: 1fr 1fr 1fr 1fr;
-  /* due righe uguali */
   gap: 24px;
   width: 100%;
   height: calc(100vh - 32px);
-  /* lascia padding esterno */
   box-sizing: border-box;
 }
 
-/* Mappatura delle aree (secondo lo schema che volevi):
-   - div1: note (colonna 1, span 2 righe)
-   - div4: calendario (colonna 2, riga 1)
-   - div2: meteo (colonna 3, riga 1)
-   - div3: pomodoro (colonna 3, riga 2)
-*/
 .div1 {
   grid-area: 1 / 2 / 5 / 3;
 }
@@ -115,7 +98,6 @@ button:hover {
   grid-area: 2 / 4 / 3 / 5;
 }
 
-/* Ogni cella: forzo dimensione 100% e controllo overflow */
 .div1,
 .div2,
 .div3,
@@ -124,20 +106,15 @@ button:hover {
   height: 100%;
   box-sizing: border-box;
 
-  /* il contenuto viene posizionato e non può ridimensionare la cella */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  /* puoi cambiare vedi commenti sotto */
   align-items: stretch;
   overflow: hidden;
-  /* previene che il contenuto allarghi la cella */
   padding: 8px;
-  /* respiro interno */
   position: relative;
 }
 
-/* Forzo che il primo figlio del contenitore (i tuoi card/carousel) occupi tutto lo spazio */
 .div1>*,
 .div2>*,
 .div3>*,
@@ -148,19 +125,14 @@ button:hover {
   max-height: none !important;
   box-sizing: border-box;
   overflow: auto;
-  /* se il contenuto è lungo compaiono scrollbar interne */
 }
 
-/* Override specifici per i componenti che avevano inline maxWidth / maxHeight */
-
-/* NotesCarousel: rimuovo margin top e forzo card a 100% */
 .div1 .container {
   margin-top: 0 !important;
   padding: 0 !important;
   height: 100% !important;
 }
 
-/* CalendarCarousel: forzo l'item interno a 100% */
 .div4 #eventCarousel,
 .div4 .carousel-inner,
 .div4 .carousel-item {
@@ -204,7 +176,6 @@ button:hover {
 .div4 .card {
   box-sizing: border-box;
   overflow: auto;
-  /* scrollbar se contenuto troppo grande */
 }
 
 @media (max-width: 900px) {

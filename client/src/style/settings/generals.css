@@ -56,7 +56,6 @@ select.gen-form-control {
   border-radius: 8px;
   border: 1px solid rgba(var(--color-shadows), 0.10);
 
-  /* forza la palette: sfondo/testo/caret e -webkit-text-fill per prevenire override UA */
   background: var(--color-secondary) !important;
   color: var(--color-onPrimary) !important;
   caret-color: var(--color-onPrimary) !important;
@@ -72,7 +71,6 @@ select.gen-form-control {
   appearance: none;
 }
 
-/* low-contrast variant (mantiene forcing se presente) */
 .low-contrast .gen-form-control input,
 .low-contrast .gen-form-control textarea,
 .low-contrast .gen-form-control select,
@@ -81,14 +79,12 @@ select.gen-form-control {
   border: 1px solid rgba(var(--color-shadows), 0.16);
 }
 
-/* placeholder */
 .gen-form-control input::placeholder,
 .gen-form-control textarea::placeholder {
   color: var(--color-muted);
   opacity: 1;
 }
 
-/* focus: forziamo bg/colore identici e usiamo bordo/ombra solo per evidenziare */
 .gen-form-control input:focus,
 .gen-form-control textarea:focus,
 .gen-form-control select:focus,
@@ -99,7 +95,6 @@ select.gen-form-control {
 .gen-form-control .form-control:focus-visible {
   outline: none;
 
-  /* forza ancora (important) per evitare che il browser imposti bianco o altro */
   background: var(--color-secondary) !important;
   color: var(--color-onPrimary) !important;
   caret-color: var(--color-onPrimary) !important;
@@ -110,7 +105,6 @@ select.gen-form-control {
   transform: translateY(-1px);
 }
 
-/* focus-visible con anello aggiuntivo */
 .gen-form-control input:focus-visible,
 .gen-form-control textarea:focus-visible,
 .gen-form-control select:focus-visible {
@@ -120,7 +114,6 @@ select.gen-form-control {
   border-color: rgba(var(--color-accents), 1);
 }
 
-/* invalid state */
 .gen-form-control input[aria-invalid="true"],
 .gen-form-control textarea[aria-invalid="true"],
 .gen-form-control select[aria-invalid="true"],
@@ -129,7 +122,6 @@ select.gen-form-control {
   box-shadow: 0 2px 0 0 rgba(214, 40, 46, 0.10);
 }
 
-/* disabled: manteniamo palette e contrasto */
 .gen-form-control input:disabled,
 .gen-form-control textarea:disabled,
 .gen-form-control select:disabled,
@@ -141,7 +133,6 @@ select.gen-form-control {
   -webkit-text-fill-color: var(--color-onPrimary) !important;
 }
 
-/* data-overridden helper */
 .gen-form-control input[data-overridden],
 .gen-form-control textarea[data-overridden],
 .gen-form-control select[data-overridden],

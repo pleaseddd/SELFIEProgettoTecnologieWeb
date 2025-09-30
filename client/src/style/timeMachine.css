@@ -19,7 +19,6 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-/* posizionamenti responsive */
 @media (max-width: 767px) {
     .tm-toggle-btn {
         bottom: 20px;
@@ -55,7 +54,6 @@
     }
 }
 
-/* Hover / Active / Focus per il toggle */
 .tm-toggle-btn:hover {
     background-color: rgba(var(--color-accents-rgb), 0.95);
     transform: translateY(-3px);
@@ -71,7 +69,6 @@
     outline: none;
 }
 
-/* Panel */
 .tm-panel {
     z-index: 1090;
     background-color: var(--tm-surface, var(--color-surface, var(--color-card-bg)));
@@ -91,7 +88,6 @@
     pointer-events: none;
 }
 
-/* Titolo e form */
 .tm-title {
     margin: 0 0 8px;
     font-size: 16px;
@@ -112,7 +108,6 @@
     color: var(--tm-primary, var(--color-primary));
 }
 
-/* Input */
 .tm-input {
     margin-bottom: 8px;
     padding: 6px 8px;
@@ -136,14 +131,12 @@
     transform: translateY(-1px);
 }
 
-/* Buttons area */
 .tm-buttons {
     display: flex;
     justify-content: space-between;
     gap: 8px;
 }
 
-/* Bottoni base */
 .tm-btn {
     flex: 1;
     margin: 0;
@@ -170,7 +163,6 @@
     box-shadow: none;
 }
 
-/* Bottoni primari / accentuati */
 .tm-btn--primary {
     background: var(--tm-accent, var(--color-accents));
     color: var(--tm-onSurface, var(--color-onSurface));
@@ -188,7 +180,6 @@
     outline: none;
 }
 
-/* Bottoni muted / secondari */
 .tm-btn--muted {
     background: var(--tm-primary, var(--color-primary));
     color: var(--color-buttonText);
@@ -216,7 +207,6 @@
     cursor: grabbing;
 }
 
-/* reduce motion */
 @media (prefers-reduced-motion: reduce) {
 
     .tm-toggle-btn,

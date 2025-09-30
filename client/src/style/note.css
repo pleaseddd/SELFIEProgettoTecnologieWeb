@@ -7,7 +7,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Base card: separazione e contrasto */
 .card {
   background-color: var(--color-card-bg);
   color: var(--color-on-surface);
@@ -23,7 +22,6 @@
   overflow: hidden;
 }
 
-/* overlay leggero */
 .card::after {
   content: "";
   position: absolute;
@@ -32,7 +30,6 @@
   background: linear-gradient(180deg, rgba(var(--color-shadows-rgb), 0.01), rgba(0,0,0,0));
 }
 
-/* hover/focus */
 .card:hover {
   transform: translateY(-4px);
   box-shadow: 0 18px 40px rgba(var(--color-shadows-rgb), 0.12);
@@ -44,7 +41,6 @@
   outline-offset: 2px;
 }
 
-/* titoli */
 .card-title {
   color: var(--color-terziary);
   font-weight: 800;
@@ -55,7 +51,6 @@
   text-shadow: 0 1px 0 rgba(var(--color-shadows-rgb), 0.04);
 }
 
-/* sottotitoli */
 .card-subtitle {
   color: var(--color-muted);
   font-size: 0.875rem;
@@ -63,7 +58,6 @@
   opacity: 0.95;
 }
 
-/* testo principale */
 .card-text {
   max-height: 150px;
   overflow-y: auto;
@@ -78,7 +72,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Scrollbar */
 .card-text::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -100,14 +93,12 @@
   scrollbar-color: var(--color-accents) transparent;
 }
 
-/* separatore sottile */
 .card .subtle-border {
   border-top: 1px solid var(--color-details);
   margin-top: 0.5rem;
   padding-top: 0.5rem;
 }
 
-/* note light */
 .note-card--light {
   background-color: var(--color-surface);
   border: 1px solid var(--color-details);
@@ -121,7 +112,6 @@
   color: var(--color-terziary);
 }
 
-/* note dark */
 .note-card--dark {
   background: linear-gradient(180deg,
     var(--color-primary),
@@ -138,7 +128,6 @@
   color: var(--color-terziary);
 }
 
-/* versioni compatte */
 .card--compact {
   padding: 0.75rem;
   border-radius: 10px;
@@ -148,12 +137,10 @@
   max-height: 100px; 
 }
 
-/* mobile */
 @media (max-width: 576px) {
   .card { padding: 0.75rem; border-radius: 10px; }
   .card-text { max-height: 120px; }
 }
 
-/* fallback contrast */
 .force-text-dark { color: #0B1220 !important; }
 .force-text-light { color: #FFFFFF !important; }

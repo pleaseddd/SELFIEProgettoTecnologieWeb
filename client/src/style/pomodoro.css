@@ -277,7 +277,6 @@
   padding: 0.5rem;
   border-radius: 10px;
   background: linear-gradient(180deg, var(--color-surface), rgba(var(--color-shadows-rgb), 0.02));
-  /* usa la variabile della sidebar (eredita da .config-wrapper quando dentro la sidebar) */
   color: var(--color-onSurface);
   margin-bottom: 0.5rem;
   height: 3.2rem;

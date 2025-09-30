@@ -54,7 +54,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Placeholder (con prefissi e fallback variabili) */
 .modal-content input.form-control::placeholder,
 .modal-content textarea.form-control::placeholder,
 .modal-content input.form-control::-webkit-input-placeholder,
@@ -122,7 +121,6 @@
   -webkit-text-fill-color: var(--color-onSurface) !important;
 }
 
-/* Small specificity fallback for .modal-body wrappers if Bootstrap overrides */
 .modal-body input.form-control,
 .modal-body textarea.form-control,
 .modal-body .form-control,
@@ -134,7 +132,6 @@
   border: 1px solid rgba(var(--color-accents-rgb, 162, 92, 47), 0.12) !important;
 }
 
-/* Keep buttons and other existing rules (unchanged) */
 .btn-primary {
   background-color: var(--color-button-bg);
   color: var(--color-button-text);

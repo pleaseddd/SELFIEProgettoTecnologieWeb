@@ -1,6 +1,6 @@
 .card.p-4.shadow-lg {
-  background: var(--color-cardBg);        /* sfondo della card (semplice, semitrasparente) */
-  color: var(--color-onSurface);          /* testo principale leggibile */
+  background: var(--color-cardBg);        
+  color: var(--color-onSurface);        
   border: 1px solid var(--color-details);
   box-shadow: 0 6px 20px 0 var(--color-shadows);
   border-radius: 0.5rem;
@@ -14,7 +14,7 @@
 }
 
 .card.p-4.shadow-lg .text-success {
-  color: var(--color-accents); /* accento visibile per messaggi positivi */
+  color: var(--color-accents); 
   text-align: center;
   margin-bottom: 0.5rem;
   font-weight: 600;
