@@ -11,7 +11,7 @@ export const themes = {
     onSurface: "#c1e3beff",
     buttonBg: "#8ABD54",
     buttonText: "#050326",
-    muted: "rgba(255,255,255,0.7)",
+    muted: "rgba(239, 109, 29, 0.7)",
     cardBg: "rgba(36,78,90,0.10)"
   },
 
@@ -43,7 +43,7 @@ export const themes = {
     onSurface: "#262d4fff",
     buttonBg: "#730202",
     buttonText: "#EFEFF0",
-    muted: "#EFEFF0",
+    muted: "#321d1bff",
     cardBg: "rgba(243,191,45,0.06)"
   },
 

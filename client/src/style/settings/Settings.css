@@ -1,50 +1,23 @@
-:root {
-  --on-surface-effective: var(--on-surface, var(--color-on-surface, var(--colorOnSurface, #0B1220)));
-  --color-shadows-rgb-effective: var(--color-shadows-rgb, var(--shadows-rgb, 18, 49, 54));
-  --color-accents-rgb-effective: var(--color-accents-rgb, var(--accents-rgb, 46, 107, 115));
-  --button-text-effective: var(--button-text, var(--color-button-text, var(--buttonText, #ffffff)));
-  --card-bg-effective: var(--card-bg, var(--color-card-bg, rgba(var(--color-shadows-rgb, 18, 49, 54), 0.03)));
-
-  --propic-size: 96px;
-  --propic-border-radius: 999px;
-  --propic-border-rgb: var(--color-shadows-rgb-effective, 18, 49, 54);
-  --propic-overlay-rgb: var(--color-accents-rgb-effective, 46, 107, 115);
-  --propic-overlay-alpha: 0.18;
-  --propic-button-bg: rgba(var(--propic-overlay-rgb), 0.94);
-  --propic-button-color: var(--button-text-effective, #ffffff);
-  --propic-focus-ring: rgba(var(--propic-overlay-rgb), 0.18);
-
-  --form-gap: 0.5rem;
-  --form-label-color: var(--color-on-surface);
-  --form-control-color: var(--color-on-surface);
-  --form-control-bg: transparent;
-  --form-control-border-rgb: var(--color-shadows-rgb-effective, 18, 49, 54);
-  --form-helper-color: var(--muted-effective, rgba(0, 0, 0, 0.45));
-
-  --force-contrast-text-dark: #0B1220;
-  --force-contrast-text-light: #FFFFFF;
-}
-
 .propic-container {
   position: relative;
   display: inline-block;
   align-self: center;
   margin-bottom: .5rem;
-  width: var(--propic-size);
-  height: var(--propic-size);
-  border-radius: var(--propic-border-radius);
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(var(--propic-border-rgb), 0.10);
+  box-shadow: 0 8px 20px rgba(var(--color-shadows), 0.10);
   transition: transform 200ms ease, box-shadow 200ms ease;
-  background: var(--card-bg-effective, rgba(var(--propic-border-rgb), 0.04));
+  background: var(--color-cardBg, rgba(var(--color-shadows), 0.04));
 }
 
 .propic-container:focus-within,
 .propic-container:focus {
   outline: none;
   box-shadow:
-    0 10px 26px rgba(var(--propic-border-rgb), 0.12),
-    0 0 0 4px var(--propic-focus-ring);
+    0 10px 26px rgba(var(--color-shadows), 0.12),
+    0 0 0 4px var(--color-accents);
   transform: translateY(-2px);
 }
 
@@ -66,14 +39,14 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 220ms ease, transform 220ms ease, background-color 160ms ease;
-  background: linear-gradient(180deg, rgba(var(--propic-overlay-rgb), 0.98), rgba(var(--propic-overlay-rgb), 0.86));
-  color: var(--propic-button-color);
+  background: linear-gradient(180deg, rgba(var(--color-accents), 0.98), rgba(var(--color-accents), 0.86));
+  color: var(--color-buttonText);
   border: none;
   padding: 0.45rem 0.65rem;
   border-radius: 999px;
   font-weight: 700;
   font-size: 0.9rem;
-  box-shadow: 0 8px 20px rgba(var(--propic-border-rgb), 0.16);
+  box-shadow: 0 8px 20px rgba(var(--color-shadows), 0.16);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -93,7 +66,7 @@
 
 .change-propic-button:focus {
   outline: none;
-  box-shadow: 0 10px 26px rgba(var(--propic-border-rgb), 0.12), 0 0 0 4px rgba(var(--propic-overlay-rgb), 0.14);
+  box-shadow: 0 10px 26px rgba(var(--color-shadows), 0.12), 0 0 0 4px rgba(var(--color-accents), 0.14);
 }
 
 .propic-container.propic--small {
@@ -105,8 +78,8 @@
 .pers-form-container {
   display: flex;
   flex-direction: column;
-  gap: var(--form-gap);
-  color: var(--form-control-color);
+  gap: 0.5rem;
+  color: var(--color-onSurface);
 }
 
 .pers-form-fields {
@@ -124,7 +97,7 @@
 
 .pers-form-label {
   margin-bottom: .25rem;
-  color: var(--form-label-color);
+  color: var(--color-onSurface);
   font-weight: 600;
   font-size: 0.95rem;
   line-height: 1.25;
@@ -146,12 +119,12 @@ select.pers-form-control {
   padding: 0.56rem 0.7rem;
   border-radius: 10px;
 
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(transparent) !important;
+  color: var(--color-onSurface) !important;
+  caret-color: var(--color-onSurface) !important;
+  -webkit-text-fill-color: var(--color-onSurface) !important;
 
-  border: 1px solid rgba(var(--form-control-border-rgb), 0.10);
+  border: 1px solid rgba(var(--color-shadows), 0.10);
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   font-family: inherit;
@@ -165,12 +138,12 @@ select.pers-form-control {
 .low-contrast .pers-form-control select,
 .low-contrast .pers-form-control .form-control {
   background: var(--low-contrast-bg) !important;
-  border: 1px solid rgba(var(--form-control-border-rgb), 0.16);
+  border: 1px solid rgba(var(--color-shadows), 0.16);
 }
 
 .pers-form-control input::placeholder,
 .pers-form-control textarea::placeholder {
-  color: var(--form-helper-color);
+  color: var(--color-muted);
   opacity: 1;
 }
 
@@ -185,13 +158,13 @@ select.pers-form-control {
   outline: none;
 
   /* forza ancora per evitare che il browser cambi il colore/sfondo */
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(transparent) !important;
+  color: var(--color-onSurface) !important;
+  caret-color: var(--color-onSurface) !important;
+  -webkit-text-fill-color: var(--color-onSurface) !important;
 
-  border-color: rgba(var(--propic-overlay-rgb), 0.96);
-  box-shadow: 0 8px 0 0 rgba(var(--propic-overlay-rgb), var(--propic-overlay-alpha));
+  border-color: rgba(var(--color-accents), 0.96);
+  box-shadow: 0 8px 0 0 rgba(var(--color-accents), 0.18);
   transform: translateY(-1px);
 }
 
@@ -199,9 +172,9 @@ select.pers-form-control {
 .pers-form-control textarea:focus-visible,
 .pers-form-control select:focus-visible {
   box-shadow:
-    0 8px 0 0 rgba(var(--propic-overlay-rgb), var(--propic-overlay-alpha)),
-    0 0 0 4px rgba(var(--propic-overlay-rgb), 0.06);
-  border-color: rgba(var(--propic-overlay-rgb), 1);
+    0 8px 0 0 rgba(var(--color-accents), 0.18),
+    0 0 0 4px rgba(var(--color-accents), 0.06);
+  border-color: rgba(var(--color-accents), 1);
 }
 
 
@@ -219,9 +192,9 @@ select.pers-form-control {
 .pers-form-control .form-control:disabled {
   opacity: 0.85;
   cursor: not-allowed;
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(transparent) !important;
+  color: var(--color-onSurface) !important;
+  -webkit-text-fill-color: var(--color-onSurface) !important;
 }
 
 
@@ -229,27 +202,27 @@ select.pers-form-control {
 .pers-form-control textarea[data-overridden],
 .pers-form-control select[data-overridden],
 .pers-form-control .form-control[data-overridden] {
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(transparent) !important;
+  color: var(--color-onSurface) !important;
+  -webkit-text-fill-color: var(--color-onSurface) !important;
 }
 
 
 .pers-form-control input::selection,
 .pers-form-control textarea::selection,
 .pers-form-control .form-control::selection {
-  background: rgba(var(--propic-overlay-rgb), 0.18);
-  color: var(--form-control-color) !important;
+  background: rgba(var(--color-accents), 0.18);
+  color: var(--color-onSurface) !important;
 }
 
 .pers-form-control input:-webkit-autofill,
 .pers-form-control textarea:-webkit-autofill,
 .pers-form-control select:-webkit-autofill,
 .pers-form-control .form-control:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
-  box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
+  -webkit-box-shadow: 0 0 0px 1000px var(transparent) inset !important;
+  box-shadow: 0 0 0px 1000px var(transparent) inset !important;
+  -webkit-text-fill-color: var(--color-onSurface) !important;
+  caret-color: var(--color-onSurface) !important;
 }
 
 .fieldset-custom .form-control,
@@ -258,10 +231,10 @@ select.pers-form-control {
 .fieldset-custom select,
 .fieldset-custom .underline-input,
 .underline-input {
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(transparent) !important;
+  color: var(--color-onSurface) !important;
+  caret-color: var(--color-onSurface) !important;
+  -webkit-text-fill-color: var(--color-onSurface) !important;
 
   border-radius: 8px;
   box-sizing: border-box;
@@ -271,7 +244,7 @@ select.pers-form-control {
 .fieldset-custom input::placeholder,
 .fieldset-custom textarea::placeholder,
 .fieldset-custom .underline-input::placeholder {
-  color: var(--form-helper-color);
+  color: var(--color-muted);
   opacity: 1;
 }
 
@@ -286,13 +259,13 @@ select.pers-form-control {
 .fieldset-custom select:focus-visible,
 .fieldset-custom .underline-input:focus-visible {
   outline: none;
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(transparent) !important;
+  color: var(--color-onSurface) !important;
+  caret-color: var(--color-onSurface) !important;
+  -webkit-text-fill-color: var(--color-onSurface) !important;
 
-  border-color: rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.96);
-  box-shadow: 0 6px 0 0 rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.12);
+  border-color: rgba(var(--color-accents, 46, 107, 115), 0.96);
+  box-shadow: 0 6px 0 0 rgba(var(--color-accents, 46, 107, 115), 0.12);
   transform: translateY(-1px);
 }
 
@@ -302,17 +275,17 @@ select.pers-form-control {
 .fieldset-custom select:focus-visible,
 .fieldset-custom .underline-input:focus-visible {
   box-shadow:
-    0 6px 0 0 rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.12),
-    0 0 0 4px rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.06);
-  border-color: rgba(var(--color-accents-rgb-effective, 46, 107, 115), 1);
+    0 6px 0 0 rgba(var(--color-accents, 46, 107, 115), 0.12),
+    0 0 0 4px rgba(var(--color-accents, 46, 107, 115), 0.06);
+  border-color: rgba(var(--color-accents, 46, 107, 115), 1);
 }
 
 .fieldset-custom input::selection,
 .fieldset-custom textarea::selection,
 .fieldset-custom .form-control::selection,
 .fieldset-custom .underline-input::selection {
-  background: rgba(var(--color-accents-rgb-effective, 46, 107, 115), 0.18);
-  color: var(--form-control-color) !important;
+  background: rgba(var(--color-accents, 46, 107, 115), 0.18);
+  color: var(--color-onSurface) !important;
 }
 
 .fieldset-custom input:-webkit-autofill,
@@ -320,10 +293,10 @@ select.pers-form-control {
 .fieldset-custom select:-webkit-autofill,
 .fieldset-custom .underline-input:-webkit-autofill,
 .fieldset-custom .form-control:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
-  box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
+  -webkit-box-shadow: 0 0 0px 1000px var(transparent) inset !important;
+  box-shadow: 0 0 0px 1000px var(transparent) inset !important;
+  -webkit-text-fill-color: var(--color-onSurface) !important;
+  caret-color: var(--color-onSurface) !important;
 }
 
 .fieldset-custom .form-control:disabled,
@@ -331,9 +304,9 @@ select.pers-form-control {
 .fieldset-custom textarea:disabled,
 .fieldset-custom select:disabled,
 .fieldset-custom .underline-input:disabled {
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(transparent) !important;
+  color: var(--color-onSurface) !important;
+  -webkit-text-fill-color: var(--color-onSurface) !important;
   opacity: .85;
   cursor: not-allowed;
 }
@@ -351,10 +324,10 @@ select.pers-form-control {
 .d-grid>.btn,
 .d-grid .btn-primary,
 .btn-primary {
-  background: var(--button-bg, var(--propic-button-bg)) !important;
-  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
+  background: var(--button-bg, var(--color-accents)) !important;
+  color: var(--color-buttonText, var(--color-buttonText, #fff)) !important;
   border: 1px solid transparent !important;
-  box-shadow: 0 8px 20px rgba(var(--propic-border-rgb, 18, 49, 54), 0.16);
+  box-shadow: 0 8px 20px rgba(var(--color-shadows, 18, 49, 54), 0.16);
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease, color 120ms ease;
 }
 
@@ -363,12 +336,12 @@ select.pers-form-control {
 .d-grid .btn-primary:hover,
 .btn-primary:hover,
 .btn-primary:focus {
-  background: var(--button-bg, var(--propic-button-bg)) !important;
-  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
-  border-color: rgba(var(--propic-overlay-rgb, 46, 107, 115), 0.9) !important;
+  background: var(--button-bg, var(--color-accents)) !important;
+  color: var(--color-buttonText, var(--color-buttonText, #fff)) !important;
+  border-color: rgba(var(--color-accents, 46, 107, 115), 0.9) !important;
   box-shadow:
-    0 10px 26px rgba(var(--propic-border-rgb, 18, 49, 54), 0.14),
-    0 0 0 4px rgba(var(--propic-overlay-rgb, 46, 107, 115), 0.08);
+    0 10px 26px rgba(var(--color-shadows, 18, 49, 54), 0.14),
+    0 0 0 4px rgba(var(--color-accents, 46, 107, 115), 0.08);
   transform: translateY(-1px);
   outline: none;
 }
@@ -376,17 +349,17 @@ select.pers-form-control {
 .btn-primary:focus-visible,
 .d-grid .btn-primary:focus-visible {
   box-shadow:
-    0 10px 26px rgba(var(--propic-border-rgb, 18, 49, 54), 0.14),
-    0 0 0 6px rgba(var(--propic-overlay-rgb, 46, 107, 115), 0.06);
-  border-color: rgba(var(--propic-overlay-rgb, 46, 107, 115), 1) !important;
-  background: var(--button-bg, var(--propic-button-bg)) !important;
-  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
+    0 10px 26px rgba(var(--color-shadows, 18, 49, 54), 0.14),
+    0 0 0 6px rgba(var(--color-accents, 46, 107, 115), 0.06);
+  border-color: rgba(var(--color-accents, 46, 107, 115), 1) !important;
+  background: var(--button-bg, var(--color-accents)) !important;
+  color: var(--color-buttonText, var(--color-buttonText, #fff)) !important;
 }
 
 .btn-primary:active,
 .d-grid .btn-primary:active {
   transform: translateY(0) scale(0.997);
-  box-shadow: 0 6px 14px rgba(var(--propic-border-rgb, 18, 49, 54), 0.12);
+  box-shadow: 0 6px 14px rgba(var(--color-shadows, 18, 49, 54), 0.12);
 }
 
 .btn-primary:disabled,
@@ -395,27 +368,27 @@ select.pers-form-control {
   opacity: 0.75;
   cursor: not-allowed;
   box-shadow: none !important;
-  background: var(--button-bg, var(--propic-button-bg)) !important;
-  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
+  background: var(--button-bg, var(--color-accents)) !important;
+  color: var(--color-buttonText, var(--color-buttonText, #fff)) !important;
 }
 
 .btn-lg.btn-primary,
 .d-grid .btn-lg {
-  background: var(--button-bg, var(--propic-button-bg)) !important;
-  color: var(--button-text-effective, var(--propic-button-color, #fff)) !important;
+  background: var(--button-bg, var(--color-accents)) !important;
+  color: var(--color-buttonText, var(--color-buttonText, #fff)) !important;
 }
 
 /* propic / immagine nella conferma */
 .confirm-modal .confirm-propic,
 .confirm-modal img.confirm-propic {
-  width: var(--propic-size);
-  height: var(--propic-size);
-  border-radius: var(--propic-border-radius);
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
   object-fit: cover;
   display: block;
   margin: 0.6rem auto;
-  border: 2px solid rgba(var(--propic-border-rgb), 0.08);
-  box-shadow: 0 10px 22px rgba(var(--propic-border-rgb), 0.06);
+  border: 2px solid rgba(var(--color-shadows), 0.08);
+  box-shadow: 0 10px 22px rgba(var(--color-shadows), 0.06);
 }
 
 /* disabled state */
@@ -447,8 +420,8 @@ select.pers-form-control {
   .fieldset-custom textarea,
   .fieldset-custom select,
   .fieldset-custom .underline-input {
-    border-color: rgba(var(--form-control-border-rgb, 18, 49, 54), 0.22);
-    box-shadow: 0 6px 18px rgba(var(--form-control-border-rgb, 18, 49, 54), 0.06);
+    border-color: rgba(var(--color-shadows, 18, 49, 54), 0.22);
+    box-shadow: 0 6px 18px rgba(var(--color-shadows, 18, 49, 54), 0.06);
   }
 }
 
@@ -458,8 +431,8 @@ select.pers-form-control {
   .pers-form-control textarea,
   .pers-form-control select,
   .pers-form-control .form-control {
-    border-color: rgba(var(--form-control-border-rgb), 0.22);
-    box-shadow: 0 6px 18px rgba(var(--form-control-border-rgb), 0.06);
+    border-color: rgba(var(--color-shadows), 0.22);
+    box-shadow: 0 6px 18px rgba(var(--color-shadows), 0.06);
   }
 }
 
@@ -502,20 +475,20 @@ select.pers-form-control {
 
 @media (prefers-contrast: more) {
   .propic-container {
-    box-shadow: 0 10px 28px rgba(var(--propic-border-rgb), 0.16);
+    box-shadow: 0 10px 28px rgba(var(--color-shadows), 0.16);
   }
 
   .pers-form-control input,
   .pers-form-control textarea,
   .pers-form-control select {
-    border-color: rgba(var(--form-control-border-rgb), 0.22);
+    border-color: rgba(var(--color-shadows), 0.22);
   }
 }
 
 .force-text-dark {
-  color: var(--force-contrast-text-dark) !important;
+  color: var(#0B1220) !important;
 }
 
 .force-text-light {
-  color: var(--force-contrast-text-light) !important;
+  color: var(#FFFFFF) !important;
 }

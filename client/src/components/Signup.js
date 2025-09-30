@@ -27,7 +27,6 @@ function Register({ change }) {
   const pwdRegex = /^(?=.{8,20}$)(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
   const passwordValid = pwdRegex.test(password);
   const passwordsMatch = password === confirmPassword || confirmPassword === "";
-  const timezone="";
   //PRESA DELLA POSIZIONE PER METTERE NELL'USER SETTINGS
   useEffect(() => {
     const prendiposizione = async () => {
