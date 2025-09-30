@@ -24,6 +24,13 @@ function hexToRgb(value) {
   return `${r},${g},${b}`; 
 }
 
+function adjustColorForEffective(value, factor = 0.15) {
+  // Scurisci o modifica il colore leggermente per la variante effective
+  const rgb = hexToRgb(value).split(",").map(Number);
+  const adjusted = rgb.map(c => Math.max(0, Math.min(255, Math.floor(c * (1 - factor)))));
+  return `rgb(${adjusted.join(",")})`;
+}
+
 function applyPaletteToRoot(key, fallbackKey = "avatar1", rootEl = null) {
   // applica la palette selezionata impostando variabili CSS su :root
   const palette = themes[key] || themes[fallbackKey];
@@ -40,6 +47,17 @@ function applyPaletteToRoot(key, fallbackKey = "avatar1", rootEl = null) {
     } catch (err) {
       root.style.setProperty(`--color-${name}-rgb`, "0,0,0");
     }
+
+     try {
+      const effective = adjustColorForEffective(value);
+      root.style.setProperty(`--color-${name}-effective`, effective);
+      const rgbEffective = hexToRgb(effective);
+      root.style.setProperty(`--color-${name}-rgb-effective`, rgbEffective);
+    } catch {
+      root.style.setProperty(`--color-${name}-effective`, value);
+      root.style.setProperty(`--color-${name}-rgb-effective`, "0,0,0");
+    }
+    
   });
 
   root.setAttribute("data-palette", key);
