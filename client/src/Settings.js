@@ -257,8 +257,8 @@ const EventsSection = ({ form, setForm, notSaved, setNotSaved }) => {
           </div>
 
           {/* Categorie eventi */}
-          <div>
-            <h6>Categorie eventi</h6>
+          <fieldset className="fieldset-custom">
+            <legend className="legend-custom">Categorie eventi</legend>
 
             <div className="d-flex mb-2">
               <Form.Control
@@ -280,7 +280,7 @@ const EventsSection = ({ form, setForm, notSaved, setNotSaved }) => {
               list={form.eventCategories}
               removeItem={removeEventCategory}
             />
-          </div>
+          </fieldset>
         </Card.Body>
       </Card>
     </>
@@ -343,9 +343,9 @@ const NotesSection = ({
             <h5>Note</h5>
           </div>
 
-					{/* Categorie note */}
-          <div>
-						<h6>Categorie note</h6>
+          <fieldset className="fieldset-custom mb-2">
+            {/* Categorie note */}
+            <legend className="legend-custom">Categorie note</legend>
             <div className="d-flex mb-2">
               <Form.Control
                 type="text"
@@ -366,11 +366,10 @@ const NotesSection = ({
               list={form.noteCategories}
               removeItem={removeNoteCategory}
             />
-          </div>
-
+          </fieldset>
           {/* Numero di note visibili nella home */}
-          <div>
-            <h6>Varie</h6>
+          <fieldset className="fieldset-custom d-flex">
+            <legend className="legend-custom">Varie</legend>
             <Form.Label className="mt-2 me-2 mb-0 text-nowrap">
               Note visibili nella home:
             </Form.Label>
@@ -384,7 +383,7 @@ const NotesSection = ({
                 handleSingleChange("notesInHome", e.target.value)
               }
             />
-          </div>
+          </fieldset>
         </Card.Body>
       </Card>
     </>

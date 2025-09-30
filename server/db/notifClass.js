@@ -31,10 +31,6 @@ const NotifSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	
-	//In caso di notifica che si deve ripetere
-	ripetition: Number,
-	counter: Number,
 
     //Quando verra' mandata la notifica
 	time: {
@@ -59,7 +55,6 @@ const NotifSchema = new mongoose.Schema({
 			months: Number
 		},
 		ripetition: {
-		    howMany: Number,
 		    minutes: Number,
 		    hours: Number,
 		    days: Number
@@ -80,18 +75,6 @@ module.exports = {
 	 * returns: Object, il nuovo documento della collezione
 	 */
 	new_notif: async (notif) => {
-		const newnotif = new Notification(notif);
-		return newnotif.save();
-	},
-
-	/*
-	 * Applica lo snooze a una notifica mandata, quindi ne crea una nuova
-	 * @param notif: Object, copia aggiornata della notifica appena 
-	 * eliminata perchè mandata
-	 * @param snooze: Integer, quanti minuti posticipare la notifica
-	 * returns: Object, la nuova notifica del db
-	 */
-	applySnooze: async (notif) => {
 		const newnotif = new Notification(notif);
 		return newnotif.save();
 	},

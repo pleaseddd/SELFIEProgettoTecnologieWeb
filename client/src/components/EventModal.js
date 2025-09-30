@@ -81,12 +81,11 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   
       // Carica le notifiche esistenti
 			const load = async () => {
-				let notifs = await fetch('/api/notifs/list', {
+				const notifs = await fetch('/api/notifs/list', {
 					method: "POST",
 	        headers: { "Content-Type": "application/json" },
 	        body: JSON.stringify(initialData)
 				}).then(resp => resp.json());
-				notifs = notifs.filter(notif => (notif.mod=="advance")||(notif.counter==0));
 				setNotifsList(notifs.map(notif => notif.rawData) || []);
 			};
 			load();

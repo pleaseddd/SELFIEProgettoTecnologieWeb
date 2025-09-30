@@ -1,12 +1,3 @@
-:root {
-  --sidebar-text: var(
-    --color-onSurface,
-    var(--onSurface, var(--color-on-surface, var(--on-surface, #D0DBCF)))
-  );
-
-  --sidebar-text-rgb: var(--color-onSurface-rgb, var(--onSurface-rgb, var(--color-on-surface-rgb, 208,219,207)));
-}
-
 .pomodoro-root {
   position: relative;
   min-height: 100vh;
@@ -35,16 +26,15 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  left: calc(-1 * var(--panel-width));
+  left: 0;
   top: 0;
   width: var(--panel-width);
   height: 100vh;
-
   background:
     linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)),
     var(--color-surface, var(--color-card-bg));
-  color: var(--sidebar-text);
-  --config-text: var(--sidebar-text);
+  color: var(--color-onSurface);
+  --config-text: var(--color-onSurface);
 
   box-shadow: 2px 0 18px rgba(var(--color-shadows-rgb), 0.12);
   transition: transform 0.32s cubic-bezier(.2,.9,.3,1), box-shadow 0.2s ease;
@@ -56,7 +46,7 @@
 }
 
 .config-wrapper.collapsed { transform: translateX(-100%); }
-.config-wrapper:not(.collapsed) { transform: translateX(var(--panel-width)); }
+.config-wrapper:not(.collapsed) {  transform: translateX(0);}
 
 .config-header {
   display: flex;
@@ -74,13 +64,13 @@
 .config-header h2 {
   font-size: 1.25rem;
   margin: 0;
-  color: var(--config-text, var(--sidebar-text, var(--color-terziary)));
+  color: var(--config-text, var(--color-onSurface, var(--color-terziary)));
   font-weight: 800;
   letter-spacing: -0.01em;
 }
 .config-header .btn-link {
   font-size: 1.5rem;
-  color: var(--config-text, var(--sidebar-text, var(--color-terziary)));
+  color: var(--config-text, var(--color-onSurface, var(--color-terziary)));
 }
 
 .config-body {
@@ -286,8 +276,7 @@
   padding: 0.5rem;
   border-radius: 10px;
   background: linear-gradient(180deg, var(--color-surface), rgba(var(--color-shadows-rgb), 0.02));
-  /* usa la variabile della sidebar (eredita da .config-wrapper quando dentro la sidebar) */
-  color: var(--sidebar-text);
+  color: var(--color-onSurface);
   margin-bottom: 0.5rem;
   height: 3.2rem;
   border: 1px solid rgba(var(--color-shadows-rgb), 0.06);
@@ -298,7 +287,7 @@
   background: linear-gradient(180deg, rgba(var(--color-secondary-rgb),0.02), var(--color-surface));
 }
 .cycle-suggestion h3 { display: none; }
-.cycle-suggestion p { margin: 0; font-size: 0.9rem; color: var(--sidebar-text); }
+.cycle-suggestion p { margin: 0; font-size: 0.9rem; color: var(--color-onSurface); }
 
 @media (max-width: 1024px) {
   .pomodoro-root { padding: 1.5rem; gap: 1.5rem; }

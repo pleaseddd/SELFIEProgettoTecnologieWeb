@@ -1,17 +1,3 @@
-:root {
-  --on-surface-effective: var(--color-onSurface, var(--color-on-surface, #0B1220));
-  --color-shadows-rgb-effective: var(--color-shadows-rgb, 18, 49, 54);
-  --color-accents-rgb-effective: var(--color-accents-rgb, 46, 107, 115);
-  --color-details-rgb-effective: var(--color-details-rgb, 255, 255, 255);
-  --button-text-effective: var(--color-button-text, #ffffff);
-  --card-bg-effective: var(--color-cardBg, rgba(18, 49, 54, 0.03));
-  --muted-effective: var(--color-muted, rgba(0, 0, 0, 0.45));
-  --form-control-bg: var(--color-secondary, transparent);
-  --form-control-color: var(--color-onPrimary, var(--color-onSurface, #0B1220));
-  --form-helper-color: var(--muted-effective);
-}
-
-/* ProPic */
 .propic-container {
   position: relative;
   display: inline-block;
@@ -23,7 +9,7 @@
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(var(--color-shadows-rgb, 18, 49, 54), 0.10);
   transition: transform 200ms ease, box-shadow 200ms ease;
-  background: var(--card-bg-effective);
+  background: var(--color-cardBg);
 }
 
 .propic-container:focus-within,
@@ -54,7 +40,7 @@
   pointer-events: none;
   transition: opacity 220ms ease, transform 220ms ease, background-color 160ms ease;
   background: linear-gradient(180deg, rgba(var(--color-accents-rgb, 46, 107, 115), 0.98), rgba(var(--color-accents-rgb, 46, 107, 115), 0.86));
-  color: var(--button-text-effective);
+  color: var(--color-button-text);
   border: none;
   padding: .45rem .65rem;
   border-radius: 999px;
@@ -77,7 +63,6 @@
   transform: translate(-50%, -50%) scale(1.02);
 }
 
-/* Form layout */
 .pers-form-container {
   display: flex;
   flex-direction: column;
@@ -100,7 +85,7 @@
 
 .pers-form-label {
   margin-bottom: .25rem;
-  color: var(--color-details);
+  color: var(--color-shadows);
   font-weight: 600;
   font-size: .95rem;
   line-height: 1.25;
@@ -122,11 +107,10 @@ select.pers-form-control,
   padding: .56rem .7rem;
   border-radius: 10px;
 
-  /* ora usiamo le variabili specifiche per i controlli */
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(--color-secondary) !important;
+  color: var(--color-onPrimary) !important;
+  caret-color: var(--color-onPrimary) !important;
+  -webkit-text-fill-color: var(--color-onPrimary) !important;
 
   border: 1px solid rgba(var(--color-shadows-rgb, 18, 49, 54), 0.10);
   box-sizing: border-box;
@@ -136,13 +120,12 @@ select.pers-form-control,
   transition: border-color 160ms ease, box-shadow 160ms ease, transform 120ms ease;
 }
 
-/* placeholder -> usare muted della palette */
 .pers-form-control input::placeholder,
 .pers-form-control textarea::placeholder,
 input.pers-form-control::placeholder,
 textarea.pers-form-control::placeholder,
 .pers-form-control .form-control::placeholder {
-  color: var(--form-helper-color);
+  color: var(--color-muted);
   opacity: 1;
 }
 
@@ -154,10 +137,10 @@ textarea.pers-form-control:focus,
 select.pers-form-control:focus,
 .pers-form-control .form-control:focus {
   outline: none;
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(--color-secondary) !important;
+  color: var(--color-onPrimary) !important;
+  caret-color: var(--color-onPrimary) !important;
+  -webkit-text-fill-color: var(--color-onPrimary) !important;
 
   border-color: rgba(var(--color-accents-rgb, 46, 107, 115), 0.96);
   box-shadow: 0 8px 0 0 rgba(var(--color-accents-rgb, 46, 107, 115), 0.18);
@@ -165,7 +148,6 @@ select.pers-form-control:focus,
 }
 
 
-/* invalid state */
 .pers-form-control input[aria-invalid="true"],
 .pers-form-control textarea[aria-invalid="true"],
 .pers-form-control select[aria-invalid="true"],
@@ -176,17 +158,15 @@ select.pers-form-control[aria-invalid="true"] {
   box-shadow: 0 2px 0 0 rgba(214, 40, 46, 0.10);
 }
 
-/* selection inside inputs */
 .pers-form-control input::selection,
 .pers-form-control textarea::selection,
 input.pers-form-control::selection,
 textarea.pers-form-control::selection,
 .pers-form-control .form-control::selection {
   background: rgba(var(--color-accents-rgb, 46, 107, 115), 0.18);
-  color: var(--form-control-color, var(--color-onPrimary, var(--color-onSurface, #0B1220)));
+  color: var(--color-onPrimary, var(--color-onPrimary, var(--color-onSurface, #0B1220)));
 }
 
-/* disabled */
 .pers-form-control input:disabled,
 .pers-form-control textarea:disabled,
 .pers-form-control select:disabled,
@@ -194,14 +174,13 @@ input.pers-form-control:disabled,
 textarea.pers-form-control:disabled,
 select.pers-form-control:disabled,
 .pers-form-control .form-control:disabled {
-  background: var(--form-control-bg) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
-  color: var(--form-control-color) !important;
+  background: var(--color-secondary) !important;
+  -webkit-text-fill-color: var(--color-onPrimary) !important;
+  color: var(--color-onPrimary) !important;
   opacity: .85;
   cursor: not-allowed;
 }
 
-/* data-overridden helper */
 .pers-form-control input[data-overridden],
 .pers-form-control textarea[data-overridden],
 .pers-form-control select[data-overridden],
@@ -209,11 +188,10 @@ input.pers-form-control[data-overridden],
 textarea.pers-form-control[data-overridden],
 select.pers-form-control[data-overridden],
 .pers-form-control .form-control[data-overridden] {
-  background: var(--form-control-bg, var(--color-secondary, transparent)) !important;
-  color: var(--form-control-color, var(--color-onPrimary, var(--color-onSurface, #0B1220))) !important;
+  background: var(--color-secondary, var(--color-secondary, transparent)) !important;
+  color: var(--color-onPrimary, var(--color-onPrimary, var(--color-onSurface, #0B1220))) !important;
 }
 
-/* Autofill (Chrome) — must override UA rules */
 .pers-form-control input:-webkit-autofill,
 .pers-form-control textarea:-webkit-autofill,
 .pers-form-control select:-webkit-autofill,
@@ -221,13 +199,12 @@ input.pers-form-control:-webkit-autofill,
 textarea.pers-form-control:-webkit-autofill,
 select.pers-form-control:-webkit-autofill,
 .pers-form-control .form-control:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px var(--form-control-bg, var(--color-secondary, transparent)) inset !important;
-  box-shadow: 0 0 0px 1000px var(--form-control-bg, var(--color-secondary, transparent)) inset !important;
-  -webkit-text-fill-color: var(--form-control-color, var(--color-onPrimary, var(--color-onSurface, #0B1220))) !important;
-  caret-color: var(--form-control-color, var(--color-onPrimary, var(--color-onSurface, #0B1220))) !important;
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-secondary) inset !important;
+  box-shadow: 0 0 0px 1000px var(--color-secondary) inset !important;
+  -webkit-text-fill-color: var(--color-onPrimary, var(--color-onPrimary, var(--color-onSurface, #0B1220))) !important;
+  caret-color: var(--color-onPrimary, var(--color-onPrimary, var(--color-onSurface, #0B1220))) !important;
 }
 
-/* responsive tweaks */
 @media (min-width:768px) {
   .propic-container {
     margin: 0 1.5rem .5rem 0;
@@ -265,7 +242,6 @@ select.pers-form-control:-webkit-autofill,
   }
 }
 
-/* prefers-contrast tweak */
 @media (prefers-contrast: more) {
   .propic-container {
     box-shadow: 0 10px 28px rgba(var(--color-shadows-rgb, 18, 49, 54), 0.16);
@@ -278,7 +254,6 @@ select.pers-form-control:-webkit-autofill,
   }
 }
 
-/* contrast helpers */
 .force-text-dark {
   color: #0B1220 !important;
 }

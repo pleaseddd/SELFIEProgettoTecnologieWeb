@@ -1,44 +1,9 @@
-:root {
-  --on-surface-effective: var(--on-surface, var(--color-on-surface, var(--colorOnSurface, #0B1220)));
-  --surface-effective: var(--surface, var(--color-surface, var(--colorSurface, #ffffff)));
-  --color-primary-effective: var(--color-primary, var(--primary, #244E5A));
-  --color-shadows-rgb-effective: var(--color-shadows-rgb, var(--shadows-rgb, 18, 49, 54));
-  --color-details-rgb-effective: var(--color-details-rgb, var(--details-rgb, 255, 255, 255));
-  --color-terziary-rgb-effective: var(--color-terziary-rgb, var(--terziary-rgb, 243, 191, 45));
-  --color-accents-rgb-effective: var(--color-accents-rgb, var(--accents-rgb, 46, 107, 115));
-  --button-text-effective: var(--button-text, var(--color-button-text, var(--buttonText, #ffffff)));
-  --button-bg-effective: var(--button-bg, var(--color-button-bg, var(--buttonBg, #D27E86)));
-  --muted-effective: var(--muted, var(--color-muted, rgba(0, 0, 0, 0.45)));
-
-  --form-gap: 0.5rem;
-  --form-label-weight: 600;
-  --form-font-size: 1rem;
-  --form-line-height: 1.4;
-
-  --field-label-color: var(--on-surface-effective, #0B1220);
-
-  --form-control-bg: var(--color-secondary, transparent);
-  --form-control-color: var(--color-onPrimary, var(--on-surface-effective, #0B1220));
-  --form-helper-color: var(--muted-effective, rgba(0,0,0,0.45));
-
-  --input-border-rgb: var(--color-shadows-rgb-effective, 18, 49, 54);
-  --input-placeholder: var(--form-helper-color);
-  --error-color: #D6282E;
-  --focus-accent-rgb: var(--color-accents-rgb-effective, 46, 107, 115);
-  --focus-accent-alpha: 0.12;
-  --label-width-desktop: 32%;
-
-  --low-contrast-bg: rgba(var(--color-details-rgb-effective, 255, 255, 255), 0.06);
-  --force-contrast-text-dark: #0B1220;
-  --force-contrast-text-light: #FFFFFF;
-}
-
 .gen-form-container {
   display: flex;
   flex-direction: column;
-  gap: var(--form-gap);
-  font-size: var(--form-font-size);
-  line-height: var(--form-line-height);
+  gap: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.4;
   color: var(--input-text);
 }
 
@@ -60,11 +25,11 @@
 .gen-form-label {
   flex: 0 0 auto;
   margin-bottom: .25rem;
-  font-weight: var(--form-label-weight);
+  font-weight: 600;
   font-size: 0.95rem;
   letter-spacing: -0.01em;
   display: block;
-  color: var(--color-details);
+  color: var(--color-shadows);
 }
 
 .gen-form-control {
@@ -89,13 +54,12 @@ select.gen-form-control {
   width: 100%;
   padding: 0.5rem 0.625rem;
   border-radius: 8px;
-  border: 1px solid rgba(var(--input-border-rgb), 0.10);
+  border: 1px solid rgba(var(--color-shadows), 0.10);
 
-  /* forza la palette: sfondo/testo/caret e -webkit-text-fill per prevenire override UA */
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(--color-secondary) !important;
+  color: var(--color-onPrimary) !important;
+  caret-color: var(--color-onPrimary) !important;
+  -webkit-text-fill-color: var(--color-onPrimary) !important;
 
   font-size: 0.95rem;
   line-height: 1.3;
@@ -107,23 +71,20 @@ select.gen-form-control {
   appearance: none;
 }
 
-/* low-contrast variant (mantiene forcing se presente) */
 .low-contrast .gen-form-control input,
 .low-contrast .gen-form-control textarea,
 .low-contrast .gen-form-control select,
 .low-contrast .gen-form-control .form-control {
-  background: var(--low-contrast-bg) !important;
-  border: 1px solid rgba(var(--input-border-rgb), 0.16);
+  background: var(--color-details) !important;
+  border: 1px solid rgba(var(--color-shadows), 0.16);
 }
 
-/* placeholder */
 .gen-form-control input::placeholder,
 .gen-form-control textarea::placeholder {
-  color: var(--input-placeholder);
+  color: var(--color-muted);
   opacity: 1;
 }
 
-/* focus: forziamo bg/colore identici e usiamo bordo/ombra solo per evidenziare */
 .gen-form-control input:focus,
 .gen-form-control textarea:focus,
 .gen-form-control select:focus,
@@ -134,73 +95,68 @@ select.gen-form-control {
 .gen-form-control .form-control:focus-visible {
   outline: none;
 
-  /* forza ancora (important) per evitare che il browser imposti bianco o altro */
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(--color-secondary) !important;
+  color: var(--color-onPrimary) !important;
+  caret-color: var(--color-onPrimary) !important;
+  -webkit-text-fill-color: var(--color-onPrimary) !important;
 
-  border-color: rgba(var(--focus-accent-rgb), 0.96);
-  box-shadow: 0 6px 0 0 rgba(var(--focus-accent-rgb), var(--focus-accent-alpha));
+  border-color: rgba(var(--color-accents), 0.96);
+  box-shadow: 0 6px 0 0 rgba(var(--color-accents), 0.12);
   transform: translateY(-1px);
 }
 
-/* focus-visible con anello aggiuntivo */
 .gen-form-control input:focus-visible,
 .gen-form-control textarea:focus-visible,
 .gen-form-control select:focus-visible {
   box-shadow:
-    0 6px 0 0 rgba(var(--focus-accent-rgb), var(--focus-accent-alpha)),
-    0 0 0 4px rgba(var(--focus-accent-rgb), 0.06);
-  border-color: rgba(var(--focus-accent-rgb), 1);
+    0 6px 0 0 rgba(var(--color-accents), 0.12),
+    0 0 0 4px rgba(var(--color-accents), 0.06);
+  border-color: rgba(var(--color-accents), 1);
 }
 
-/* invalid state */
 .gen-form-control input[aria-invalid="true"],
 .gen-form-control textarea[aria-invalid="true"],
 .gen-form-control select[aria-invalid="true"],
 .gen-form-control .form-control[aria-invalid="true"] {
-  border-color: var(--error-color);
+  border-color: var(#D6282E);
   box-shadow: 0 2px 0 0 rgba(214, 40, 46, 0.10);
 }
 
-/* disabled: manteniamo palette e contrasto */
 .gen-form-control input:disabled,
 .gen-form-control textarea:disabled,
 .gen-form-control select:disabled,
 .gen-form-control .form-control:disabled {
   opacity: 0.85;
   cursor: not-allowed;
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(--color-secondary) !important;
+  color: var(--color-onPrimary) !important;
+  -webkit-text-fill-color: var(--color-onPrimary) !important;
 }
 
-/* data-overridden helper */
 .gen-form-control input[data-overridden],
 .gen-form-control textarea[data-overridden],
 .gen-form-control select[data-overridden],
 .gen-form-control .form-control[data-overridden] {
-  background: var(--form-control-bg) !important;
-  color: var(--form-control-color) !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
+  background: var(--color-secondary) !important;
+  color: var(--color-onPrimary) !important;
+  -webkit-text-fill-color: var(--color-onPrimary) !important;
 }
 
 .gen-form-control input::selection,
 .gen-form-control textarea::selection,
 .gen-form-control .form-control::selection {
-  background: rgba(var(--focus-accent-rgb), 0.18);
-  color: var(--form-control-color) !important;
+  background: rgba(var(--color-accents), 0.18);
+  color: var(--color-onPrimary) !important;
 }
 
 .gen-form-control input:-webkit-autofill,
 .gen-form-control textarea:-webkit-autofill,
 .gen-form-control select:-webkit-autofill,
 .gen-form-control .form-control:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
-  box-shadow: 0 0 0px 1000px var(--form-control-bg) inset !important;
-  -webkit-text-fill-color: var(--form-control-color) !important;
-  caret-color: var(--form-control-color) !important;
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-secondary) inset !important;
+  box-shadow: 0 0 0px 1000px var(--color-secondary) inset !important;
+  -webkit-text-fill-color: var(--color-onPrimary) !important;
+  caret-color: var(--color-onPrimary) !important;
 }
 
 @media (prefers-contrast: more) {
@@ -208,8 +164,8 @@ select.gen-form-control {
   .gen-form-control textarea,
   .gen-form-control select,
   .gen-form-control .form-control {
-    border-color: rgba(var(--input-border-rgb), 0.22);
-    box-shadow: 0 6px 18px rgba(var(--input-border-rgb), 0.06);
+    border-color: rgba(var(--color-shadows), 0.22);
+    box-shadow: 0 6px 18px rgba(var(--color-shadows), 0.06);
   }
 }
 
@@ -221,7 +177,7 @@ select.gen-form-control {
   }
 
   .gen-form-label {
-    flex: 0 0 var(--label-width-desktop);
+    flex: 0 0 32%;
     margin-top: .5rem;  
     margin-bottom: 0;  
     text-align: left;

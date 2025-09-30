@@ -1,4 +1,3 @@
-import React from "react";
 import "./style/home.css";
 import NotesCarousel from "./components/home/NotesCarousel.js";
 import Weather from "./components/home/Weather.js";

@@ -1,19 +1,3 @@
-:root {
-  --color-primary: #568990;
-  --color-secondary: #364853;
-  --color-terziary: #262333;
-  --color-details: #050326;
-  --color-shadows: #050326;
-  --color-accents: #A25C2F;
-  --color-on-primary: #D0DBCF;
-  --color-surface: #12112D;
-  --color-on-surface: #D0DBCF;
-  --color-button-bg: #8ABD54;
-  --color-button-text: #050326;
-  --color-muted: rgba(255, 255, 255, 0.7);
-  --color-card-bg: rgba(36, 78, 90, 0.10);
-}
-
 .modal-content {
   background-color: var(--color-surface, var(--surface));
   color: var(--color-on-surface, var(--on-surface));
@@ -70,7 +54,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Placeholder (con prefissi e fallback variabili) */
 .modal-content input.form-control::placeholder,
 .modal-content textarea.form-control::placeholder,
 .modal-content input.form-control::-webkit-input-placeholder,
@@ -138,7 +121,6 @@
   -webkit-text-fill-color: var(--color-onSurface) !important;
 }
 
-/* Small specificity fallback for .modal-body wrappers if Bootstrap overrides */
 .modal-body input.form-control,
 .modal-body textarea.form-control,
 .modal-body .form-control,
@@ -150,7 +132,6 @@
   border: 1px solid rgba(var(--color-accents-rgb, 162, 92, 47), 0.12) !important;
 }
 
-/* Keep buttons and other existing rules (unchanged) */
 .btn-primary {
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
