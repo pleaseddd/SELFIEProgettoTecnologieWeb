@@ -5,6 +5,7 @@ import { useTheme } from "../components/ThemeContext";
 function Sidebar({ toggleSidebar, logout }) {
   return (
     <>
+      {/* Overlay per chiudere la sidebar cliccando fuori */}
       <div className="sidebar-overlay" onClick={toggleSidebar}></div>
       <div className="sidebar open">
         <button type="button" className="close-btn" onClick={toggleSidebar}>

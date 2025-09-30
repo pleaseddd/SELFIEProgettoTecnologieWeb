@@ -10,16 +10,19 @@ module.exports = {
 	}
 };
 
+//Elenco di tutte le iscrizioni di un utente al service worker
 async function POST_list(req, res) {
 	const subs = await swsubsdb.findBy({ user: req.body.user_id });
 	res.status(201).json(subs);
 }
 
+//Trova una specifica iscrizione
 async function POST_getswsub(req, res) {
 	const sub = await swsubsdb.findBy({ endpoint: req.body.endpoint });
 	res.status(201).json(sub);
 }
 
+//Memorizza l'iscrizione nel db
 function POST_subscribe(req, res) {
 	try {
 		const sub = Object.assign(req.body.sub, {
@@ -36,6 +39,7 @@ function POST_subscribe(req, res) {
 	}
 }
 
+//Elimina i dati dell'iscrizione nel db
 async function POST_unsubscribe(req, res) {
 	try {
 		await swsubsdb.deleteBy({ endpoint: req.body.endpoint });
@@ -46,6 +50,7 @@ async function POST_unsubscribe(req, res) {
 	}
 }
 
+//Modifica il nome del dispositivo di un'iscrizione
 async function POST_updateswsubname(req, res) {
 	try {
 		await swsubsdb.updateName(req.body.endpoint, req.body.name);

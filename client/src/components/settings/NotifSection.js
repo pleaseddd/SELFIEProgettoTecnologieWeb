@@ -1,17 +1,20 @@
+//Moduli esterni
 import React, { useState, useEffect } from "react";
 import { Card, Form, Button } from "react-bootstrap";
-
 import { toast } from 'react-toastify';
 
+//Moduli interni
 import SwSubSwitch from "./switch-swsub.js";
-import EmailNotifSwitch from "./switch-email.js";
 
 import { useDevice } from "../../hooks/swsubsHooks.js";
 
 import '../../style/settings/Settings.css';
 
 const BrowserNotif = ({ user }) => {
-
+	/*
+   * Genero automaticamente un nome per il dispositivo
+	 * che si potrà modificare
+	 */
 	const { device, setDevice } = useDevice();
 
 	const [newName, setNewName] = useState(device?.name);
@@ -23,7 +26,8 @@ const BrowserNotif = ({ user }) => {
 	const handleChangeName = async () => {
 		if(!newName?.trim())
 			return;
-
+		
+		//Aggiorno il db con il nuovo nome
 		const update = await fetch("/api/swsub/updatename", {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
@@ -34,17 +38,14 @@ const BrowserNotif = ({ user }) => {
 		}).then(resp => resp.json());
 		console.log(update.message);
 
+		//Feedback visivo
 		toast('Nome del dispositivo cambiato con successo!', { type: 'success' });
 
 		setDevice(prev => ({...prev, name: newName}));
 	};
 
 	return (
-		<fieldset className="fieldset-custom mb-2">
-			<legend className="legend-custom">
-				Notifiche browser
-			</legend>
-
+		<div>
 			<div className="mb-2">
 				<SwSubSwitch label="Notifiche push" user={user} deviceName={device?.name} />
 			</div>
@@ -71,7 +72,7 @@ const BrowserNotif = ({ user }) => {
 					</Button>
 				</div>
 			</div>
-		</fieldset>
+		</div>
 	);
 };
 
@@ -84,17 +85,6 @@ const NotifSection = ({ user, updateUser }) => {
 				</div>
 
 				<BrowserNotif user={user} />
-
-				<fieldset className="fieldset-custom">
-					<legend className="legend-custom">
-						Notifiche via email
-					</legend>
-					<EmailNotifSwitch
-						label="Notifiche tramite gmail"
-						user={user}
-						updateUser={updateUser}
-					/>
-				</fieldset>
 			</Card.Body>
 		</Card>
 	);

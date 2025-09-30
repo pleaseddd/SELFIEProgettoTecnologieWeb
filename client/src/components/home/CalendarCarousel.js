@@ -15,6 +15,7 @@ function CalendarCarousel({ user }) {
   const timeFlagRef = useRef(0);
 
   const navigate = useNavigate();
+  //Recupera gli eventi in arrivo dall'utente
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -40,7 +41,7 @@ function CalendarCarousel({ user }) {
     fetchEvents();
   }, [user._id]);
 
-  //TIME MACHINE
+  //Gestione time machine come fatto in Calendar page
   useEffect(() => {
     timeFlagRef.current = timeFlag;
   }, [timeFlag]);
@@ -85,9 +86,8 @@ function CalendarCarousel({ user }) {
     return () => clearInterval(interval);
   }, [serverTime]);
 
-  //FINE TIME MACHINE
-
-  //Countdown per ogni evento
+  //Gestione countdown eventi
+  // Aggiorna i countdown ogni secondo e viene richiamato ogni volta che cambia serverTime e ci sono nuovi eventi
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date(serverTime.epochMilliseconds);
@@ -121,11 +121,13 @@ function CalendarCarousel({ user }) {
   }, [events]);
 
   return events.length === 0 ? (
+    
     <div
       className="d-flex justify-content-center align-items-center flex-column p-4"
       style={{ minHeight: "200px", cursor: "pointer" }}
       onClick={() => navigate("/Calendario")}
     >
+      {/* Messaggio se non ci sono eventi */}
       <div className="alert alert-info text-center shadow-sm">
         <span className="d-inline-flex align-items-center gap-2">
           Non hai nessun evento in arrivo. Clicca qui per andare al calendario
@@ -140,6 +142,7 @@ function CalendarCarousel({ user }) {
       data-bs-ride="carousel"
       data-bs-interval="5000"
     >
+      {/* nel caso ci siano eventi li inserisce nel carousel */}
       <div className="carousel-inner">
         {events.map((event, index) => (
           <div

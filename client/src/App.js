@@ -48,7 +48,7 @@ const App = () => {
     fetchUser();
   }, []);
 
-  //Se disconnetto l'utente, lo rimuovo dal token
+  //Se l'utente si disconnette, viene rimosso il token
   const handleLogout = async () => {
     await fetch("/api/user/logout", {
       method: "POST",
@@ -58,7 +58,7 @@ const App = () => {
   };
 
 
-  //Aggiorno lo stato user 
+  //Aggiorna lo stato dell'utente ogni modifica
   const handleSetUser = (userData) => {
     setUser(userData);
   };
@@ -79,13 +79,14 @@ const App = () => {
 		<ThemeProvider>
 	    <Router>
 	      <Routes>
+			{/* Reindirizzamento alla pagina corretta in base all'autenticazione */}
 	        <Route
 	          path="/"
 	          element={<Navigate to={user ? "/home" : "/login"} replace />}
 	        />
 
 	        <Route path="/login" element={<Login setUser={handleSetUser} />} />
-
+			{/* Pagine accessibili solo se l'utente è autenticato, altrimenti reindirizzamento al login */}
 	        <Route
 	          path="/home"
 	          element={

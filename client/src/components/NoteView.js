@@ -3,14 +3,16 @@ import { Modal, Button } from "react-bootstrap";
 import ConfirmModal from "./ConfirmModal";
 import { FaRegTrashCan,FaPencil  } from "react-icons/fa6";
 
-
+//Componente per visualizzare una nota in una modale
 function NoteView({ show, onClose, note, onEdit, onDelete }) {
+  //Gestione della modale di conferma per l'eliminazione della nota
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   if (!note) return null;
   const openConfirm = () => setShowConfirm(true);
   const closeConfirm = () => setShowConfirm(false);
 
+  //Conferma l'eliminazione della nota e chiude la modale di conferma
   const confirmDelete = () => {
     setLoading(true);
     closeConfirm();
@@ -24,6 +26,7 @@ function NoteView({ show, onClose, note, onEdit, onDelete }) {
         <Modal.Title>Nota</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {/* Visualizza il titolo, la categoria e il corpo della nota */}
         <h5 className="text-center">{note.title}</h5>
         <hr />
         <p>

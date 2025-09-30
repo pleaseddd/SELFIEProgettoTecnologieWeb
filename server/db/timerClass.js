@@ -1,3 +1,4 @@
+//Moduli esterni
 const mongoose = require('mongoose');
 
 //schema per le preferenze utente su durata lavoro e pause
@@ -7,22 +8,25 @@ const TimerConfigSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  
   workMinutes: {
     type: Number,
     required: true,
     default: 25
   },
+  
   shortBreakMinutes: {
     type: Number,
     required: true,
     default: 5
   },
+  
   longBreakMinutes: {
     type: Number,
     required: true,
     default: 15
   }
-}, { timestamps: true });
+}, { timestamps: true }); //Aggiunge automaticamente "createdAt" e "updatedAt"
 
 //schema per salvare le sessioni pomodoro di un utente
 const PomodoroSessionSchema = new mongoose.Schema({
@@ -47,7 +51,6 @@ const PomodoroSessionSchema = new mongoose.Schema({
     default: null
   }
 });
-
 
 const TimerConfig = mongoose.model('TimerConfig', TimerConfigSchema);
 const PomodoroSession = mongoose.model('PomodoroSession', PomodoroSessionSchema);

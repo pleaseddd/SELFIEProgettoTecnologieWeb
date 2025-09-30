@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 import '../../style/settings/Settings.css';
 
+//Il pulsante che porta alla schermata di login di google  
 const GoogleAuth = ({ user }) => {
 	return (
 		<div>
@@ -15,6 +16,7 @@ const GoogleAuth = ({ user }) => {
 	);
 };
 
+//Una volta fatto il login, vengono mostrati foto profilo e indirizzo email
 const GoogleProfile = ({ user }) => {
 	return (
 		<div className="d-flex align-items-center mb-2 border border-1 rounded-pill px-2 py-1">
@@ -26,23 +28,29 @@ const GoogleProfile = ({ user }) => {
 				height={22}
 				referrerPolicy="no-referrer"
 			/>
-			<h6 className="mb-0">{user.google?.gmail?.address}</h6>
+			<p className="mb-0">{user.google?.gmail?.address}</p>
 		</div>
 	);
 };
 
+//Selezione del calendario google in cui salvare gli eventi
 const GoogleCalendarUsed = ({ user, updateUser }) => {
 	const [calslist, setCalslist] = useState([]);
 	const [selCal, setSelCal] = useState("");
 
 	useEffect(() => {
+		//Estraggo i calendari esistenti dell'account google
 		const load = async () => {
 			let data = await fetch('/api/google/getcalendars', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify({ googleTokens: user.google.tokens })
 			}).then(resp => resp.json());
-
+			
+			/*
+			 * Se risulta un messaggio di errore viene fatto il logout
+			 * succede quando, per esempio, i token di accesso sono scaduti
+			 */
 			if(data.hasOwnProperty('message')) {
 				const logout = await fetch('/api/google/logout', {
 					method: 'POST',
@@ -50,18 +58,25 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 					body: JSON.stringify({ user_id: user._id })
 				}).then(resp => resp.json());
 				updateUser(logout);
+				return;
 			}
-			else {
-				data = data.filter(cal => cal.accessRole == "owner");
-				if(!user.google.hasOwnProperty("calendarId"))
-					data.unshift({id: "nocal", summary: ""});
-				setCalslist(data);
-			}
+		
+			//Seleziono solo i calendari su cui posso scrivere	
+			data = data.filter(cal => cal.accessRole == "owner");
 
+			/*
+			 * Nel caso in cui l'utente non abbia ancora scelto
+       * il calendario, ne viene mostrato uno vuoto fittizio
+			 */
+			if(!user.google.hasOwnProperty("calendarId"))
+				data.unshift({id: "nocal", summary: ""});
+
+			setCalslist(data);
 		}
 		load();
 	}, []);
-
+	
+	//Per salvare la scelta nel db
 	const handleChangeCal = async () =>  {
 		const update = await fetch("/api/google/setcal", {
 			method: 'POST',
@@ -71,7 +86,10 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 				calid: selCal
 			})
 		}).then(resp => resp.json());
+
+		//Feedback visivo
 		toast('Calendario google impostato con successo!', { type: 'success' });
+
 		updateUser(update);
 	};
 
@@ -116,13 +134,16 @@ const GoogleCalendarUsed = ({ user, updateUser }) => {
 	);
 };
 
+//Componente che raggruppa tutti i sottocomponenti definiti sopra
 const ExternalCalsSection = ({ user, updateUser }) => {
+	
 	const [googleLogin, setGoogleLogin] = useState(user.google.isLogged);
-
+	
 	useEffect(() => {
 		setGoogleLogin(user.google.isLogged);
 	}, [user.google.isLogged]);
-
+	
+	//In caso di logout elimino i dati dal db
 	const handleLogout = async () => {
 		const resp = await fetch('/api/google/logout', {
 			method: 'POST',
@@ -139,33 +160,32 @@ const ExternalCalsSection = ({ user, updateUser }) => {
 					<h5>Calendari esterni</h5>
 				</div>
 
-				<fieldset className="fieldset-custom">
-					<legend className="legend-custom">
-						Google calendar
-					</legend>
-				{
-					googleLogin ?
-					(<div>
-						<div className="d-flex flex-column flex-md-row justify-content-start align-items-center column-gap-3 flex-wrap">
-							<GoogleProfile user={user} />
-							<GoogleCalendarUsed
-								user={user}
-								updateUser={updateUser}
-							/>
-						</div>
+				<div>
+					<h6>Google calendar</h6>
 
-						<Button
-							variant="outline-danger"
-							className="mt-3"
-							onClick={handleLogout}
-						>
-							Google - Logout
-						</Button>
-					</div>)
+					{
+						googleLogin ? (
+						<div>
+							<div className="d-flex flex-column flex-md-row justify-content-start align-items-center column-gap-3 flex-wrap">
+								<GoogleProfile user={user} />
+								<GoogleCalendarUsed
+									user={user}
+									updateUser={updateUser}
+								/>
+							</div>
+
+							<Button
+								variant="outline-danger"
+								className="mt-3"
+								onClick={handleLogout}
+							>
+								Google - Logout
+							</Button>
+						</div>)
 					:
-					(<GoogleAuth user={user} />)
+						(<GoogleAuth user={user} />)
 				}
-				</fieldset>
+				</div>
 			</Card.Body>
 		</Card>
 	);

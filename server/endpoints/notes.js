@@ -1,3 +1,4 @@
+//Moduli interni per la manipolazione dei database
 const notesdb = require('../db/notesClass.js');
 
 module.exports = {
@@ -10,18 +11,20 @@ module.exports = {
 	}
 };
 
+//Lista delle note di un utente
 async function POST_list(req, res) {
 	try {
-	  // filtra per id utente
+	    //Filtra per id utente
 		const userId = req.body.userid;
 		const notes = await notesdb.findBy({ author: userId });
 
-		res.status(201).json(notes);
+		res.status(201).json(notes); //Successo
 	} catch (err) {
 		res.status(500).json({ message: err.message });
 	}
 }
 
+//Memorizzazione di una nuova nota nel db
 async function POST_new(req, res) {
   try {
     const { title, category, body, userid } = req.body;
@@ -37,6 +40,7 @@ async function POST_new(req, res) {
   }
 }
 
+//Lista delle ultime n note modificate piu' recentemente
 async function POST_last(req, res) {
 	try {
 	  const userId = req.body.userid;
@@ -50,6 +54,7 @@ async function POST_last(req, res) {
 	}
 }
 
+//Eliminazione di una nota dal db
 async function POST_delete(req, res) {
   try {
     const { noteid, userid } = req.body;
@@ -62,12 +67,13 @@ async function POST_delete(req, res) {
 
     await note.deleteOne();
 
-    res.json({ message: "Nota eliminata" });
+    res.status(200).json({ message: "Nota eliminata" }); //Successo
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 }
 
+//Modifica di una nota esistente
 async function POST_update(req, res) {
   try {
     const { noteid, title, category, body, userid } = req.body;

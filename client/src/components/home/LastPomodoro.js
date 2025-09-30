@@ -1,7 +1,9 @@
 import { Card } from "react-bootstrap";
 import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 function LastPomodoro({ user }) {
+  const navigate = useNavigate();
+  //Prepara usestate per ultimo pomodoro
   const [ultimoPomodoro, setUltimoPomodoro] = useState({
     total: 0,
     work: 0,
@@ -10,7 +12,8 @@ function LastPomodoro({ user }) {
   });
 
   useEffect(() => {
-    const fetchNotes = async () => {
+    //Recupera ultimo pomodoro dell'utente
+    const fetchpomodoro = async () => {
       try {
         const response = await fetch("/api/user/info", {
           method: "POST",
@@ -25,7 +28,10 @@ function LastPomodoro({ user }) {
             total: data.lastPomodoroSession.total,
             work: data.lastPomodoroSession.work,
             break: data.lastPomodoroSession.break,
-            date: new Date(data.lastPomodoroSession.updatedAt).toLocaleDateString("it-IT", {
+            date: new Date(
+              data.lastPomodoroSession.updatedAt
+            ).toLocaleDateString("it-IT", {
+              //taglia i valori della data
               day: "2-digit",
               month: "2-digit",
               year: "numeric",
@@ -39,11 +45,16 @@ function LastPomodoro({ user }) {
       }
     };
 
-    fetchNotes();
+    fetchpomodoro();
   }, [user._id]);
 
   return (
-    <div className="d-flex justify-content-center align-items-center w-100 mt-4">
+    <div
+      className="d-flex justify-content-center align-items-center w-100 mt-4"
+      //link alla pagina pomodoro dalla card
+      onClick={() => navigate("/Pomodoro")}
+      style={{ cursor: "pointer" }}
+    >
       <Card
         className="shadow-sm rounded-3 border-0"
         style={{ width: "100%", maxWidth: "400px" }}

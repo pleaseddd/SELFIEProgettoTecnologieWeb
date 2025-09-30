@@ -17,7 +17,8 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
   const editorRef = useRef(null);
   const [message, setMessage] = useState("");
 
-//Verifico che se sto modificando o meno una nota e nel caso aggiorno le variabili
+//Verifica se l'utente sta modificando o meno una nota e nel caso aggiorna le variabili
+//di stato con i valori della nota selezionata
   useEffect(() => {
     if (selectedNote) {
       setForm({
@@ -25,7 +26,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
         category: selectedNote.category,
         text: selectedNote.body,
       });
-      //Metto un timeout per essere sicuro che il Trix Editor sia caricato prima di settare il contenuto
+      //timeout per verificare il Trix Editor sia caricato prima di settare il contenuto
       setTimeout(() => {
         const editor = document.querySelector("trix-editor");
         if (editor && selectedNote.body) {
@@ -37,7 +38,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
     }
   }, [selectedNote]);
 
-//Monto il componente Trix Editor e gestisco gli eventi di cambio
+//Monta il componente Trix Editor e gestisce gli eventi di cambio
   useEffect(() => {
     const editor = editorRef.current;
     const handleChange = () => {
@@ -84,7 +85,9 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
     document.head.appendChild(style);
   }, []);
 
-  // Funzione per gestire l'invio del form
+  // Gestione dell'aggiunta o modifica della nota
+  // In base alla presenza o meno della selectedNote decide se creare una nuova nota o modificarne una esistente
+  // Dopo l'operazione ricarica la pagina per aggiornare la lista delle note
   const handleSubmit = async (event) => {
     event.preventDefault();
     const { title, category, text } = form;
@@ -98,6 +101,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
       ...(selectedNote && { noteid: selectedNote._id }),
     };
 
+    //Decide l'endpoint in base alla presenza o meno della selectedNote quindi se modificare o creare una nuova nota
     const endpoint = "/api/notes/" + (selectedNote ? "update" : "new");
 
     try {
@@ -143,6 +147,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
             required
           />
         </div>
+        {/* Cicla le categorie per creare le opzioni del select */}
         <div className="mb-3">
           <label className="form-label">Categoria</label>
           <select
@@ -258,6 +263,7 @@ function AddNote({ user, selectedNote, clearSelectedNote }) {
         <button type="submit" className="btn btn-primary w-100">
           {selectedNote ? "Modifica" : "Aggiungi"}
         </button>
+        {/* Bottone per annullare la modifica e tornare alla modalità di aggiunta */}
         {selectedNote && (
           <button
             type="button"

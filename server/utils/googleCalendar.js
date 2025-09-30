@@ -1,5 +1,7 @@
+//Moduli esterni
 const { google } = require('googleapis');
 
+//Modulo interno per la manipolazione del db
 const usersdb = require('../db/usersClass.js');
 
 const oauth2Client = new google.auth.OAuth2(
@@ -8,12 +10,12 @@ const oauth2Client = new google.auth.OAuth2(
 	process.env.GOOGLE_REDIRECT_URI
 );
 
-const scopes = [
-	'https://www.googleapis.com/auth/calendar',
-	'https://mail.google.com/'
-];
-
 module.exports = {
+	/*
+	 * crea un nuovo evento su Google Calendar
+	 * @param event: Object, l'evento del db da copiare
+	 * returns: Object, l'oggetto restituito da google alla creazione
+	 */
 	newEvent: async (event) => {
 		const author = await usersdb.findBy({ id: event.author });
 
@@ -40,7 +42,12 @@ module.exports = {
 			}
 		});
 	},
-
+	
+	/*
+	 * aggiorna un evento di Google Calendar esistente anche sul db
+	 * @param event: Object, l'evento del db di referimento
+	 * returns: Object, l'oggetto restituito da google
+	 */
 	updateEvent: async (event) => {
 		const author = await usersdb.findBy({ id: event.author });
 
@@ -67,7 +74,12 @@ module.exports = {
 			}
 		});
 	},
-
+	
+	/*
+	 * elimina un evento di Google Calendar esistente anche sul db
+	 * @param event: Object, l'evento del db di referimento
+	 * returns: Object, l'oggetto restitutito da google
+	 */
 	deleteEvent: async (event) => {
 		const author = await usersdb.findBy({ id: event.author });
 

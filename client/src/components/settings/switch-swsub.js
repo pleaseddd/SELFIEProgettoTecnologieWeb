@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Switch from 'react-switch';
 
+//Lo switch usato nelle impostazioni per dare il consenso delle notifiche push
 class SwSubSwitch extends Component {
 	constructor(props) {
 		super(props);
@@ -37,8 +38,10 @@ class SwSubSwitch extends Component {
 		else
 			await this.handleUnubscribe();
 	}
-
+	
+	//Per dare il consenso
 	async handleSubscribe() {
+		//Controllo se le notifiche push sono supportate dal browser
 		if(!('Notification' in window)) {
 			console.log("Questo browser non supporta le notifiche");
 			return;
@@ -53,12 +56,13 @@ class SwSubSwitch extends Component {
 					userVisibleOnly: true,
 					applicationServerKey: process.env.REACT_APP_VPKEY_PUBLIC
 				}).then(sub => {
+					//Memorizzo l'iscrizione nel db
 					fetch('/api/swsub/subscribe', {
 						method: 'POST',
 						body: JSON.stringify({
 							user_id: this.props.user._id,
 							name: this.props.deviceName,
-							sub: sub,
+							sub,
 						}),
 						headers: { 'content-type': 'application/json' }
 					})
@@ -68,16 +72,19 @@ class SwSubSwitch extends Component {
 			});
 		}
 	}
-
+	
+  //Per negare il consenso
 	async handleUnubscribe() {
 		navigator.serviceWorker.ready.then(registration => {
 			registration.pushManager.getSubscription().then(sub => {
+				//Controllo che l'iscrizione sia esistente
 				if(!sub) {
 					console.log("Nessuna iscrizione trovata");
 					return;
 				}
-
-				fetch('/api/swsub/unsubscribe', {
+				
+				//Elimino i dalti dal db
+				fetch('/api/swsub/unsubscribe', {		
 					method: 'POST',
 					body: JSON.stringify({ endpoint: sub.endpoint }),
 					headers: { 'content-type': 'application/json' }

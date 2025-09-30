@@ -1,3 +1,4 @@
+//Moduli esterni
 const mongoose = require("mongoose");
 
 const TimeMachineSchema = new mongoose.Schema(
@@ -8,7 +9,7 @@ const TimeMachineSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: true
+    timestamps: true //Aggiunge automaticamente "createdAt" e "updatedAt"
   }
 );
 
@@ -17,18 +18,26 @@ const TimeMachine = mongoose.model("TimeMachine", TimeMachineSchema);
 let cachedOffset = 0;
 let flag=0;
 
+//Funzioni che si possono usare in file esterni
 module.exports = {
+    /*
+     * Crea un tempo falsificato della time machine
+     * @param fakeNow: Object, l'oggetto con i dati
+     * returns: Object, il nuovo documento della collezione
+     */
 	newTime: async (fakeNow) => {
 		const newtime = await TimeMachine({ fakeNow });
 		flag=Date.now();
 		return await newtime.save();
 	},
-
+    
+    //Cancella tutti i tempi falsificati
 	deleteAll: async () => {
 		flag=Date.now();
 		return await TimeMachine.deleteMany({});
 	},
 
+    //Carica un tempo falsificato, l'ultimo modificato del db
 	loadFake: async () => {
 		const lastEntry = await TimeMachine.findOne({}).sort({ updatedAt: -1 });
 		if (lastEntry && lastEntry.fakeNow) {
@@ -47,6 +56,7 @@ module.exports = {
 	},
 
 	getCache: () => cachedOffset,
+	
 	getFlag: () => flag,
 	resetCache: () => {
 		cachedOffset = 0;

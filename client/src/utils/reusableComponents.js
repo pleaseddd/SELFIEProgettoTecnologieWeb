@@ -1,5 +1,9 @@
 import { Form, Button } from 'react-bootstrap';
 
+/*
+ * Componente generale per la visualizzazione grafica di una lista
+ * in cui è possibili rimuovere elementi
+ */
 export const DinamicList = ({ list, removeItem }) => {
 
 	return (

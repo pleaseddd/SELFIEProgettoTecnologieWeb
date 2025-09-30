@@ -11,7 +11,7 @@ const cookieParser = require("cookie-parser"); //gestisce i cookie degli utenti
  * sono prese da .env_test,
  * in produzione (test=false) sono prese da .env
  */
-const test = true;
+const test = false;
 require('dotenv').config({ path: __dirname + "/.env" + (test?'_test':'') });
 
 /*
@@ -46,7 +46,7 @@ app.use((req, res, next) => {
 /*
  * definisco gli endpoint dell'api,
  * sono molti e quindi sono divisi
- * nei file esterni per le collezioni mongodb
+ * nei file esterni come per le collezioni mongodb
  */
 const dir = './endpoints/';
 [

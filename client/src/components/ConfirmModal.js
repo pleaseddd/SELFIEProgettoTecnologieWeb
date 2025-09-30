@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Button, Spinner } from 'react-bootstrap';
-
+// Componente modale di conferma riutilizzabile
 function ConfirmModal({
   show,
   title = 'Conferma',
@@ -19,6 +19,7 @@ function ConfirmModal({
       </Modal.Header>
       <Modal.Body>{body}</Modal.Body>
       <Modal.Footer>
+        {/* Pulsanti di conferma e annullamento personalizzabili*/}
         <Button variant="secondary" onClick={onCancel} disabled={loading}>
           {cancelText}
         </Button>

@@ -12,6 +12,12 @@ const timeUnits = [
 	"months",
 ];
 
+/*
+ * converte i dati di una notifica in una stringa
+ * esteticamente leggibile
+ * @param notif: Object, i dati della notifica
+ * returns: String, la stringa di output
+ */
 const notifsPrettify = (notif) => {
 	const oneOrMore = (n, str) =>
 		n == 1 ? str[str.length-2] : str[str.length-1];
@@ -54,6 +60,7 @@ const notifsPrettify = (notif) => {
 	}
 };
 
+//Per le notifiche degli eventi
 const AdvanceSection = ({ newNotif, setNewNotif}) => {
 
 	const [showMore, setShowMore] = useState(false);
@@ -75,6 +82,7 @@ const AdvanceSection = ({ newNotif, setNewNotif}) => {
 		<>
 			<div>Mandami una notifica</div>
 			<div className="d-flex flex-column flex-md-row mb-2 gap-2">
+				//Unità di tempo standard (minuti, ore, giorni)
 				{timeUnits.slice(0, 3).map((timeUnit, i) => (
 					<div key={i}>
 						<Form.Group
@@ -104,6 +112,7 @@ const AdvanceSection = ({ newNotif, setNewNotif}) => {
 			</Button>
 
 			<div className="d-flex flex-column flex-md-row mb-2 gap-2">
+				//Unità estese (settimane, mesi)
 				{showMore && timeUnits.slice(3).map((timeUnit, i) => (
 					<div key={i}>
 						<Form.Group
@@ -128,6 +137,7 @@ const AdvanceSection = ({ newNotif, setNewNotif}) => {
 	);
 };
 
+//Per le notifiche delle attività
 const RipetitionSection = ({ newNotif, setNewNotif}) => {
 	const handleChangeParam = (param, value) => {
 		setNewNotif(
@@ -178,6 +188,7 @@ const RipetitionSection = ({ newNotif, setNewNotif}) => {
 	);
 };
 
+//Componente che accorpa i sotto-componenti definiti sopra
 const NotifsModal = ({
 	sendNotifs, setSendNotifs, //Lo stato dello switch per le notifiche
 	notifsList, setNotifsList //L'insieme delle notifiche dell'evento

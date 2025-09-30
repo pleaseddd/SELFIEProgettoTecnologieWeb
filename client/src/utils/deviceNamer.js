@@ -1,5 +1,13 @@
 import { UAParser } from 'ua-parser-js';
 
+/*
+ * funzioni usate per la creazione di un nome predefinito di un dispositivo
+ * vengono estratte le informazioni sul sistema operativo e sul browser
+ * che si sta utilizzando, e poi vengono combinate
+ * in caso di più dispositivi con le stesse informazioni viene posto
+ * un numero incrementale
+ */
+
 export const generateFinalDeviceName = () => {
 	const name = generateDeviceName();
 	const deviceId = generateDeviceId();
