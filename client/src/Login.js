@@ -7,15 +7,6 @@ import './style/login.css';
 
 function Login({ setUser }) {
   const [login, setLogin] = useState(true);
-  /*
-  useEffect(() => {
-    const bootstrap = require('bootstrap');
-    new bootstrap.Carousel(document.getElementById('carouselExampleSlidesOnly'), {
-      interval: 4069, 
-      ride: 'carousel'
-    });
-  }, []);
-*/
   return (
     <div className="login-page">
       <div className="background-container"></div>
@@ -23,6 +14,7 @@ function Login({ setUser }) {
       <div className="container vh-100">
         <div className="row h-100">
           <div className="col-md-4 d-flex justify-content-center align-items-center">
+            {/* Form di login o registrazione */}
             {login ? (
               <Signin setUser={setUser} change={() => setLogin(false)} />
             ) : (

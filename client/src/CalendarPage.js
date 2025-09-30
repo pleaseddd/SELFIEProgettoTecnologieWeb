@@ -12,14 +12,19 @@ import ConfirmModal from "./components/ConfirmModal";
 
 const locales = { "it-IT": it };
 
+// Funzione per convertire le date in input locale
 function toLocalInput(date) {
   const local = new Date(date);
   local.setMinutes(local.getMinutes() - local.getTimezoneOffset());
   return local.toISOString().slice(0, 16);
 }
 
+
 function CalendarPage({ user }) {
+  // Fuso orario utente 
   const userTz = user.settings.position || "Europe/Rome";
+
+  // Configurazione del localizzatore per react-big-calendar
   const localizer = useMemo(() => {
     return dateFnsLocalizer({
       format,
@@ -32,8 +37,10 @@ function CalendarPage({ user }) {
       },
     });
   }, [user.settings.startDay]);
-
+  // Navigazione tra le pagine
   const navigate = useNavigate();
+
+  //State per le varie funzionalità
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [serverTime, setServerTime] = useState(null);
@@ -43,8 +50,10 @@ function CalendarPage({ user }) {
   const [showPomodoroConfirm, setShowPomodoroConfirm] = useState(false);
   const [pomodoroData, setPomodoroData] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  // Flag per il controllo delle modifiche dell'orario server (time machine)
   const [timeMachineFlag, setTimeMachineFlag] = useState(0);
 
+  // Recupera l'orario del server ogni volta che cambia il flag (time machine)
   useEffect(() => {
     fetch("/api/server-time")
       .then((res) => res.json())
@@ -58,7 +67,7 @@ function CalendarPage({ user }) {
       });
   }, [timeMachineFlag]);
 
-  // TIME MACHINE
+  //Gestione per vedere modifiche orario server (time machine)
   useEffect(() => {
     const checkForServerTimeUpdate = async () => {
       try {
@@ -71,12 +80,13 @@ function CalendarPage({ user }) {
         console.error("Errore nel controllo aggiornamento orario:", err);
       }
     };
+    //controllo ogni secondo se c'è stato un cambiamento e nel caso aggiorno
     const interval = setInterval(checkForServerTimeUpdate, 1000);
     checkForServerTimeUpdate();
     return () => clearInterval(interval);
   }, []);
-  // FINE TIME MACHINE
 
+  // Carica gli eventi dal server
   const loadEvents = useCallback(async () => {
     try {
       const response = await fetch("/api/events/list", {
@@ -85,7 +95,7 @@ function CalendarPage({ user }) {
         body: JSON.stringify({ userid: user._id }),
       });
       const data = await response.json();
-
+      // Converto gli orari in Date oggetti nel fuso orario utente
       if (response.ok) {
         const allEvents = [];
         if (!serverTime) return;
@@ -94,7 +104,7 @@ function CalendarPage({ user }) {
 
         data.forEach((event) => {
           if (!event.begin || !event.end) return;
-
+          //Mostro le ricorrenze fino all'anno successivo prendeno i dati dalla RRULE string 
           if (event.rruleStr) {
             const rule = RRule.fromString(event.rruleStr);
             const dates = rule.between(
@@ -102,6 +112,7 @@ function CalendarPage({ user }) {
               new Date(oneYearLater.toInstant().epochMilliseconds),
               true
             );
+            // Aggiungo gli eventi ricorrenti all'array
             dates.forEach((date) => {
               const beginInstant = Temporal.Instant.from(date.toISOString());
               const originalBegin = Temporal.Instant.from(event.begin);
@@ -137,23 +148,28 @@ function CalendarPage({ user }) {
     }
   }, [serverTime, user._id, userTz]);
 
+  // Ricarica gli eventi quando il serverTime viene impostato
   useEffect(() => {
     if (serverTime) {
       loadEvents();
     }
   }, [serverTime, loadEvents]);
 
+  // Gestione selezione slot per creare un nuovo evento
   const handleSelectSlot = useCallback((slotInfo) => {
     const start = new Date(slotInfo.start);
     const end = new Date(slotInfo.end - 1);
 
     if (
+      // controllo se l'evento dura meno di un giorno ma inizia e finisce lo stesso giorno
       start.toDateString() === end.toDateString() &&
       end.getTime() - start.getTime() > 23 * 60 * 60 * 1000
     ) {
+      //evento che dura meno di un giorno ma inizia e finisce lo stesso giorno
       start.setHours(9, 0, 0, 0);
       end.setHours(10, 0, 0, 0);
     } else if (start.toDateString() === end.toDateString()) {
+      //evento che inizia e finisce lo stesso giorno ma dura tutto il giorno
       end.setTime(end.getTime() + 1);
     }
 
@@ -165,6 +181,7 @@ function CalendarPage({ user }) {
     setModalOpen(true);
   }, []);
 
+  // Gestione per il redirect alla pagina pomodoro nel caso sia un evento pomodoro
   const handlePomodoroRedirect = () => {
     setShowPomodoroConfirm(false);
     navigate("/pomodoro", {
@@ -176,6 +193,7 @@ function CalendarPage({ user }) {
     });
   };
 
+  // Gestione selezione evento per modifica o avvio pomodoro nel caso sia un evento pomodoro
   const handleSelectEvent = useCallback((event) => {
     if (event.pomodoro?.on === true) {
       setPomodoroData({
@@ -198,6 +216,7 @@ function CalendarPage({ user }) {
     }
   }, []);
 
+  // Gestione salvataggio evento (nuovo o modificato)
   const handleModalSave = async (eventData) => {
     try {
       const localBegin = new Date(eventData.begin);
@@ -229,6 +248,7 @@ function CalendarPage({ user }) {
         author: user._id,
       };
 
+      // Determina l'endpoint in base a se è una modifica o un nuovo evento
       const url = "/api/events" + (isEditing ? "/update" : "/new");
 
       const response = await fetch(url, {
@@ -240,6 +260,7 @@ function CalendarPage({ user }) {
 
       if (response.ok) {
         setModalOpen(false);
+        // Ricarico gli eventi dopo il salvataggio
         loadEvents();
       } else {
         alert("Errore durante il salvataggio dell'evento");
@@ -250,6 +271,7 @@ function CalendarPage({ user }) {
     }
   };
 
+  //Gestione eliminazione evento 
   const handleModalDelete = async () => {
     try {
       const response = await fetch("/api/events/delete", {
@@ -261,6 +283,7 @@ function CalendarPage({ user }) {
 
       if (response.ok) {
         setModalOpen(false);
+        // Ricarico gli eventi dopo l'eliminazione
         loadEvents();
       } else {
         alert("Errore durante l'eliminazione dell'evento");
@@ -274,6 +297,7 @@ function CalendarPage({ user }) {
   return (
     <div className="container mt-3">
       <h2 className="text-center">Calendario</h2>
+      {/* Mostra il calendario solo quando l'orario del server è stato caricato così da renderlo coerente con la time machine */}
       {serverTime ? (
         <Calendar
           localizer={localizer}
@@ -304,6 +328,8 @@ function CalendarPage({ user }) {
       ) : (
         <div>Caricamento orario dal server...</div>
       )}
+
+      {/* Modale per creare/modificare eventi */}
       <EventModal
         show={modalOpen}
         user={user}
@@ -312,7 +338,7 @@ function CalendarPage({ user }) {
         onDelete={handleModalDelete}
         initialData={modalData}
       />
-
+      {/* Modale di conferma per evento pomodoro o modifica*/}
       <ConfirmModal
         show={showPomodoroConfirm}
         title="Evento Pomodoro"
