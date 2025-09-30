@@ -9,10 +9,10 @@ import {
   FaAnglesRight,
   FaAnglesLeft,
 } from "react-icons/fa6";
-//componente principale Pomodoro
+// componente principale Pomodoro
 export default function Pomodoro({ user }) {
   const location = useLocation();
-  //inizializzazione stato dal local storage
+  // inizializzazione stato dal local storage
   const [totalMinutes, setTotalMinutes] = useState(
     () => location.state?.duration || 200
   );
@@ -152,7 +152,8 @@ export default function Pomodoro({ user }) {
     }
   }, [phase]);
 
-  //salva dati essenziali nel localStorage
+  // salva dati essenziali nel localStorage
+  // Salva lo stato corrente del Pomodoro nel localStorage per persistenza
   function persistState() {
     const state = {
       activeConfig,
@@ -168,7 +169,8 @@ export default function Pomodoro({ user }) {
     localStorage.setItem("pomodoroTimeLeft", String(timeLeft));
   }
 
-  //SALVO PER LA HOME L'ULTIMA SESSIONE
+  // SALVO PER LA HOME L'ULTIMA SESSIONE
+  // Invia all'API l'informazione dell'ultima sessione per l'utente
   const lastPomodoroSession = async (w, b) => {
     const totalminutes= Number(totalMinutes);
     try {
@@ -190,6 +192,7 @@ export default function Pomodoro({ user }) {
   };
 
   // -- GENERAZIONE SUGGERIMENTI CICLI --
+  // Calcola e prepara le proposte di ciclo basate sul tempo totale e opzioni selezionate
   const generateCycles = () => {
     const total = Number(totalMinutes);
     const works = selectedWorkOptions.length
@@ -219,6 +222,7 @@ export default function Pomodoro({ user }) {
   };
 
   // -- AVVIO NUOVO CICLO --
+  // Imposta e avvia un nuovo ciclo di studio/pausa con la configurazione data
   const startCycle = ({ work, break: brk }) => {
     setActiveConfig({ work, break: brk });
     setPhase("work");
@@ -235,6 +239,7 @@ export default function Pomodoro({ user }) {
   };
 
   // -- GESTIONE PASSAGGIO FASI --
+  // Gestisce la transizione tra fase di lavoro e pausa e termina la sessione se necessario
   const nextPhase = () => {
     const { work, break: brk } = activeConfig;
 
@@ -273,6 +278,7 @@ export default function Pomodoro({ user }) {
   };
 
   // -- FORMATTATORE ORE:MINUTI --
+  // Converte secondi in stringa MM:SS per la visualizzazione
   const formatTime = (secs) =>
     `${String(Math.floor(secs / 60)).padStart(2, "0")}:${String(
       secs % 60

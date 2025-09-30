@@ -5,18 +5,18 @@ import useIsMobile from "../hooks/useIsMobile";
 import "../style/timeMachine.css";
 
 const TimeMachine = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [dateTime, setDateTime] = useState("");
-  const nodeRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false); // stato visibilità pannello
+  const [dateTime, setDateTime] = useState(""); // stato input data/ora
+  const nodeRef = useRef(null); // riferimento al pannello
 
-  // Al montaggio, prendo l’ora corrente dal server per popolare l’input
+  // al montaggio: recupera l'ora corrente dal server e la mette nell'input
   useEffect(() => {
     (async () => {
       try {
         const res = await axios.get("/api/server-time");
         const iso = res.data.now; // es. "2025-06-04T14:30:00.000Z"
-        // Converto ISO in "YYYY-MM-DDTHH:mm" per <input type="datetime-local" />
         const dt = new Date(iso);
+        // converto ISO in "YYYY-MM-DDTHH:mm" compatibile con datetime-local
         const local = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000)
           .toISOString()
           .slice(0, 16);
@@ -27,21 +27,23 @@ const TimeMachine = () => {
     })();
   }, []);
 
+  // apre/chiude il pannello
   const togglePanel = () => {
     setIsOpen((prev) => !prev);
   };
 
+  // aggiorna stato input
   const handleChange = (e) => {
     setDateTime(e.target.value);
   };
 
+  // invia la data selezionata al server
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!dateTime) return;
 
     try {
       const selected = new Date(dateTime).toISOString();
-
       await axios.post("/api/server-time/set", { datetime: selected });
       alert("Time Machine: data e ora impostati correttamente.");
       setIsOpen(false);
@@ -51,11 +53,11 @@ const TimeMachine = () => {
     }
   };
 
+  // resetta la data sul server e riporta l’input all’ora reale
   const handleReset = async () => {
     try {
       await axios.post("/api/server-time/reset");
       alert("Time Machine resettata: ora torna reale.");
-      // Resetto l’input all’ora reale
       const res = await axios.get("/api/server-time");
       const iso = res.data.now;
       const dt = new Date(iso);
@@ -70,6 +72,7 @@ const TimeMachine = () => {
     }
   };
 
+  // chiude il pannello se si clicca fuori
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (nodeRef.current && !nodeRef.current.contains(e.target)) {
@@ -86,10 +89,11 @@ const TimeMachine = () => {
     };
   }, [isOpen]);
 
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(); // hook che rileva se è mobile
 
   return (
     <>
+      {/* Bottone visibile solo su mobile */}
       {isMobile && (
         <button
           className="tm-toggle-btn"

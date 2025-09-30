@@ -1,17 +1,17 @@
-//src/components/ThemeContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { themes } from "../Themes";
 import axios from "axios";
 
-axios.defaults.withCredentials = true; //importante: invia cookie al server
+axios.defaults.withCredentials = true; // abilita l'inclusione dei cookie nelle richieste axios
 
-const ThemeContext = createContext();
+const ThemeContext = createContext(); // context per il tema
 
 function hexToRgb(value) {
+  // converte un valore colore (hex o rgb(a)) nella stringa "r,g,b"
   if (value.startsWith("rgba") || value.startsWith("rgb")) {
     const nums = value.match(/\d+/g);
     if (nums && nums.length >= 3) {
-      return `${nums[0]},${nums[1]},${nums[2]}`; // senza spazi
+      return `${nums[0]},${nums[1]},${nums[2]}`; 
     }
     return "0,0,0";
   }
@@ -21,10 +21,11 @@ function hexToRgb(value) {
   const r = (bigint >> 16) & 255;
   const g = (bigint >> 8) & 255;
   const b = bigint & 255;
-  return `${r},${g},${b}`; // senza spazi
+  return `${r},${g},${b}`; 
 }
 
 function applyPaletteToRoot(key, fallbackKey = "avatar1", rootEl = null) {
+  // applica la palette selezionata impostando variabili CSS su :root
   const palette = themes[key] || themes[fallbackKey];
   if (!palette) return;
 
@@ -45,34 +46,30 @@ function applyPaletteToRoot(key, fallbackKey = "avatar1", rootEl = null) {
 }
 
 export function ThemeProvider({ children, initialKey = "avatar1" }) {
+  // Provider che espone la chiave tema e si occupa di sincronizzare stato locale e remoto
   const [themeKey, setThemeKey] = useState(() => {
     return localStorage.getItem("themeKey") || initialKey;
   });
 
-  //applica palette ogni volta che cambia la chiave
+  // applica la palette e salva la chiave in localStorage quando cambia
   useEffect(() => {
     applyPaletteToRoot(themeKey, initialKey);
     localStorage.setItem("themeKey", themeKey);
   }, [themeKey, initialKey]);
 
-  //funzione pubblica per aggiornare (ottimistica + salvataggio server)
+  // aggiorna la chiave tema localmente e la invia al server (ottimistico)
   const updateThemeKey = async (key) => {
-    //applico subito
     setThemeKey(key);
     localStorage.setItem("themeKey", key);
 
     try {
-      //salvataggio remoto (richiede cookie di sessione: ensureAuth)
       await axios.post("/api/user/setPaletteKey", { paletteKey: key });
-      //non richiedo il nuovo utente qui (l'endpoint torna l'utente aggiornato nel server-side route),
-      //ma non è strettamente necessario per la palette perché l'aggiornamento locale è già fatto.
     } catch (err) {
       console.error("Errore nel salvataggio remoto della paletteKey:", err);
-      //non rollback per non rompere UX; potresti decidere di fare rollback in caso di errore
     }
   };
 
-  //al primo montaggio: se loggato, prendi la palette dal server
+  // al primo montaggio: prova a recuperare la palette dell'utente dal server
   useEffect(() => {
     let mounted = true;
 
@@ -98,7 +95,7 @@ export function ThemeProvider({ children, initialKey = "avatar1" }) {
     return () => {
       mounted = false;
     };
-  }, []); //esegui solo una volta al mount
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ themeKey, setThemeKey: updateThemeKey }}>
@@ -108,5 +105,6 @@ export function ThemeProvider({ children, initialKey = "avatar1" }) {
 }
 
 export function useTheme() {
+  // hook per accedere al ThemeContext
   return useContext(ThemeContext);
 }
