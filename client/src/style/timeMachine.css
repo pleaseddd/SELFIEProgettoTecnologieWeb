@@ -120,7 +120,7 @@
     border: 1px solid rgba(var(--color-shadows-rgb), 0.12);
     border-radius: 6px;
     background: var(--color-onPrimary);
-    color: var(--tm-surface, var(--color-surface));
+    color: var(--color-buttonText);
     outline: none;
     transition: box-shadow 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
 }

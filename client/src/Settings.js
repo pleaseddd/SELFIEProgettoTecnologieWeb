@@ -587,35 +587,32 @@ function Settings({ user, updateUser }) {
         currentKey={user.settings?.paletteKey || themeKey}
       />
 
-      <ConfirmModal
-        className="confirm-modal"
-        show={showAvatarConfirm}
-        title="Conferma cambio avatar"
-        body={
-          pendingThemeKey ? (
-            <div className="confirm-body" style={{ textAlign: "center" }}>
-              <p className="confirm-text">
-                Vuoi cambiare avatar in <strong>{pendingThemeKey}</strong>?
-              </p>
-              <img
-                src={`/pfp/${pendingThemeKey}.png`}
-                alt={pendingThemeKey}
-                style={{ width: 96, height: 96, borderRadius: 999 }}
-              />
-            </div>
-          ) : (
-            "Sei sicuro?"
-          )
-        }
-        confirmText="Cambia avatar"
-        cancelText="Annulla"
-        loading={avatarLoading}
-        onConfirm={() => handleAvatarSelect(pendingThemeKey)}
-        onCancel={handleAvatarCancel}
-        onClose={handleAvatarCancel}
-      />
-    </Container>
-  );
+			<ConfirmModal
+				className="confirm-modal"
+				contentClassName="confirm-modal--content"
+				show={showAvatarConfirm}
+				title={<span className="confirm-modal__title">Conferma cambio avatar</span>}
+				body={
+					pendingThemeKey ? (
+						<div className="confirm-body" style={{ textAlign: "center" }}>
+							<p className="confirm-text">Vuoi cambiare avatar in <strong>{pendingThemeKey}</strong>?</p>
+							<img
+								src={`/pfp/${pendingThemeKey}.png`}
+								alt={pendingThemeKey}
+								style={{ width: 96, height: 96, borderRadius: 999 }}
+							/>
+						</div>
+					) : "Sei sicuro?"
+				}
+				confirmText="Cambia avatar"
+				cancelText="Annulla"
+				loading={avatarLoading}
+				onConfirm={() => handleAvatarSelect(pendingThemeKey)}
+				onCancel={handleAvatarCancel}
+				onClose={handleAvatarCancel}
+			/>
+		</Container>
+	);
 }
 
 export default Settings;

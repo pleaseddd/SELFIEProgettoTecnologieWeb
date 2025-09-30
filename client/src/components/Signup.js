@@ -2,18 +2,29 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
+const updatetimezone = async () => {
+  try {
+    const geoRes = await fetch(
+      "https://api.ipgeolocation.io/ipgeo?apiKey=ae48adddb3f64feb984decd7b4299e7b"
+    );
+    const geoData = await geoRes.json();
+    return geoData.time_zone.name;
+  } catch (err) {
+    console.error("Errore geolocalizzazione:", err);
+    return "Europe/Rome"; // fallback sicuro
+  }
+};
+
 function Register({ change }) {
-  // controlled inputs per validazione live
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [timezone, setTimezone] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // regex: 8-20 chars, must include letters and numbers, only letters+digits (no spaces or symbols)
   const pwdRegex = /^(?=.{8,20}$)(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
-
   const passwordValid = pwdRegex.test(password);
   const passwordsMatch = password === confirmPassword || confirmPassword === "";
   const timezone="";
@@ -36,6 +47,14 @@ function Register({ change }) {
   }, []);
 
 
+  useEffect(() => {
+    const fetchTz = async () => {
+      const tz = await updatetimezone();
+      setTimezone(tz);
+    };
+    fetchTz();
+  }, []);
+
   const handleregister = async (e) => {
     e.preventDefault();
     setError("");
@@ -56,9 +75,7 @@ function Register({ change }) {
     try {
       const response = await fetch("/api/user/new", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim(),
@@ -70,13 +87,10 @@ function Register({ change }) {
       const data = await response.json();
       if (response.ok) {
         setSuccess("Registrazione completata con successo!");
-        setError("");
-        // reset campi opzionale
         setName("");
         setEmail("");
         setPassword("");
         setConfirmPassword("");
-        // passa alla view di login (o quello che fa `change`)
         change();
       } else {
         setError(data.message || "Errore durante la registrazione.");
@@ -116,7 +130,6 @@ function Register({ change }) {
             </label>
             <input
               type="text"
-              name="name"
               id="name"
               className="form-control form-control-sm"
               placeholder="Nome Utente"
@@ -133,7 +146,6 @@ function Register({ change }) {
             </label>
             <input
               type="email"
-              name="email"
               id="email"
               className="form-control form-control-sm"
               placeholder="Email"
@@ -150,7 +162,6 @@ function Register({ change }) {
             </label>
             <input
               type="password"
-              name="password"
               id="password"
               className="form-control form-control-sm"
               placeholder="Password"
@@ -158,7 +169,6 @@ function Register({ change }) {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {/* mostra il messaggio d'aiuto solo se la password è stata inserita e non valida */}
             {password.length > 0 && !passwordValid && (
               <div className="form-text text-danger">
                 La password deve essere 8-20 caratteri, contenere lettere e
@@ -174,7 +184,6 @@ function Register({ change }) {
             </label>
             <input
               type="password"
-              name="confirmPassword"
               id="confirmPassword"
               className="form-control form-control-sm"
               placeholder="Conferma Password"
@@ -182,14 +191,18 @@ function Register({ change }) {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
-            {/* messaggio se non coincidono */}
             {confirmPassword.length > 0 && !passwordsMatch && (
               <div className="form-text text-danger">
                 Le password non coincidono.
               </div>
             )}
           </div>
-          <button type="submit" className="btn btn-primary w-100 btn-sm mb-2">
+
+          <button
+            type="submit"
+            className="btn btn-primary w-100 btn-sm mb-2"
+            disabled={!timezone} // blocca se il timezone non è pronto
+          >
             Registrati
           </button>
         </form>
@@ -200,6 +213,10 @@ function Register({ change }) {
         >
           Indietro
         </button>
+
+        <div className="text-muted mt-2" style={{ fontSize: 12 }}>
+          Fuso rilevato: {timezone || "caricamento..."}
+        </div>
       </div>
     </div>
   );
