@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { RRule } from "rrule";
 import Switch from "react-switch";
 import "../style/eventModal.css";
-
 import ConfirmModal from "./ConfirmModal";
 import GcalEventSwitch from './switch-gcal-event';
 import NotifsModal from  './calendar/NotifsModal';
 
 function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
+  //definisco tutti gli state per le varie variabili dell'evento
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
@@ -16,21 +16,21 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [end, setEnd] = useState("");
 	const [saveOnGoogle, setSaveOnGoogle] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
+  //stato per il pomodoro
+  const presetWorkOptions = [10, 20, 25, 30, 35];
+  const presetBreakOptions = [5, 10, 15];
   const [Pomodoro, setPomodoro] = useState({
     on: false,
     duration: 0,
     workoption: 25,
     breakoption: 5,
   });
-  const labels = {
-    DAILY: "giorni",
-    WEEKLY: "settimane",
-    MONTHLY: "mesi",
-    YEARLY: "anni",
-  };
+  
+  //stati per le notifiche
 	const [sendNotifs, setSendNotifs] = useState(false);
 	const [notifsList, setNotifsList] = useState([]);
 
+  //Stati per la ricorrenza
   const [freq, setFreq] = useState("");
   const [interval, setInterval] = useState(1);
   const [byweekday, setByweekday] = useState([]);
@@ -42,17 +42,25 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
   const [byday, setByday] = useState("MO");
   const [bymonth, setBymonth] = useState("1");
   const [bymonthdayYearly, setBymonthdayYearly] = useState("1");
+  //etichette per la frequenza perchè rrule usa i nomi in inglese
+  const labels = {
+      DAILY: "giorni",
+      WEEKLY: "settimane",
+      MONTHLY: "mesi",
+      YEARLY: "anni",
+    };
+  //Colore dell'evento
   const [color, setColor] = useState("#3788d8");
+  //Categorie dell'utente prese da una stringa separata da /
   const categories = user.settings.categoryEvents.split("/");
-  const presetWorkOptions = [10, 20, 25, 30, 35];
-  const presetBreakOptions = [5, 10, 15];
-  //MODALE DI CONFERMA
+  //Modale di conferma
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const openConfirm = () => setShowConfirm(true);
   const closeConfirm = () => setShowConfirm(false);
 
+  //carica i dati iniziali dell'evento se presenti (in caso di modifica)
   useEffect(() => {
     if (initialData) {
       setTitle(initialData.title || "");
@@ -70,7 +78,8 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
         workoption: initialData.pomodoro?.workoption || 25,
         breakoption: initialData.pomodoro?.breakoption || 5,
       });
-
+  
+      // Carica le notifiche esistenti
 			const load = async () => {
 				const notifs = await fetch('/api/notifs/list', {
 					method: "POST",
@@ -81,6 +90,8 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
 			};
 			load();
 
+
+      // Carica le regole di ricorrenza se presenti utilizzando rrule
       if (initialData.rruleStr) {
         const rule = RRule.fromString(initialData.rruleStr);
         const options = rule.origOptions;
@@ -120,6 +131,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
     }
   }, [initialData]);
 
+  //aggiorna la durata del pomodoro quando si attiva o cambiano inizio/fine
   useEffect(() => {
     if (Pomodoro.on && start && end) {
       const startTime = new Date(start);
@@ -129,12 +141,14 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
     }
   }, [Pomodoro.on, start, end, category]);
 
+  //gestisce la selezione dei giorni della settimana per la ricorrenza settimanale
   const handleCheckboxChange = (day) => {
     setByweekday((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
   };
 
+  //costruisce la stringa rrule in base alla regole della ricorrenza scelte dall'utente
   const buildRRuleString = () => {
     if (!freq) return null;
     const options = {
@@ -167,6 +181,9 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
     return rule.toString();
   };
 
+
+  //gestisce il salvataggio dell'evento che poi passerà al componente padre Calendarpage
+  //Creando l'oggetto evento con tutti i dati presi dagli stati
   const handleSubmit = () => {
     const event = {
       title,
@@ -193,6 +210,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
     onSave(event);
   };
 
+  //Modale di conferma per l'eliminazione
   const confirmDelete = () => {
     setLoading(true);
     closeConfirm();
@@ -200,6 +218,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
     setLoading(false);
   };
 
+  //Se viene chiusa la modale ritorna 
   if (!show) return null;
 
   return (
@@ -225,6 +244,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
+            {/* Selezione della categoria vedendo quelle dell'utente*/}
             <div className="mb-3">
               <label className="form-label">Categoria</label>
               <select
@@ -242,6 +262,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
 
             <div className="mb-3">
               <div className="d-flex align-items-center">
+                {/* Switch per attivare/disattivare il pomodoro */}
                 <Switch
                   className="me-2"
                   id="pomodoroCheck"
@@ -262,7 +283,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
                 </label>
               </div>
             </div>
-
+                {/* Opzioni del pomodoro se attivato */}
             {Pomodoro.on && (
               <div className="border rounded p-2">
                 <div className="mb-2">
@@ -323,6 +344,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
                 onChange={(e) => setLocation(e.target.value)}
               />
             </div>
+            {/* Selezione dell'urgenza */}
             <div className="mb-3">
               <label className="form-label">Urgenza</label>
               <select
@@ -363,7 +385,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
                 title="Scegli il colore dell'evento"
               />
             </div>
-
+            {/* Opzione per salvare su Google Calendar se l'utente è loggato con Google */}
 						{
 						user.google.isLogged ?
 						(<div className="mb-3">
@@ -377,7 +399,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
 							</div>
 						</div>) : null
 						}
-
+            {/* Selezione della ricorrenza*/}
             <div className="mb-3">
               <div className="d-flex align-items-center">
                 <Switch
@@ -398,7 +420,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
                 </label>
               </div>
             </div>
-
+            {/* Opzioni di ricorrenza che cambiano a seconda delle selezioni effettuate dall'utente*/}
             {isRecurring && (
               <div className="border p-2">
                 <div className="mb-2">
@@ -558,7 +580,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
                 </div>
               </div>
             )}
-
+            {/* Sezione notifiche */}
 						<NotifsModal
 							sendNotifs={sendNotifs}
 							setSendNotifs={setSendNotifs}
@@ -567,6 +589,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
 						/>
 
           </div>
+          {/*Gestione dell'eliminazione dell'evento*/}
           <div className="modal-footer d-flex justify-content-between">
             <button
               type="button"
@@ -576,6 +599,7 @@ function EventModal({ show, onClose, onSave, onDelete, initialData, user }) {
             >
               Elimina
             </button>
+            {/* Modale di conferma per l'eliminazione */}
             <ConfirmModal
               show={showConfirm}
               title="Elimina Evento"
