@@ -17,15 +17,13 @@ function Weather() {
         const geoData = await geoRes.json();
         const { latitude, longitude } = geoData;
 
-        // Chiedi anche temperatura max/min
+        // Chiede all'API del meteo le condizioni attuali a seconda di latitudine e longitudine
         const weatherRes = await fetch(
 			`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=Europe%2FRome`
 		  );
         const weatherData = await weatherRes.json();
         setWeather({
           now: weatherData.current_weather,
-          max: weatherData.daily.temperature_2m_max[0],
-          min: weatherData.daily.temperature_2m_min[0],
         });
       } catch (err) {
         console.error("Errore meteo:", err);
@@ -37,6 +35,7 @@ function Weather() {
   }, []);
 
   const getWeatherIcon = (code) => {
+    // Mappa i codici meteo alle icone corrispondenti
     switch (code) {
       case 0: return <WiDaySunny size={48} />;
       case 1:

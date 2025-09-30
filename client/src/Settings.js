@@ -1,18 +1,13 @@
 import { useState } from "react";
 import { Container, Form, Button, Card, Image } from "react-bootstrap";
-
 import { toast } from "react-toastify";
-
 import ConfirmModal from "./components/ConfirmModal";
 import ExternalCalsSection from "./components/settings/ExternalCalendars.js";
 import NotifSection from "./components/settings/NotifSection.js";
-
 import { DinamicList } from "./utils/reusableComponents.js";
-
 import { useTheme } from "./components/ThemeContext";
 import AvatarSelectorModal from "./components/AvatarSelectorModal";
 import axios from "axios";
-
 import "./style/settings/Settings.css";
 import "./style/settings/personalInfo.css";
 import "./style/settings/generals.css";
@@ -20,6 +15,7 @@ import "./style/settings/avatarModal.css";
 
 axios.defaults.withCredentials = true;
 
+// Funzione per ottenere il fuso orario basato sulla geolocalizzazione IP
 const updatetimezone = async () => {
   try {
     // Ottieni la posizione approssimativa
@@ -33,6 +29,8 @@ const updatetimezone = async () => {
   }
 };
 
+
+// Sezione Informazioni Personali
 const PersonalInfoSection = ({
   user,
   form,
@@ -133,6 +131,7 @@ const GeneralsSection = ({
         }
       >
         <Card.Body>
+          {/* Sezione Generali */}
           <div className="section-title">
             <h5>Generali</h5>
           </div>
@@ -150,7 +149,6 @@ const GeneralsSection = ({
                 }}
               >
                 <option value="it">Italiano</option>
-                <option value="en">Inglese</option>
               </Form.Select>
             </Form.Group>
 
@@ -182,7 +180,7 @@ const GeneralsSection = ({
                   value={form.location}
                   readOnly
                   placeholder="es. Europe/Rome"
-				  style={{ flex: "1" }} 
+                  style={{ flex: "1" }}
                 />
                 <Button
                   variant="success"
@@ -210,9 +208,10 @@ const GeneralsSection = ({
   );
 };
 
+// Sezione categorie eventi
 const EventsSection = ({ form, setForm, notSaved, setNotSaved }) => {
   const [newEventCat, setNewEventCat] = useState("");
-
+  // Aggiunge categoria eventi
   const addEventCategory = () => {
     if (!newEventCat.trim()) {
       toast("Scegli un nome per la tua nuova categoria!", { type: "warning" });
@@ -230,7 +229,7 @@ const EventsSection = ({ form, setForm, notSaved, setNotSaved }) => {
 
     setNewEventCat("");
   };
-
+  // Rimuove categoria eventi
   const removeEventCategory = (index) => {
     const updated = [...form.eventCategories];
     const deleted = updated.splice(index, 1);
@@ -288,6 +287,8 @@ const EventsSection = ({ form, setForm, notSaved, setNotSaved }) => {
   );
 };
 
+
+//Sezione note per fare modifiche alle categorie note e al numero di note visibili nella home
 const NotesSection = ({
   form,
   setForm,
@@ -296,7 +297,7 @@ const NotesSection = ({
   handleSingleChange,
 }) => {
   const [newNoteCat, setNewNoteCat] = useState("");
-
+  // Aggiunge categoria note
   const addNoteCategory = () => {
     if (!newNoteCat.trim()) {
       toast("Scegli un nome per la tua nuova categoria!", { type: "warning" });
@@ -327,7 +328,8 @@ const NotesSection = ({
 
   return (
     <>
-      {notSaved.includes("notes") ? (
+      {//Segnalo che modifiche non sono salvate
+      notSaved.includes("notes") ? (
         <span className="text-warning text-center">Modifiche non salvate</span>
       ) : null}
       <Card
@@ -342,6 +344,7 @@ const NotesSection = ({
           </div>
 
           <fieldset className="fieldset-custom mb-2">
+            {/* Categorie note */}
             <legend className="legend-custom">Categorie note</legend>
             <div className="d-flex mb-2">
               <Form.Control
@@ -364,7 +367,7 @@ const NotesSection = ({
               removeItem={removeNoteCategory}
             />
           </fieldset>
-
+          {/* Numero di note visibili nella home */}
           <fieldset className="fieldset-custom d-flex">
             <legend className="legend-custom">Varie</legend>
             <Form.Label className="mt-2 me-2 mb-0 text-nowrap">
@@ -393,8 +396,8 @@ function Settings({ user, updateUser }) {
   const [form, setForm] = useState({
     name: user.name,
     email: user.email,
-    eventCategories: user.settings.categoryEvents.split("/") || [],
-    noteCategories: user.settings.categoryNotes.split("/") || [],
+    eventCategories: user.settings.categoryEvents.split("/") || [], // array di stringhe
+    noteCategories: user.settings.categoryNotes.split("/") || [], // array di stringhe
     language: user.settings.language,
     weekStart: user.settings.startDay ? "sunday" : "monday",
     location: user.settings.position,
@@ -403,7 +406,7 @@ function Settings({ user, updateUser }) {
 
   const [notSaved, setNotSaved] = useState([]);
 
-  // Modal per conferma
+  // Modal per conferma del salvataggio
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const openConfirm = () => setShowConfirm(true);
@@ -424,6 +427,7 @@ function Settings({ user, updateUser }) {
     setShowAvatarSelector(false);
   };
 
+  // Salva le impostazioni sul server
   const handleSaveSettings = async () => {
     setLoading(true);
     const payload = {
@@ -445,6 +449,7 @@ function Settings({ user, updateUser }) {
     };
 
     try {
+      // Invia i dati al server per l'aggiornamento
       const data = await fetch("/api/user/updatesettings", {
         method: "POST",
         headers: {
@@ -454,7 +459,7 @@ function Settings({ user, updateUser }) {
       }).then((resp) => resp.json());
 
       console.log("Risposta server:", data.message);
-
+      // Aggiorna il contesto utente con i nuovi dati
       const updatedUser = {
         ...user,
         name: form.name,
@@ -522,6 +527,7 @@ function Settings({ user, updateUser }) {
 
   return (
     <Container className="mt-4">
+      {/* Card principale contenente tutte le sezioni */}
       <Card className="p-4 shadow-sm">
         <h3 className="mb-4">Impostazioni</h3>
 
@@ -587,32 +593,39 @@ function Settings({ user, updateUser }) {
         currentKey={user.settings?.paletteKey || themeKey}
       />
 
-			<ConfirmModal
-				className="confirm-modal"
-				contentClassName="confirm-modal--content"
-				show={showAvatarConfirm}
-				title={<span className="confirm-modal__title">Conferma cambio avatar</span>}
-				body={
-					pendingThemeKey ? (
-						<div className="confirm-body" style={{ textAlign: "center" }}>
-							<p className="confirm-text">Vuoi cambiare avatar in <strong>{pendingThemeKey}</strong>?</p>
-							<img
-								src={`/pfp/${pendingThemeKey}.png`}
-								alt={pendingThemeKey}
-								style={{ width: 96, height: 96, borderRadius: 999 }}
-							/>
-						</div>
-					) : "Sei sicuro?"
-				}
-				confirmText="Cambia avatar"
-				cancelText="Annulla"
-				loading={avatarLoading}
-				onConfirm={() => handleAvatarSelect(pendingThemeKey)}
-				onCancel={handleAvatarCancel}
-				onClose={handleAvatarCancel}
-			/>
-		</Container>
-	);
+
+      <ConfirmModal
+        className="confirm-modal"
+        contentClassName="confirm-modal--content"
+        show={showAvatarConfirm}
+        title={
+          <span className="confirm-modal__title">Conferma cambio avatar</span>
+        }
+        body={
+          pendingThemeKey ? (
+            <div className="confirm-body" style={{ textAlign: "center" }}>
+              <p className="confirm-text">
+                Vuoi cambiare avatar in <strong>{pendingThemeKey}</strong>?
+              </p>
+              <img
+                src={`/pfp/${pendingThemeKey}.png`}
+                alt={pendingThemeKey}
+                style={{ width: 96, height: 96, borderRadius: 999 }}
+              />
+            </div>
+          ) : (
+            "Sei sicuro?"
+          )
+        }
+        confirmText="Cambia avatar"
+        cancelText="Annulla"
+        loading={avatarLoading}
+        onConfirm={() => handleAvatarSelect(pendingThemeKey)}
+        onCancel={handleAvatarCancel}
+        onClose={handleAvatarCancel}
+      />
+    </Container>
+  );
 }
 
 export default Settings;

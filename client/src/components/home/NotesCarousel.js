@@ -9,6 +9,7 @@ function NotesCarousel({ user }) {
   const [notes, setNotes] = useState([]);
   const navigate = useNavigate();
 
+  //recupera le note più recenti a seconda di quante ne vuole vedere l'utente
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -19,7 +20,7 @@ function NotesCarousel({ user }) {
           },
           body: JSON.stringify({
             userid: user._id,
-            limit: user.settings.homeNotes,
+            limit: user.settings.homeNotes, // Numero di note da recuperare
           }),
         });
         const data = await response.json();
@@ -36,6 +37,7 @@ function NotesCarousel({ user }) {
     fetchNotes();
   }, [user._id, user.settings.homeNotes]);
 
+  // Inizializza il carousel delle note
   useEffect(() => {
     const carouselElement = document.getElementById("noteCarousel");
     if (carouselElement) {
@@ -50,6 +52,7 @@ function NotesCarousel({ user }) {
     <div
       className="container mt-5"
     >
+      {/* Se ci sono note, mostra il carousel, altrimenti mostra un messaggio per creare la prima nota */}
       {notes.length > 0 ? (
         <div
           id="noteCarousel"
@@ -58,6 +61,7 @@ function NotesCarousel({ user }) {
           data-bs-interval="3000"
         >
           <div className="carousel-inner">
+            {/* Mappa le note e crea un elemento del carousel per ciascuna */}
             {notes.map((nota, index) => (
               <div
                 key={nota._id}
@@ -91,6 +95,7 @@ function NotesCarousel({ user }) {
                       </h5>
                     </div>
                     <p className="card-text note-body text-truncate-multiline">
+                      {/* Usa dangerouslySetInnerHTML per mostrare eventuale markup della nota */}
                       <div dangerouslySetInnerHTML={{ __html: nota.body }} />
                     </p>
                   </div>

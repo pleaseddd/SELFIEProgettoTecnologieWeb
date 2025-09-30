@@ -7,6 +7,7 @@ function Signin({ change, setUser }) {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+//Gestione del login
   const handleLogin = async (event) => {
     event.preventDefault();
     const email = event.target.email.value.trim();
@@ -15,7 +16,7 @@ function Signin({ change, setUser }) {
     setError(""); // reset
 
     try {
-      // 1 Login
+      //1 Controllo credenziali dell'user
       const loginRes = await fetch("/api/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,7 +29,7 @@ function Signin({ change, setUser }) {
         return;
       }
 
-      // 2 Recupera utente con cookie
+      // 2 Recupera le impostazioni dell'utente dopo il login
       const meRes = await fetch("/api/user/auth", {
         method: "GET",
         credentials: "include",
@@ -39,6 +40,7 @@ function Signin({ change, setUser }) {
         return;
       }
 
+      // 3 Imposta lo stato dell'utente e reindirizza alla home
       const userData = await meRes.json();
       setUser(userData);
       navigate("/home");
@@ -50,11 +52,12 @@ function Signin({ change, setUser }) {
 
   return (
     <div className="col-md-6 d-flex justify-content-center align-items-center mb-3 mb-md-0">
+      {/* Form di login o registrazione */}
       <div className="card p-3 shadow-sm login-card" style={{ maxWidth: 420, width: "100%" }}>
         <h2 className="text-center mb-3" style={{ fontSize: "1.25rem" }}>Login</h2>
 
         {error && <div className="alert alert-danger py-1 mb-2" role="alert">{error}</div>}
-
+        {/* Form di login */}
         <form onSubmit={handleLogin}>
           <div className="mb-2">
             <label htmlFor="email" className="form-label small">Email</label>
@@ -85,6 +88,7 @@ function Signin({ change, setUser }) {
           </button>
         </form>
 
+        {/* Pulsante per passare al form di registrazione */}
         <button
           className="register-btn btn btn-outline-secondary w-100 btn-sm"
           onClick={change}

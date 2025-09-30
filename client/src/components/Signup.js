@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
+//Funzione per ottenere il timezone dell'utente tramite geolocalizzazione
 const updatetimezone = async () => {
   try {
     const geoRes = await fetch(
@@ -24,29 +25,13 @@ function Register({ change }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Requisiti password 
   const pwdRegex = /^(?=.{8,20}$)(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
   const passwordValid = pwdRegex.test(password);
+  // Confronto password
   const passwordsMatch = password === confirmPassword || confirmPassword === "";
-  const timezone="";
-  //PRESA DELLA POSIZIONE PER METTERE NELL'USER SETTINGS
-  useEffect(() => {
-    const prendiposizione = async () => {
-      try {
-        // Ottieni la posizione approssimativa
-        const geoRes = await fetch(
-          "https://api.ipgeolocation.io/ipgeo?apiKey=ae48adddb3f64feb984decd7b4299e7b"
-        );
-        const geoData = await geoRes.json();
-        timezone = geoData.time_zone.name;
-      } catch (err) {
-        console.error("Errore geolocalizzazione:", err);
-      }
-    };
-
-    prendiposizione();
-  }, []);
-
-
+ 
+// Ottengo il timezone all'inizio
   useEffect(() => {
     const fetchTz = async () => {
       const tz = await updatetimezone();
@@ -55,7 +40,9 @@ function Register({ change }) {
     fetchTz();
   }, []);
 
+  //Gestione della registrazione
   const handleregister = async (e) => {
+    // Prevenzione del refresh della pagina per evitare la perdita dei dati
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -72,6 +59,7 @@ function Register({ change }) {
       return;
     }
 
+    //Invia i dati al server per creare l'utente
     try {
       const response = await fetch("/api/user/new", {
         method: "POST",
@@ -213,7 +201,7 @@ function Register({ change }) {
         >
           Indietro
         </button>
-
+          {/* Mostra il timezone rilevato */}
         <div className="text-muted mt-2" style={{ fontSize: 12 }}>
           Fuso rilevato: {timezone || "caricamento..."}
         </div>
