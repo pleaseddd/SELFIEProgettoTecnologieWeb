@@ -4,12 +4,15 @@ import ConfirmModal from "./ConfirmModal";
 import { FaRegTrashCan } from "react-icons/fa6";
 
 function RemoveNote({ noteId, userId, onSuccess }) {
+  //Gestione della modale di conferma per l'eliminazione della nota
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const openConfirm = () => setShowConfirm(true);
   const closeConfirm = () => setShowConfirm(false);
 
+  //Gestisce l'eliminazione della nota chiamando l'API e passando noteId e userId
+  //In caso di successo chiama la funzione onSuccess passata come prop per aggiornare la lista delle note
   const handleConfirm = async () => {
     setLoading(true);
     try {
@@ -46,7 +49,7 @@ function RemoveNote({ noteId, userId, onSuccess }) {
       >
         <FaRegTrashCan />
       </Button>
-
+        {/* Modale di conferma per l'eliminazione della nota */}
       <ConfirmModal
         show={showConfirm}
         title="Elimina nota"

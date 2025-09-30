@@ -16,7 +16,7 @@ function NotesPages({ user }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
 
-  // Fetch notes
+  // Recupera le note dell'utente dal server quando il componente viene montato
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -35,12 +35,14 @@ function NotesPages({ user }) {
     fetchNotes();
   }, [user._id]);
 
-  // Categories list
+  // Lista delle categorie uniche presenti nelle note
   const categories = Array.from(
     new Set(notes.map((n) => n.category || "Senza categoria"))
   );
 
-  // Handle checkbox toggle
+  // Checkbox per il filtro delle categorie
+  // Aggiorna la lista delle categorie selezionate in base alle checkbox selezionate
+  // Se nessuna categoria è selezionata mostra tutte le note
   const handleCategoryChange = (e) => {
     const { value, checked } = e.target;
     setSelectedCategories((prev) =>
@@ -48,13 +50,13 @@ function NotesPages({ user }) {
     );
   };
 
-  // Filtered notes
+  // Mostra le note in base alle categorie selezionate
   const displayedNotes = notes.filter((note) => {
     const cat = note.category || "Senza categoria";
     return selectedCategories.length === 0 || selectedCategories.includes(cat);
   });
 
-  // Modal controls
+  // Controllo visualizzazione nota
   const openNoteView = (note) => {
     setSelectedNote(note);
     setShowNoteView(true);
@@ -64,12 +66,13 @@ function NotesPages({ user }) {
     setShowNoteView(false);
   };
 
-  // Remove after delete
+  // Rimozione nota
   const handleNoteRemoved = (id) => {
     setNotes(notes.filter((n) => n._id !== id));
     closeNoteView();
   };
 
+  // Elimina la nota selezionata e chiude la modale di visualizzazione
   const handleDeleteModal = async () => {
     try {
       const response = await fetch('/api/notes/delete', {
@@ -84,6 +87,7 @@ function NotesPages({ user }) {
     }
   };
 
+  // Modifica nota, scroll in alto e mostra il form di modifica
   const handleEdit = (note) => {
     setSelectedNote(note);
     setShowNoteView(false);
@@ -97,6 +101,7 @@ function NotesPages({ user }) {
   return (
     <div className="container mt-4">
       <div className="row d-flex flex-column flex-md-row">
+        {/* Form per aggiungere o modificare una nota */}
         <div className="col-md-4 mb-3">
           <div className="p-3 bg-light rounded shadow-sm">
             <AddNote
@@ -109,6 +114,7 @@ function NotesPages({ user }) {
 
         <div className="col-md-8">
           <div className="row">
+            {/* Mostra le note sotto filtri */}
             {displayedNotes.length > 0 ? (
               displayedNotes.map((note) => (
                 <div key={note._id} className="col-lg-6 col-xl-4 mb-3">
@@ -122,10 +128,12 @@ function NotesPages({ user }) {
                         {note.category || "Senza categoria"}
                       </h6>
                       <p className="card-text">
+                        {/* Usa dangerouslySetInnerHTML per rendere il corpo della nota con formattazione HTML */}
                         <div dangerouslySetInnerHTML={{ __html: note.body }} />
                       </p>
                     </div>
                     <div className="card-footer bg-transparent border-top-0 d-flex justify-content-between px-3 pb-3">
+                      {/* Evita la propagazione del click per non aprire la modale di visualizzazione */}
                       <div onClick={(e) => e.stopPropagation()}>
                         <RemoveNote
                           noteId={note._id}
@@ -168,7 +176,7 @@ function NotesPages({ user }) {
         />
       )}
 
-      {/* Floating Filter Toggle */}
+      {/* bottone per aprire il pannello dei filtri */}
       <button
         className="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
         style={{
@@ -176,16 +184,16 @@ function NotesPages({ user }) {
           bottom: "20px",
           right: "20px",
           zIndex: 1000,
-          width: "50px", // larghezza
-          height: "50px", // altezza uguale alla larghezza
-          padding: 0, // rimuove padding interno di default
+          width: "50px", 
+          height: "50px", 
+          padding: 0, 
         }}
         onClick={() => setShowFilterPanel((prev) => !prev)}
       >
         <FaMagnifyingGlass size={20} />
       </button>
 
-      {/* Scroll to Top Button */}
+      {/* Bottone per tornare in alto */}
       <button
         className="btn btn-secondary rounded-circle d-flex align-items-center justify-content-center"
         style={{
@@ -204,7 +212,7 @@ function NotesPages({ user }) {
         <FaArrowUp />
       </button>
 
-      {/* Filter Panel Overlay */}
+      {/* Pannello del filtro*/}
       {showFilterPanel && (
         <div
           style={{
@@ -222,6 +230,7 @@ function NotesPages({ user }) {
             zIndex: 1000,
           }}
         >
+          {/* Lista delle categorie con checkbox */}
           <h6>Filtra categorie</h6>
           {categories.map((cat) => (
             <div className="form-check" key={cat}>
@@ -238,6 +247,7 @@ function NotesPages({ user }) {
               </label>
             </div>
           ))}
+          {/* Bottone per resettare i filtri */}
           {categories.length > 0 && (
             <button
               className="btn btn-sm btn-link mt-2"
