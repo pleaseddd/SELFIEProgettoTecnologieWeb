@@ -29,7 +29,7 @@
   font-size: 0.95rem;
   letter-spacing: -0.01em;
   display: block;
-  color: var(--color-details);
+  color: var(--color-shadows);
 }
 
 .gen-form-control {
