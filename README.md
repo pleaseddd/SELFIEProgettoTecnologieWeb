@@ -1,5 +1,5 @@
 Utenti per il test:
-
+aggiunta la "a" alla fine della password per coerenza con le richieste di login
 fv1
   email:fv1@gmail.com
   pw:12345678a
